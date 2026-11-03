@@ -75,6 +75,48 @@ Exemple fourni : [`exemple-horaire-semaine.png`](exemple-horaire-semaine.png) �
 
 Personne désignée : **CT Eric BYUMANINE**.
 
+## Complément transmis (organisation, sécurité, déploiement)
+
+### Comptes du personnel
+
+| Besoin | Réponse de l'institut |
+|---|---|
+| Personnel à doter d'un compte d'administration | Prof. SINDANO WA KITWANGA Expédit ; CT Eric BYUMANINE |
+| Niveau super-administrateur | Prof. SINDANO |
+| Personnes autorisées à enregistrer un paiement | Prof. SINDANO WA KITWANGA Expédit ; CT Eric BYUMANINE |
+| Format des registres actuels | Tableau : N°, Nom, post-nom et prénom, Sexe, Matricule |
+
+### Sécurité et conservation
+
+| Besoin | Réponse |
+|---|---|
+| Fréquence de sauvegarde | Hebdomadaire (minimum) |
+| Conservation des données des anciens étudiants | Longue durée |
+| Contact en cas d'incident | CT Eric BYUMANINE |
+
+### Configuration
+
+| Besoin | Réponse |
+|---|---|
+| Adresse d'expédition des emails automatiques | ispt.bk@gmail.com |
+| Référent pour la formation à l'administration | CT Eric BYUMANINE |
+
+### Tableau de bord de la direction — priorités
+
+1. Effectifs par filière
+2. Taux de réussite
+3. Revenus et impayés par période
+4. Activité de la plateforme
+
+### Communication institutionnelle
+
+Seule l'administration centrale publie des annonces adressées à tout l'institut.
+
+### Déploiement
+
+- Date de lancement souhaitée : dès que disponible.
+- Mode : **lancement simultané** de tous les espaces (public, étudiant, enseignant, administration).
+
 ## Points restés sans réponse
 
 Portée du fil d'actualité étudiant, données visibles sur le profil, comportements interdits et sanctions, canaux de notification, témoignages et chiffres clés. Ces éléments seront paramétrables dans l'administration.
