@@ -10,16 +10,20 @@ Le point de départ est un constat connu des étudiants : l'information officiel
 
 ## 2. Données de référence
 
-Source : dépliant officiel de l'institut ([`docs/sources/depliant-ispt-bukavu.pdf`](../sources/depliant-ispt-bukavu.pdf)).
+Sources : dépliant officiel ([`depliant-ispt-bukavu.pdf`](../sources/depliant-ispt-bukavu.pdf)) et données transmises par l'institut ([`donnees-site-ispt.md`](../sources/donnees-site-ispt.md)).
 
 | Élément | Information |
 |---|---|
 | Statut | Établissement public d'enseignement supérieur et universitaire |
 | Création | Arrêté ministériel n°219/MINESU/CAB.MIN/MML/KOB/2010 du 8 novembre 2010 ; opérationnel depuis 2011 |
-| Adresse | Avenue de l'Hippodrome n°102, quartier Nyawera, commune d'Ibanda, Bukavu · B.P. 1334 |
+| Adresse | Avenue de l'Hippodrome n°102, quartier Nyawera, commune d'Ibanda, Bukavu · B.P. 1334 · GPS 02°30'09'' S, 28°52'18'' E |
 | Contacts | WhatsApp 085 371 5883 · Téléphone 099 924 9630 · ispt.bk@gmail.com |
 | Mission | Former des ingénieurs en techniques appliquées, aptes à l'industrie et à l'enseignement technique |
-| Sections et options | Génie Civil (BTP) · Électricité : Électromécanique, Électrotechnique · Électronique et Informatique : Électronique et Télécommunications, Génie Informatique · Mécanique : Mécanique Générale, Mécanique Automobile |
+| Devise | *Scientia splendet et conscientia* |
+| Études | LMD : 4 ans, 8 semestres, diplôme de Licence |
+| Filières LMD | Électromécanique · Génie Informatique · Électronique et Télécommunications · Génie Civil (BTP) |
+| Admission | Frais d'inscription 10 $ ; bulletins de 5e et 6e, diplôme d'État ou palmarès, attestations de bonne vie et mœurs, de nationalité, d'aptitude physique et de naissance, farde chemise |
+| Support étudiants | CT Eric BYUMANINE |
 | Stages | Pédagogique (Collège Sainte-Anne Mbobero, C.S. La Lune, C.S. Lapereaux…) ; professionnel obligatoire (Office des Routes, BRALIMA, ITFM, centrale SNEL, BRAPRO, hôpitaux) |
 | Autorités | Directeur Général : Prof. SINDANO WA KITWANGA Expédit · Secrétaire Général Académique : Prof. Albert LUKWISHI · Secrétaire Général Administratif : CT MUSAFIRI MULALI WAZO |
 | Débouchés | SNEL, REGIDESO, bureaux d'études, télécoms, banques, hôtels, ONG, usines, ministères ; enseignement technique |
@@ -100,7 +104,14 @@ Prix publics indicatifs relevés en novembre 2026, à reconfirmer à la souscrip
 | Nom de domaine | — | ≈ 25 à 130 $ / an selon l'extension |
 | GitHub, Sentry, UptimeRobot | gratuit | gratuit |
 
-## 8. Principes
+## 8. Contraintes réglementaires structurantes
+
+Détail et sources : [`../recherche/cadre-reglementaire.md`](../recherche/cadre-reglementaire.md).
+
+- **Plateforme ministérielle.** L'instruction académique n° 025 du 13 novembre 2023 impose aux établissements publics l'usage de la solution ministérielle OptSolution pour la gestion financière, académique et administrative. La plateforme de l'ISPT-Bukavu se positionne donc en **complément** (communication, admissions, valve, pédagogie, services aux étudiants) et prévoit des **exports compatibles** des données d'inscription et de notes, sans dupliquer l'obligation ministérielle.
+- **Localisation des données.** L'article 201 du Code du numérique (ordonnance-loi n° 23/010 du 13 mars 2023) prévoit l'hébergement des données personnelles en RDC, sauf autorisation de l'autorité de protection des données. Conséquence : architecture **portable** (PostgreSQL standard, stockage compatible S3, aucune dépendance propriétaire bloquante) pour permettre un hébergement en RDC en production ; l'environnement actuel hors RDC sert au développement et à la démonstration, avec des données fictives.
+
+## 9. Principes
 
 - Toute information publiée est sourcée ou signalée comme à compléter dans l'administration.
 - Aucune donnée personnelle d'enquête dans le dépôt.
