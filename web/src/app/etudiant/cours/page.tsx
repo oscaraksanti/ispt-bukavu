@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { EtatVide } from "@/components/ui/elements";
 import { exigerEtudiant } from "@/features/espaces/acces";
 import { db } from "@/lib/db";
@@ -45,7 +46,12 @@ export default async function CoursEtudiant() {
                   className="flex flex-col gap-1 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div>
-                    <p className="font-medium text-encre">{c.cours.intitule}</p>
+                    <Link
+                      href={`/etudiant/cours/${c.id}`}
+                      className="font-medium text-encre hover:text-ispt-600"
+                    >
+                      {c.cours.intitule}
+                    </Link>
                     <p className="text-sm text-pierre-600">
                       {c.cours.ue.code} · {c.cours.credits} crédit(s) · {c.cours.volumeHoraire} h
                     </p>
