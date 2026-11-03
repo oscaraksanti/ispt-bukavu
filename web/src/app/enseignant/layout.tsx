@@ -19,6 +19,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
       sousTitre={profil.domaine ?? "Enseignant"}
       liens={[
         { libelle: "Mes cours", href: "/enseignant" },
+        { libelle: "Horaire", href: "/enseignant/horaire" },
         { libelle: "Valve", href: "/enseignant/valve" },
       ]}
       autresEspaces={u.estPersonnel ? [{ libelle: "Administration", href: "/admin" }] : undefined}

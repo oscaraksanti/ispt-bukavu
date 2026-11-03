@@ -77,6 +77,18 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
         permission: "academique.structure",
       },
       {
+        libelle: "Horaires",
+        href: "/admin/horaires",
+        icone: "CalendarClock",
+        permission: "academique.horaires",
+      },
+      {
+        libelle: "Notes",
+        href: "/admin/notes",
+        icone: "ClipboardCheck",
+        permission: "academique.notes.valider",
+      },
+      {
         libelle: "Étudiants",
         href: "/admin/etudiants",
         icone: "Users",
@@ -87,6 +99,17 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
         href: "/admin/enseignants",
         icone: "Presentation",
         permission: "academique.structure",
+      },
+    ],
+  },
+  {
+    titre: "Finances",
+    entrees: [
+      {
+        libelle: "Frais et paiements",
+        href: "/admin/finances",
+        icone: "Wallet",
+        permission: "finances.consulter",
       },
     ],
   },

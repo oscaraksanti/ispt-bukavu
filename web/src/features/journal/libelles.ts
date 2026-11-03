@@ -67,6 +67,22 @@ export const LIBELLES_ACTIONS: Record<string, string> = {
   communique_valide: "Communiqué validé",
   communique_archive: "Communiqué retiré",
   communique_supprime: "Communiqué supprimé",
+  horaire_modifie: "Horaire modifié",
+  horaire_copie: "Horaire repris de la semaine précédente",
+  seance_modifiee: "Séance reportée ou annulée",
+  evaluation_creee: "Évaluation créée",
+  evaluation_supprimee: "Évaluation supprimée",
+  notes_saisies: "Notes saisies",
+  evaluation_transmise: "Notes transmises",
+  evaluation_statut: "Notes validées ou publiées",
+  support_ajoute: "Support de cours ajouté",
+  support_supprime: "Support de cours retiré",
+  bareme_cree: "Barème de frais créé",
+  bareme_modifie: "Barème de frais modifié",
+  bareme_supprime: "Barème de frais supprimé",
+  paiement_enregistre: "Paiement enregistré",
+  paiement_annule: "Paiement annulé",
+  exoneration_ajoutee: "Exonération accordée",
 };
 
 export function libelleAction(action: string) {

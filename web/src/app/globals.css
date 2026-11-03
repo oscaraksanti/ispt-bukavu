@@ -474,3 +474,26 @@
     inset: 0;
   }
 }
+
+/* Impression de l'horaire de la semaine, au format du document affiché aux valves. */
+@page paysage {
+  size: A4 landscape;
+  margin: 12mm;
+}
+@media print {
+  .horaire-imprimable {
+    page: paysage;
+  }
+  body:has(.horaire-imprimable) * {
+    visibility: hidden;
+  }
+  body:has(.horaire-imprimable) .horaire-imprimable,
+  body:has(.horaire-imprimable) .horaire-imprimable * {
+    visibility: visible;
+  }
+  body:has(.horaire-imprimable) .horaire-imprimable {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+  }
+}

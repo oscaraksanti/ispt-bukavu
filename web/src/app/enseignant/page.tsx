@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { LienBouton } from "@/components/ui/bouton";
 import { EtatVide } from "@/components/ui/elements";
 import { libellePromotion } from "@/features/academique/regles";
@@ -52,16 +53,24 @@ export default async function AccueilEnseignant() {
         ) : (
           <ul className="mt-4 grid gap-4 md:grid-cols-2">
             {affectations.map(({ coursOffert: co, titulaire }) => (
-              <li key={co.id} className="rounded-md border border-pierre-200 bg-white p-5">
-                <p className="font-mono text-xs text-ispt-600">
-                  {co.cours.ue.code} · S{co.cours.ue.semestre}
-                  {!titulaire && " · assistant"}
-                </p>
-                <p className="mt-2 font-serif text-xl text-encre">{co.cours.intitule}</p>
-                <p className="mt-1 text-sm text-pierre-600">
-                  {libellePromotion(co.promotion)} · {co.promotion._count.inscriptions} étudiant(s)
-                  · {co.cours.volumeHoraire} h
-                </p>
+              <li key={co.id}>
+                <Link
+                  href={`/enseignant/cours/${co.id}`}
+                  className="group block h-full rounded-md border border-pierre-200 bg-white p-5 transition-colors hover:border-ispt-600"
+                >
+                  <p className="font-mono text-xs text-ispt-600">
+                    {co.cours.ue.code} · S{co.cours.ue.semestre}
+                    {!titulaire && " · assistant"}
+                  </p>
+                  <p className="mt-2 font-serif text-xl text-encre">{co.cours.intitule}</p>
+                  <p className="mt-1 text-sm text-pierre-600">
+                    {libellePromotion(co.promotion)} · {co.promotion._count.inscriptions}{" "}
+                    étudiant(s) · {co.cours.volumeHoraire} h
+                  </p>
+                  <p className="mt-3 text-sm font-medium text-ispt-600 group-hover:underline">
+                    Notes et supports →
+                  </p>
+                </Link>
               </li>
             ))}
           </ul>

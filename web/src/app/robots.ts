@@ -14,6 +14,8 @@ export default function robots(): MetadataRoute.Robots {
         "/candidat",
         "/pieces",
         "/valve/pieces",
+        "/supports",
+        "/recu",
         "/activer",
         "/api",
         "/systeme-de-design",

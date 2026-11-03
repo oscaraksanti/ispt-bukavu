@@ -22,7 +22,10 @@ async function Cadre({ children }: { children: React.ReactNode }) {
       liens={[
         { libelle: "Accueil", href: "/etudiant" },
         { libelle: "Valve", href: "/etudiant/valve" },
+        { libelle: "Horaire", href: "/etudiant/horaire" },
         { libelle: "Mes cours", href: "/etudiant/cours" },
+        { libelle: "Notes", href: "/etudiant/notes" },
+        { libelle: "Frais", href: "/etudiant/frais" },
       ]}
       autresEspaces={u.estPersonnel ? [{ libelle: "Administration", href: "/admin" }] : undefined}
     >
