@@ -51,3 +51,9 @@ Aucune clé, aucun mot de passe dans le dépôt. Les variables sont décrites da
 ## Données personnelles
 
 Les réponses brutes aux enquêtes et toute donnée nominative restent hors du dépôt (`docs/recherche/donnees-brutes/` est ignoré par Git). Seules des synthèses anonymisées sont publiées.
+
+## Base de données et sécurité
+
+- Toute nouvelle table passe par une migration Prisma ; la migration doit activer la sécurité au niveau des lignes (`ALTER TABLE … ENABLE ROW LEVEL SECURITY`) : l'API REST de Supabase reste ainsi fermée, l'application accédant aux données uniquement par Prisma.
+- Chaque page et chaque action de l'administration vérifie elle-même la permission requise (`exigerPermission`) ; le menu ne fait que refléter ces droits.
+- Toute modification sensible est tracée avec `journaliser` et l'action reçoit un libellé dans `src/features/journal/libelles.ts`.
