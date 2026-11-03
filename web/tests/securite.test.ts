@@ -93,3 +93,14 @@ describe("médiathèque", () => {
     expect(tailleLisible(1.5 * 1024 * 1024)).toBe("1,5 Mo");
   });
 });
+
+describe("connexion à la base", () => {
+  it("adopte la sémantique libpq pour sslmode=require", async () => {
+    const { adapterChaine, BASE_ABSENTE } = await import("@/lib/connexion");
+    expect(adapterChaine("postgres://u:p@h:6543/db?sslmode=require&pgbouncer=true")).toBe(
+      "postgres://u:p@h:6543/db?sslmode=require&pgbouncer=true&uselibpqcompat=true",
+    );
+    expect(adapterChaine("postgres://u@h/db")).toBe("postgres://u@h/db");
+    expect(adapterChaine(undefined)).toBe(BASE_ABSENTE);
+  });
+});

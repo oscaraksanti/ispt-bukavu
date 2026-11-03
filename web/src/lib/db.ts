@@ -1,6 +1,7 @@
 import "server-only";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@/generated/prisma/client";
+import { adapterChaine } from "./connexion";
 
 /**
  * Accès à la base de données. En production (Supabase), l'application passe
@@ -8,8 +9,8 @@ import { PrismaClient } from "@/generated/prisma/client";
  */
 function chaineConnexion() {
   const url = process.env.POSTGRES_PRISMA_URL ?? process.env.DATABASE_URL;
-  if (!url) throw new Error("Aucune base de données configurée (DATABASE_URL).");
-  return url;
+  if (!url) console.warn("[base] Aucune base configurée : contenus de référence uniquement.");
+  return adapterChaine(url);
 }
 
 const globalPourPrisma = globalThis as unknown as { prisma?: PrismaClient };

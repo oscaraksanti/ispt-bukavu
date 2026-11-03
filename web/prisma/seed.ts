@@ -13,6 +13,7 @@ import { PrismaClient } from "../src/generated/prisma/client";
 import { PAGES } from "../src/features/contenu/definitions";
 import { REGLAGES_INSTITUT } from "../src/features/contenu/reglages";
 import { autorites, debouchesAnciens, filieres, stages } from "../src/contenu/institut";
+import { adapterChaine } from "../src/lib/connexion";
 import { PERMISSIONS, ROLES_PAR_DEFAUT } from "../src/lib/permissions";
 import { PHOTOS_OFFICIELLES as PHOTOS } from "../src/features/medias/photos-officielles";
 
@@ -22,7 +23,9 @@ const url =
   process.env.POSTGRES_PRISMA_URL ??
   process.env.DATABASE_URL;
 if (!url) throw new Error("DATABASE_URL manquante.");
-const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: url }) });
+const db = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: adapterChaine(url) }),
+});
 
 async function permissionsEtRoles() {
   for (const [code, p] of Object.entries(PERMISSIONS)) {
