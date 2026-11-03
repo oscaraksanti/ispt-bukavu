@@ -31,7 +31,10 @@ export const ETIQUETTES = {
 } as const;
 
 function signalerPanne(origine: string, erreur: unknown) {
-  console.error(`[contenu] ${origine} : base indisponible, contenu de référence affiché.`, erreur);
+  const detail = erreur instanceof Error ? erreur.message.split("\n")[0] : String(erreur);
+  console.error(
+    `[contenu] ${origine} : base indisponible, contenu de référence affiché (${detail}).`,
+  );
 }
 
 /* ---------- Images ---------- */

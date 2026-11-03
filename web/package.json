@@ -11,7 +11,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "postinstall": "prisma generate",
-    "vercel-build": "prisma migrate deploy && tsx prisma/seed.ts && next build",
+    "vercel-build": "node scripts/build-vercel.mjs",
     "db:migrer": "prisma migrate dev",
     "db:initialiser": "tsx prisma/seed.ts",
     "test": "vitest run"

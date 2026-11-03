@@ -32,6 +32,10 @@ export async function envoyerEmail({ a, sujet, texte, html }: Message) {
   return { envoye: true };
 }
 
+/** Adresse publique du site, pour les liens envoyés par email. */
 export function urlSite() {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL)
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  return "http://localhost:3000";
 }

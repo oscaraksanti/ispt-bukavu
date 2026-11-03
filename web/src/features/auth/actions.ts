@@ -38,42 +38,50 @@ export async function seConnecter(_: EtatFormulaire, donnees: FormData): Promise
   });
   if (!saisie.success) return { erreur: MESSAGE_IDENTIFIANTS };
 
-  const email = normaliserEmail(saisie.data.email);
-  const ip = await ipDuClient();
-  const depuis = new Date(Date.now() - FENETRE_TENTATIVES_MS);
-  const [echecsEmail, echecsIp] = await Promise.all([
-    db.tentativeConnexion.count({ where: { email, reussie: false, creeLe: { gte: depuis } } }),
-    ip
-      ? db.tentativeConnexion.count({ where: { ip, reussie: false, creeLe: { gte: depuis } } })
-      : 0,
-  ]);
-  if (estBloque(echecsEmail, echecsIp)) {
+  try {
+    const email = normaliserEmail(saisie.data.email);
+    const ip = await ipDuClient();
+    const depuis = new Date(Date.now() - FENETRE_TENTATIVES_MS);
+    const [echecsEmail, echecsIp] = await Promise.all([
+      db.tentativeConnexion.count({ where: { email, reussie: false, creeLe: { gte: depuis } } }),
+      ip
+        ? db.tentativeConnexion.count({ where: { ip, reussie: false, creeLe: { gte: depuis } } })
+        : 0,
+    ]);
+    if (estBloque(echecsEmail, echecsIp)) {
+      return {
+        erreur: "Trop de tentatives. Pour votre sécurité, réessayez dans quinze minutes.",
+      };
+    }
+
+    const utilisateur = await db.utilisateur.findUnique({ where: { email } });
+    const valide = await verify(
+      utilisateur?.motDePasseHash ?? EMPREINTE_FACTICE,
+      saisie.data.motDePasse,
+    ).catch(() => false);
+
+    const accepte = !!utilisateur && valide && utilisateur.statut === "ACTIF";
+    await db.tentativeConnexion.create({ data: { email, ip, reussie: accepte } });
+    if (!accepte) return { erreur: MESSAGE_IDENTIFIANTS };
+
+    await ouvrirSession(utilisateur.id);
+    await db.utilisateur.update({
+      where: { id: utilisateur.id },
+      data: { derniereConnexion: new Date() },
+    });
+    await journaliser({
+      auteurId: utilisateur.id,
+      action: "connexion",
+      entite: "Utilisateur",
+      entiteId: utilisateur.id,
+    });
+  } catch (erreur) {
+    console.error("[connexion] service indisponible", erreur);
     return {
-      erreur: "Trop de tentatives. Pour votre sécurité, réessayez dans quinze minutes.",
+      erreur:
+        "Le service de connexion est momentanément indisponible. Réessayez dans quelques minutes.",
     };
   }
-
-  const utilisateur = await db.utilisateur.findUnique({ where: { email } });
-  const valide = await verify(
-    utilisateur?.motDePasseHash ?? EMPREINTE_FACTICE,
-    saisie.data.motDePasse,
-  ).catch(() => false);
-
-  const accepte = !!utilisateur && valide && utilisateur.statut === "ACTIF";
-  await db.tentativeConnexion.create({ data: { email, ip, reussie: accepte } });
-  if (!accepte) return { erreur: MESSAGE_IDENTIFIANTS };
-
-  await ouvrirSession(utilisateur.id);
-  await db.utilisateur.update({
-    where: { id: utilisateur.id },
-    data: { derniereConnexion: new Date() },
-  });
-  await journaliser({
-    auteurId: utilisateur.id,
-    action: "connexion",
-    entite: "Utilisateur",
-    entiteId: utilisateur.id,
-  });
   redirect(destinationSure(saisie.data.suite));
 }
 
