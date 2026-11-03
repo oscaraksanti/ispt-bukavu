@@ -15,7 +15,7 @@ import { rolesAttribuables } from "./regles";
 /** Crée un lien d'invitation à usage unique et l'envoie par email. */
 async function emettreInvitation(utilisateur: {
   id: string;
-  email: string;
+  email: string | null;
   prenom: string | null;
 }) {
   await db.jetonReinitialisation.deleteMany({
@@ -30,6 +30,7 @@ async function emettreInvitation(utilisateur: {
     },
   });
   const lien = `${urlSite()}/reinitialiser/${jeton}`;
+  if (!utilisateur.email) return { lien, envoye: false };
   const { envoye } = await envoyerEmail({
     a: utilisateur.email,
     sujet: "Votre accès à la plateforme de l'ISPT-Bukavu",
@@ -83,6 +84,8 @@ export async function inviterCompte(
       roles: { create: roles.map((role) => ({ roleId: role.id })) },
     },
   });
+  if (r.data.roles.includes("enseignant"))
+    await db.profilEnseignant.create({ data: { utilisateurId: utilisateur.id } });
   await journaliser({
     auteurId: auteur.id,
     action: "utilisateur_cree",
@@ -139,6 +142,12 @@ export async function modifierRolesCompte(
       data: roles.map((role) => ({ utilisateurId: id, roleId: role.id })),
     }),
   ]);
+  if (nouveaux.includes("enseignant"))
+    await db.profilEnseignant.upsert({
+      where: { utilisateurId: id },
+      update: {},
+      create: { utilisateurId: id },
+    });
   await journaliser({
     auteurId: auteur.id,
     action: "utilisateur_modifie",

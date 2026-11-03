@@ -6,6 +6,7 @@ import { FormulaireAction } from "@/components/admin/formulaire-action";
 import { Champ, Liste, Saisie, ZoneTexte } from "@/components/ui/champs";
 import { Etiquette } from "@/components/ui/elements";
 import { formatHeure, formatJour } from "@/features/actualites/dates";
+import { inscrireAdmis } from "@/features/academique/actions-etudiants";
 import { deciderCandidature, statuerPiece } from "@/features/admissions/actions-admin";
 import {
   DECISIONS,
@@ -195,7 +196,19 @@ export default async function Dossier({ params }: PageProps<"/admin/admissions/[
         </div>
 
         <div className="space-y-6">
-          {peutDecider && decisions.length === 0 && (
+          {statut === "ADMISE" && aPermission(u, "etudiants.gerer") && (
+            <Panneau
+              titre="Inscrire l'étudiant"
+              description="Attribuez le matricule : l'admis devient étudiant de première année dans sa filière, avec le même compte."
+            >
+              <FormulaireAction action={inscrireAdmis.bind(null, d.id)} libelleEnvoi="Inscrire">
+                <Champ id="matricule" libelle="Matricule attribué">
+                  <Saisie id="matricule" name="matricule" autoCapitalize="characters" required />
+                </Champ>
+              </FormulaireAction>
+            </Panneau>
+          )}
+          {peutDecider && decisions.length === 0 && statut !== "ADMISE" && (
             <Panneau titre="Décision">
               <p className="text-sm text-pierre-700">
                 {statut === "COMPLEMENT"

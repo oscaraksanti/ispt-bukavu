@@ -459,3 +459,18 @@
     animation-delay: 0s !important;
   }
 }
+
+/* Impression de la feuille des codes d'activation : rien d'autre ne s'imprime. */
+@media print {
+  body:has(.feuille-codes) * {
+    visibility: hidden;
+  }
+  body:has(.feuille-codes) .feuille-codes,
+  body:has(.feuille-codes) .feuille-codes * {
+    visibility: visible;
+  }
+  body:has(.feuille-codes) .feuille-codes {
+    position: absolute;
+    inset: 0;
+  }
+}

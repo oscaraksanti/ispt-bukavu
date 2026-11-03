@@ -40,7 +40,8 @@ export const DECISIONS: Record<Statut, Statut[]> = {
   SOUMISE: ["EN_EXAMEN", "COMPLEMENT", "ADMISE", "REFUSEE"],
   EN_EXAMEN: ["COMPLEMENT", "ADMISE", "REFUSEE"],
   COMPLEMENT: [],
-  ADMISE: ["INSCRITE"],
+  // L'inscription d'un admis passe par l'attribution d'un matricule (inscrireAdmis).
+  ADMISE: [],
   REFUSEE: ["EN_EXAMEN"],
   INSCRITE: [],
   ABANDONNEE: [],
@@ -129,6 +130,8 @@ export function elementsManquants(
 /** Après la connexion, chacun arrive dans son espace. */
 export function espaceParDefaut(roles: string[], rolesPersonnel: string[]) {
   if (roles.some((r) => rolesPersonnel.includes(r))) return "/admin";
+  if (roles.includes("enseignant")) return "/enseignant";
+  if (roles.includes("etudiant")) return "/etudiant";
   if (roles.includes("candidat")) return "/candidat";
   return "/";
 }
