@@ -9,9 +9,11 @@ import { Bouton } from "./bouton";
 export function BoutonEnvoi({
   children,
   enCours = "Veuillez patienter…",
+  enCoursForce = false,
   ...props
-}: ComponentProps<typeof Bouton> & { enCours?: string }) {
-  const { pending } = useFormStatus();
+}: ComponentProps<typeof Bouton> & { enCours?: string; enCoursForce?: boolean }) {
+  const statut = useFormStatus();
+  const pending = statut.pending || enCoursForce;
   return (
     <Bouton type="submit" disabled={pending} aria-disabled={pending} {...props}>
       {pending ? (

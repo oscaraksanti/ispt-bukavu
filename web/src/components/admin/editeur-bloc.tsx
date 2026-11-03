@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
-import { useActionState, useId, useState } from "react";
+import { startTransition, useActionState, useId, useState } from "react";
 import { Bouton } from "@/components/ui/bouton";
 import { Case, Champ, Saisie, ZoneTexte } from "@/components/ui/champs";
 import { BoutonEnvoi } from "@/components/ui/formulaire";
@@ -100,12 +100,19 @@ export function EditeurBloc({
 }) {
   const prefixe = useId();
   const [valeurs, setValeurs] = useState<Valeurs>(valeursInitiales);
-  const [etat, envoyer] = useActionState(action, ETAT_INITIAL);
+  const [etat, envoyer, enCours] = useActionState(action, ETAT_INITIAL);
 
   const modifier = (cle: string, v: unknown) => setValeurs((p) => ({ ...p, [cle]: v }));
 
   return (
-    <form action={envoyer} className="space-y-6">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        const donnees = new FormData(e.currentTarget);
+        startTransition(() => envoyer(donnees));
+      }}
+      className="space-y-6"
+    >
       <input type="hidden" name="donnees" value={JSON.stringify(valeurs)} />
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -260,7 +267,7 @@ export function EditeurBloc({
           )}
           <MessageEtat etat={etat} />
         </div>
-        <BoutonEnvoi variante="institutionnel" enCours="Enregistrement…">
+        <BoutonEnvoi variante="institutionnel" enCours="Enregistrement…" enCoursForce={enCours}>
           {libelleEnvoi}
         </BoutonEnvoi>
       </div>

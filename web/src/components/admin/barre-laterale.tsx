@@ -2,6 +2,8 @@
 
 import {
   CalendarDays,
+  CalendarRange,
+  FolderOpen,
   CircleHelp,
   FileText,
   GraduationCap,
@@ -30,6 +32,8 @@ import type { GroupeNavigation } from "./navigation";
 
 const ICONES: Record<string, LucideIcon> = {
   CalendarDays,
+  CalendarRange,
+  FolderOpen,
   CircleHelp,
   FileText,
   GraduationCap,
@@ -49,6 +53,7 @@ function Liens({ groupes, surClic }: { groupes: GroupeNavigation[]; surClic?: ()
   const chemin = usePathname();
   return (
     <nav aria-label="Administration" className="space-y-7">
+      {/* L'entrée active est la plus précise qui correspond à l'adresse. */}
       {groupes.map((g) => (
         <div key={g.titre}>
           <p className="px-3 font-mono text-[0.625rem] tracking-[0.14em] text-white/65 uppercase">
@@ -57,7 +62,15 @@ function Liens({ groupes, surClic }: { groupes: GroupeNavigation[]; surClic?: ()
           <ul className="mt-2 space-y-0.5">
             {g.entrees.map((e) => {
               const Icone = ICONES[e.icone] ?? FileText;
-              const actif = e.href === "/admin" ? chemin === "/admin" : chemin.startsWith(e.href);
+              const correspond = (href: string) =>
+                href === "/admin"
+                  ? chemin === "/admin"
+                  : chemin === href || chemin.startsWith(`${href}/`);
+              const actif =
+                correspond(e.href) &&
+                !groupes.some((g2) =>
+                  g2.entrees.some((x) => x.href.length > e.href.length && correspond(x.href)),
+                );
               return (
                 <li key={e.href}>
                   <Link
