@@ -13,6 +13,23 @@ jobs:
   web:
     name: Application web
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ispt
+          POSTGRES_PASSWORD: ispt
+          POSTGRES_DB: ispt_ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ispt"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://ispt:ispt@localhost:5432/ispt_ci
+      DIRECT_URL: postgresql://ispt:ispt@localhost:5432/ispt_ci
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
     defaults:
       run:
         working-directory: web
@@ -36,6 +53,12 @@ jobs:
 
       - name: Types
         run: npm run typecheck
+
+      - name: Tests unitaires
+        run: npm test
+
+      - name: Base de données (migrations et données initiales)
+        run: npx prisma migrate deploy && npm run db:initialiser
 
       - name: Build
         run: npm run build

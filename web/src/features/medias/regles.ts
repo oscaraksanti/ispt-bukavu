@@ -18,7 +18,7 @@ export const DOSSIERS_MEDIAS: Record<string, string> = {
 
 /** Nom de fichier sans accents ni caractères spéciaux, sans extension. */
 export function nomDeFichierSur(nom: string) {
-  const base = nom.replace(/\.[^.]+$/, "");
+  const base = (nom.split(/[/\\]/).pop() ?? "").replace(/\.[^.]+$/, "");
   const propre = base
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
