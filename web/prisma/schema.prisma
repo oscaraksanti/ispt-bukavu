@@ -1,0 +1,916 @@
+// Modèle de données de la plateforme ISPT-Bukavu.
+// Voir docs/conception/ (diagrammes de classes) pour la vue d'ensemble.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================================================
+// Identité, accès et traçabilité
+// ============================================================================
+
+enum StatutCompte {
+  INVITE
+  ACTIF
+  SUSPENDU
+}
+
+model Utilisateur {
+  id                    String       @id @default(cuid())
+  email                 String       @unique
+  nom                   String
+  postnom               String?
+  prenom                String?
+  telephone             String?
+  motDePasseHash        String?
+  statut                StatutCompte @default(ACTIF)
+  emailVerifieLe        DateTime?
+  doitChangerMotDePasse Boolean      @default(false)
+  derniereConnexion     DateTime?
+  creeLe                DateTime     @default(now())
+  majLe                 DateTime     @updatedAt
+
+  roles               UtilisateurRole[]
+  sessions            Session[]
+  jetons              JetonReinitialisation[]
+  profilEtudiant      ProfilEtudiant?
+  profilEnseignant    ProfilEnseignant?
+  candidatures        Candidature[]          @relation("CandidaturesDuCandidat")
+  communiques         Communique[]           @relation("CommuniquesAuteur")
+  communiquesValides  Communique[]           @relation("CommuniquesValidateur")
+  lectures            Lecture[]
+  notifications       Notification[]
+  journal             JournalActivite[]
+  medias              Media[]
+  actualites          Actualite[]
+  paiementsEnregistres Paiement[]            @relation("PaiementsEnregistrePar")
+  stagesEncadres      Stage[]                @relation("StagesEncadreur")
+  decisions           Candidature[]          @relation("CandidaturesDecideur")
+}
+
+model Role {
+  id          String  @id @default(cuid())
+  code        String  @unique
+  libelle     String
+  description String?
+  /// Rôle prévu par la plateforme : ne peut pas être supprimé.
+  systeme     Boolean @default(false)
+
+  permissions  RolePermission[]
+  utilisateurs UtilisateurRole[]
+}
+
+model Permission {
+  code    String @id
+  libelle String
+  domaine String
+
+  roles RolePermission[]
+}
+
+model RolePermission {
+  roleId         String
+  permissionCode String
+  role           Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission     Permission @relation(fields: [permissionCode], references: [code], onDelete: Cascade)
+
+  @@id([roleId, permissionCode])
+}
+
+model UtilisateurRole {
+  utilisateurId String
+  roleId        String
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  role          Role        @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([utilisateurId, roleId])
+}
+
+model Session {
+  id            String      @id @default(cuid())
+  /// Empreinte SHA-256 du jeton envoyé dans le cookie (le jeton n'est jamais stocké en clair).
+  jetonHash     String      @unique
+  utilisateurId String
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  expireLe      DateTime
+  creeLe        DateTime    @default(now())
+  ip            String?
+  agent         String?
+
+  @@index([utilisateurId])
+}
+
+model JetonReinitialisation {
+  id            String      @id @default(cuid())
+  jetonHash     String      @unique
+  utilisateurId String
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  expireLe      DateTime
+  utiliseLe     DateTime?
+  creeLe        DateTime    @default(now())
+}
+
+model TentativeConnexion {
+  id      String   @id @default(cuid())
+  email   String
+  ip      String?
+  reussie Boolean
+  creeLe  DateTime @default(now())
+
+  @@index([email, creeLe])
+  @@index([ip, creeLe])
+}
+
+model JournalActivite {
+  id       String       @id @default(cuid())
+  auteurId String?
+  auteur   Utilisateur? @relation(fields: [auteurId], references: [id], onDelete: SetNull)
+  action   String
+  entite   String
+  entiteId String?
+  avant    Json?
+  apres    Json?
+  ip       String?
+  creeLe   DateTime     @default(now())
+
+  @@index([entite, entiteId])
+  @@index([creeLe])
+}
+
+model Notification {
+  id            String      @id @default(cuid())
+  utilisateurId String
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  type          String
+  titre         String
+  message       String
+  lien          String?
+  lueLe         DateTime?
+  creeLe        DateTime    @default(now())
+
+  @@index([utilisateurId, lueLe])
+}
+
+// ============================================================================
+// Contenus du site et médiathèque
+// ============================================================================
+
+enum StatutPublication {
+  BROUILLON
+  PUBLIE
+  ARCHIVE
+}
+
+model Reglage {
+  cle   String   @id
+  valeur Json
+  majLe DateTime @updatedAt
+}
+
+model Media {
+  id              String       @id @default(cuid())
+  /// Clé de l'objet dans le stockage (indépendante du fournisseur).
+  cle             String       @unique
+  nomFichier      String
+  typeMime        String
+  taille          Int
+  largeur         Int?
+  hauteur         Int?
+  texteAlternatif String       @default("")
+  legende         String?
+  dossier         String       @default("general")
+  creeLe          DateTime     @default(now())
+  creeParId       String?
+  creePar         Utilisateur? @relation(fields: [creeParId], references: [id], onDelete: SetNull)
+
+  albums            AlbumMedia[]
+  actualites        Actualite[]
+  partenaires       Partenaire[]
+  autorites         Autorite[]
+  filieres          Filiere[]
+  piecesJointes     PieceJointe[]
+  piecesDeposees    PieceDeposee[]
+  supports          Support[]
+  rapportsDeStage   Stage[]
+}
+
+model Page {
+  id          String            @id @default(cuid())
+  slug        String            @unique
+  titre       String
+  description String?
+  statut      StatutPublication @default(PUBLIE)
+  blocs       BlocPage[]
+  majLe       DateTime          @updatedAt
+}
+
+model BlocPage {
+  id      String  @id @default(cuid())
+  pageId  String
+  page    Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  /// Identifiant du bloc dans la page (accroche, mission, stages…).
+  cle     String
+  ordre   Int
+  visible Boolean @default(true)
+  donnees Json
+
+  @@unique([pageId, cle])
+}
+
+model Actualite {
+  id           String            @id @default(cuid())
+  slug         String            @unique
+  titre        String
+  resume       String
+  contenu      String
+  couvertureId String?
+  couverture   Media?            @relation(fields: [couvertureId], references: [id], onDelete: SetNull)
+  statut       StatutPublication @default(BROUILLON)
+  publieLe     DateTime?
+  auteurId     String?
+  auteur       Utilisateur?      @relation(fields: [auteurId], references: [id], onDelete: SetNull)
+  creeLe       DateTime          @default(now())
+  majLe        DateTime          @updatedAt
+
+  @@index([statut, publieLe])
+}
+
+model Evenement {
+  id          String            @id @default(cuid())
+  titre       String
+  description String?
+  debut       DateTime
+  fin         DateTime?
+  lieu        String?
+  statut      StatutPublication @default(PUBLIE)
+}
+
+model Album {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  titre       String
+  description String?
+  date        DateTime?
+  publie      Boolean      @default(true)
+  ordre       Int          @default(0)
+  medias      AlbumMedia[]
+}
+
+model AlbumMedia {
+  albumId String
+  mediaId String
+  ordre   Int    @default(0)
+  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  media   Media  @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@id([albumId, mediaId])
+}
+
+enum CategoriePartenaire {
+  STAGE_PROFESSIONNEL
+  STAGE_PEDAGOGIQUE
+  EMPLOYEUR
+  INSTITUTIONNEL
+}
+
+model Partenaire {
+  id        String              @id @default(cuid())
+  nom       String
+  categorie CategoriePartenaire
+  logoId    String?
+  logo      Media?              @relation(fields: [logoId], references: [id], onDelete: SetNull)
+  siteWeb   String?
+  ordre     Int                 @default(0)
+  visible   Boolean             @default(true)
+}
+
+model Autorite {
+  id       String  @id @default(cuid())
+  fonction String
+  nom      String
+  photoId  String?
+  photo    Media?  @relation(fields: [photoId], references: [id], onDelete: SetNull)
+  ordre    Int     @default(0)
+  visible  Boolean @default(true)
+}
+
+model QuestionFrequente {
+  id       String  @id @default(cuid())
+  rubrique String  @default("admissions")
+  question String
+  reponse  String
+  ordre    Int     @default(0)
+  visible  Boolean @default(true)
+}
+
+model MessageContact {
+  id        String   @id @default(cuid())
+  nom       String
+  email     String
+  telephone String?
+  sujet     String
+  message   String
+  traite    Boolean  @default(false)
+  creeLe    DateTime @default(now())
+}
+
+// ============================================================================
+// Structure académique (LMD)
+// ============================================================================
+
+model AnneeAcademique {
+  id            String   @id @default(cuid())
+  libelle       String   @unique
+  debut         DateTime
+  fin           DateTime
+  courante      Boolean  @default(false)
+  /// Seuil de réussite sur 20, paramétrable par année.
+  seuilReussite Decimal  @default(10) @db.Decimal(4, 2)
+
+  promotions  Promotion[]
+  campagnes   CampagneAdmission[]
+  baremes     BaremeFrais[]
+  paiements   Paiement[]
+  exonerations Exoneration[]
+  stages      Stage[]
+}
+
+model Filiere {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  nom          String
+  nomCourt     String
+  accroche     String
+  presentation String
+  domaines     String[]
+  metiers      String[]
+  debouches    String
+  entreprendre String
+  photoId      String?
+  photo        Media?   @relation(fields: [photoId], references: [id], onDelete: SetNull)
+  ordre        Int      @default(0)
+  ouverte      Boolean  @default(true)
+
+  promotions   Promotion[]
+  unites       UniteEnseignement[]
+  candidatures Candidature[]
+  campagnes    CampagneAdmission[]
+  communiques  Communique[]
+  baremes      BaremeFrais[]
+}
+
+model Niveau {
+  id      String @id @default(cuid())
+  code    String @unique
+  libelle String
+  ordre   Int
+
+  promotions Promotion[]
+  unites     UniteEnseignement[]
+  baremes    BaremeFrais[]
+}
+
+model Promotion {
+  id        String          @id @default(cuid())
+  filiereId String
+  niveauId  String
+  anneeId   String
+  filiere   Filiere         @relation(fields: [filiereId], references: [id])
+  niveau    Niveau          @relation(fields: [niveauId], references: [id])
+  annee     AnneeAcademique @relation(fields: [anneeId], references: [id])
+
+  inscriptions Inscription[]
+  cours        CoursOffert[]
+  communiques  Communique[]
+
+  @@unique([filiereId, niveauId, anneeId])
+}
+
+enum Sexe {
+  F
+  M
+}
+
+model ProfilEtudiant {
+  id             String      @id @default(cuid())
+  utilisateurId  String      @unique
+  utilisateur    Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  matricule      String      @unique
+  sexe           Sexe?
+  dateNaissance  DateTime?
+  lieuNaissance  String?
+
+  inscriptions Inscription[]
+  notes        Note[]
+  paiements    Paiement[]
+  exonerations Exoneration[]
+  demandes     DemandeDocument[]
+  documents    DocumentOfficiel[]
+  stages       Stage[]
+  candidature  Candidature?
+}
+
+enum StatutInscription {
+  EN_ATTENTE
+  EN_REGLE
+  SUSPENDUE
+  DIPLOME
+  ABANDON
+}
+
+model Inscription {
+  id          String            @id @default(cuid())
+  etudiantId  String
+  promotionId String
+  etudiant    ProfilEtudiant    @relation(fields: [etudiantId], references: [id], onDelete: Cascade)
+  promotion   Promotion         @relation(fields: [promotionId], references: [id])
+  statut      StatutInscription @default(EN_ATTENTE)
+  creeLe      DateTime          @default(now())
+
+  @@unique([etudiantId, promotionId])
+}
+
+model ProfilEnseignant {
+  id            String      @id @default(cuid())
+  utilisateurId String      @unique
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  titre         String?
+  domaine       String?
+
+  cours CoursEnseignant[]
+}
+
+model UniteEnseignement {
+  id        String  @id @default(cuid())
+  code      String
+  intitule  String
+  filiereId String
+  niveauId  String
+  filiere   Filiere @relation(fields: [filiereId], references: [id])
+  niveau    Niveau  @relation(fields: [niveauId], references: [id])
+  /// Semestre du parcours, de 1 à 8.
+  semestre  Int
+  credits   Int
+
+  cours Cours[]
+
+  @@unique([filiereId, code])
+}
+
+model Cours {
+  id            String            @id @default(cuid())
+  ueId          String
+  ue            UniteEnseignement @relation(fields: [ueId], references: [id], onDelete: Cascade)
+  intitule      String
+  credits       Int
+  volumeHoraire Int
+
+  offres CoursOffert[]
+}
+
+model CoursOffert {
+  id          String    @id @default(cuid())
+  coursId     String
+  promotionId String
+  cours       Cours     @relation(fields: [coursId], references: [id])
+  promotion   Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+
+  enseignants CoursEnseignant[]
+  seances     Seance[]
+  supports    Support[]
+  evaluations Evaluation[]
+  communiques Communique[]
+
+  @@unique([coursId, promotionId])
+}
+
+model CoursEnseignant {
+  coursOffertId String
+  enseignantId  String
+  titulaire     Boolean          @default(true)
+  coursOffert   CoursOffert      @relation(fields: [coursOffertId], references: [id], onDelete: Cascade)
+  enseignant    ProfilEnseignant @relation(fields: [enseignantId], references: [id], onDelete: Cascade)
+
+  @@id([coursOffertId, enseignantId])
+}
+
+enum StatutSeance {
+  PREVUE
+  REPORTEE
+  ANNULEE
+}
+
+model Seance {
+  id            String       @id @default(cuid())
+  coursOffertId String
+  coursOffert   CoursOffert  @relation(fields: [coursOffertId], references: [id], onDelete: Cascade)
+  debut         DateTime
+  fin           DateTime
+  salle         String?
+  statut        StatutSeance @default(PREVUE)
+  remarque      String?
+
+  @@index([debut])
+}
+
+enum TypeSupport {
+  FICHIER
+  LIEN
+}
+
+model Support {
+  id            String      @id @default(cuid())
+  coursOffertId String
+  coursOffert   CoursOffert @relation(fields: [coursOffertId], references: [id], onDelete: Cascade)
+  titre         String
+  type          TypeSupport
+  mediaId       String?
+  media         Media?      @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+  url           String?
+  chapitre      String?
+  ordre         Int         @default(0)
+  creeLe        DateTime    @default(now())
+}
+
+enum TypeEvaluation {
+  INTERROGATION
+  TRAVAUX_PRATIQUES
+  EXAMEN
+}
+
+enum StatutEvaluation {
+  BROUILLON
+  SOUMISE
+  VALIDEE
+  PUBLIEE
+}
+
+model Evaluation {
+  id            String           @id @default(cuid())
+  coursOffertId String
+  coursOffert   CoursOffert      @relation(fields: [coursOffertId], references: [id], onDelete: Cascade)
+  intitule      String
+  type          TypeEvaluation
+  /// Poids de l'évaluation dans la note du cours (en pourcentage).
+  ponderation   Decimal          @db.Decimal(5, 2)
+  date          DateTime?
+  statut        StatutEvaluation @default(BROUILLON)
+  notes         Note[]
+}
+
+model Note {
+  id           String         @id @default(cuid())
+  evaluationId String
+  etudiantId   String
+  evaluation   Evaluation     @relation(fields: [evaluationId], references: [id], onDelete: Cascade)
+  etudiant     ProfilEtudiant @relation(fields: [etudiantId], references: [id], onDelete: Cascade)
+  /// Note sur 20.
+  valeur       Decimal?       @db.Decimal(4, 2)
+  absent       Boolean        @default(false)
+  majLe        DateTime       @updatedAt
+
+  @@unique([evaluationId, etudiantId])
+}
+
+// ============================================================================
+// Valve numérique
+// ============================================================================
+
+enum CibleCommunique {
+  PUBLIC
+  INSTITUT
+  FILIERE
+  PROMOTION
+  COURS
+}
+
+enum StatutCommunique {
+  BROUILLON
+  EN_VALIDATION
+  PUBLIE
+  ARCHIVE
+}
+
+model Communique {
+  id            String           @id @default(cuid())
+  titre         String
+  contenu       String
+  cible         CibleCommunique
+  filiereId     String?
+  promotionId   String?
+  coursOffertId String?
+  filiere       Filiere?         @relation(fields: [filiereId], references: [id])
+  promotion     Promotion?       @relation(fields: [promotionId], references: [id])
+  coursOffert   CoursOffert?     @relation(fields: [coursOffertId], references: [id])
+  statut        StatutCommunique @default(BROUILLON)
+  epingle       Boolean          @default(false)
+  publieLe      DateTime?
+  expireLe      DateTime?
+  auteurId      String
+  auteur        Utilisateur      @relation("CommuniquesAuteur", fields: [auteurId], references: [id])
+  validateurId  String?
+  validateur    Utilisateur?     @relation("CommuniquesValidateur", fields: [validateurId], references: [id])
+  creeLe        DateTime         @default(now())
+
+  piecesJointes PieceJointe[]
+  lectures      Lecture[]
+
+  @@index([statut, publieLe])
+}
+
+model PieceJointe {
+  id           String     @id @default(cuid())
+  communiqueId String
+  mediaId      String
+  communique   Communique @relation(fields: [communiqueId], references: [id], onDelete: Cascade)
+  media        Media      @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+}
+
+model Lecture {
+  communiqueId  String
+  utilisateurId String
+  luLe          DateTime    @default(now())
+  communique    Communique  @relation(fields: [communiqueId], references: [id], onDelete: Cascade)
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@id([communiqueId, utilisateurId])
+}
+
+// ============================================================================
+// Admissions
+// ============================================================================
+
+enum StatutCampagne {
+  BROUILLON
+  OUVERTE
+  FERMEE
+}
+
+enum Devise {
+  USD
+  CDF
+}
+
+model CampagneAdmission {
+  id               String          @id @default(cuid())
+  anneeId          String
+  annee            AnneeAcademique @relation(fields: [anneeId], references: [id])
+  libelle          String
+  ouverture        DateTime
+  cloture          DateTime
+  fraisInscription Decimal         @db.Decimal(10, 2)
+  devise           Devise          @default(USD)
+  statut           StatutCampagne  @default(BROUILLON)
+  filieres         Filiere[]
+  pieces           PieceExigee[]
+  candidatures     Candidature[]
+}
+
+model PieceExigee {
+  id          String            @id @default(cuid())
+  campagneId  String
+  campagne    CampagneAdmission @relation(fields: [campagneId], references: [id], onDelete: Cascade)
+  libelle     String
+  description String?
+  obligatoire Boolean           @default(true)
+  ordre       Int               @default(0)
+  depots      PieceDeposee[]
+}
+
+enum StatutCandidature {
+  BROUILLON
+  SOUMISE
+  EN_EXAMEN
+  COMPLEMENT
+  ADMISE
+  REFUSEE
+  INSCRITE
+  ABANDONNEE
+}
+
+model Candidature {
+  id                String            @id @default(cuid())
+  numero            String            @unique
+  campagneId        String
+  campagne          CampagneAdmission @relation(fields: [campagneId], references: [id])
+  candidatId        String
+  candidat          Utilisateur       @relation("CandidaturesDuCandidat", fields: [candidatId], references: [id])
+  filiereId         String?
+  filiere           Filiere?          @relation(fields: [filiereId], references: [id])
+  nom               String?
+  postnom           String?
+  prenom            String?
+  sexe              Sexe?
+  dateNaissance     DateTime?
+  lieuNaissance     String?
+  nationalite       String?
+  telephone         String?
+  adresse           String?
+  ecoleOrigine      String?
+  sectionHumanites  String?
+  anneeDiplome      Int?
+  pourcentage       Decimal?          @db.Decimal(5, 2)
+  referencePaiement String?
+  statut            StatutCandidature @default(BROUILLON)
+  motifDecision     String?
+  consentementLe    DateTime?
+  soumiseLe         DateTime?
+  decideLe          DateTime?
+  decideParId       String?
+  decidePar         Utilisateur?      @relation("CandidaturesDecideur", fields: [decideParId], references: [id])
+  etudiantId        String?           @unique
+  etudiant          ProfilEtudiant?   @relation(fields: [etudiantId], references: [id])
+  creeLe            DateTime          @default(now())
+  majLe             DateTime          @updatedAt
+
+  pieces     PieceDeposee[]
+  historique HistoriqueCandidature[]
+
+  @@unique([campagneId, candidatId])
+  @@index([statut])
+}
+
+enum StatutPiece {
+  DEPOSEE
+  ACCEPTEE
+  REJETEE
+}
+
+model PieceDeposee {
+  id            String      @id @default(cuid())
+  candidatureId String
+  pieceExigeeId String
+  mediaId       String
+  candidature   Candidature @relation(fields: [candidatureId], references: [id], onDelete: Cascade)
+  pieceExigee   PieceExigee @relation(fields: [pieceExigeeId], references: [id])
+  media         Media       @relation(fields: [mediaId], references: [id])
+  statut        StatutPiece @default(DEPOSEE)
+  commentaire   String?
+  creeLe        DateTime    @default(now())
+
+  @@unique([candidatureId, pieceExigeeId])
+}
+
+model HistoriqueCandidature {
+  id            String            @id @default(cuid())
+  candidatureId String
+  candidature   Candidature       @relation(fields: [candidatureId], references: [id], onDelete: Cascade)
+  statut        StatutCandidature
+  commentaire   String?
+  auteurId      String?
+  creeLe        DateTime          @default(now())
+}
+
+// ============================================================================
+// Frais académiques
+// ============================================================================
+
+model BaremeFrais {
+  id        String          @id @default(cuid())
+  anneeId   String
+  annee     AnneeAcademique @relation(fields: [anneeId], references: [id])
+  niveauId  String?
+  niveau    Niveau?         @relation(fields: [niveauId], references: [id])
+  filiereId String?
+  filiere   Filiere?        @relation(fields: [filiereId], references: [id])
+  libelle   String
+  montant   Decimal         @db.Decimal(10, 2)
+  devise    Devise          @default(USD)
+  echeance  DateTime?
+}
+
+enum ModePaiement {
+  BANQUE
+  GUICHET
+  MOBILE_MONEY
+  AUTRE
+}
+
+model Paiement {
+  id               String          @id @default(cuid())
+  etudiantId       String
+  etudiant         ProfilEtudiant  @relation(fields: [etudiantId], references: [id])
+  anneeId          String
+  annee            AnneeAcademique @relation(fields: [anneeId], references: [id])
+  montant          Decimal         @db.Decimal(10, 2)
+  devise           Devise          @default(USD)
+  mode             ModePaiement
+  reference        String
+  payeLe           DateTime
+  numeroRecu       String          @unique
+  enregistreParId  String
+  enregistrePar    Utilisateur     @relation("PaiementsEnregistrePar", fields: [enregistreParId], references: [id])
+  annuleLe         DateTime?
+  motifAnnulation  String?
+  creeLe           DateTime        @default(now())
+}
+
+model Exoneration {
+  id         String          @id @default(cuid())
+  etudiantId String
+  etudiant   ProfilEtudiant  @relation(fields: [etudiantId], references: [id])
+  anneeId    String
+  annee      AnneeAcademique @relation(fields: [anneeId], references: [id])
+  montant    Decimal         @db.Decimal(10, 2)
+  devise     Devise          @default(USD)
+  motif      String
+  creeLe     DateTime        @default(now())
+}
+
+// ============================================================================
+// Documents officiels vérifiables
+// ============================================================================
+
+enum TypeDocument {
+  ATTESTATION_FREQUENTATION
+  RELEVE_NOTES
+  ATTESTATION_REUSSITE
+}
+
+enum StatutDemande {
+  EN_ATTENTE
+  EMISE
+  REFUSEE
+}
+
+model DemandeDocument {
+  id         String            @id @default(cuid())
+  etudiantId String
+  etudiant   ProfilEtudiant    @relation(fields: [etudiantId], references: [id])
+  type       TypeDocument
+  motif      String?
+  statut     StatutDemande     @default(EN_ATTENTE)
+  creeLe     DateTime          @default(now())
+  traiteLe   DateTime?
+  document   DocumentOfficiel?
+}
+
+model DocumentOfficiel {
+  id               String           @id @default(cuid())
+  /// Code de vérification public, aléatoire et non devinable.
+  code             String           @unique
+  type             TypeDocument
+  etudiantId       String
+  etudiant         ProfilEtudiant   @relation(fields: [etudiantId], references: [id])
+  demandeId        String?          @unique
+  demande          DemandeDocument? @relation(fields: [demandeId], references: [id])
+  /// Copie figée des informations imprimées sur le document.
+  donnees          Json
+  emisLe           DateTime         @default(now())
+  emisParId        String?
+  revoqueLe        DateTime?
+  motifRevocation  String?
+}
+
+// ============================================================================
+// Stages
+// ============================================================================
+
+enum TypeStage {
+  PEDAGOGIQUE
+  PROFESSIONNEL
+}
+
+enum StatutStage {
+  PREVU
+  EN_COURS
+  TERMINE
+}
+
+model LieuStage {
+  id         String    @id @default(cuid())
+  nom        String
+  type       TypeStage
+  adresse    String?
+  contact    String?
+  telephone  String?
+  email      String?
+  convention Boolean   @default(false)
+  actif      Boolean   @default(true)
+  stages     Stage[]
+}
+
+model Stage {
+  id             String          @id @default(cuid())
+  etudiantId     String
+  etudiant       ProfilEtudiant  @relation(fields: [etudiantId], references: [id])
+  lieuId         String
+  lieu           LieuStage       @relation(fields: [lieuId], references: [id])
+  anneeId        String
+  annee          AnneeAcademique @relation(fields: [anneeId], references: [id])
+  type           TypeStage
+  debut          DateTime?
+  fin            DateTime?
+  encadreurId    String?
+  encadreur      Utilisateur?    @relation("StagesEncadreur", fields: [encadreurId], references: [id])
+  statut         StatutStage     @default(PREVU)
+  rapportMediaId String?
+  rapport        Media?          @relation(fields: [rapportMediaId], references: [id])
+  note           Decimal?        @db.Decimal(4, 2)
+  appreciation   String?
+}
