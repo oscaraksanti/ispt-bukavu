@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #14172b;
+  --color-paper: #f7f6f2;
+  --color-ispt-blue: #1f2a6b;
+  --color-ispt-red: #c4262e;
+  --color-ispt-gold: #e8b923;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
