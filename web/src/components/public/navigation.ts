@@ -9,7 +9,7 @@ const principale: Lien[] = [
   { libelle: "L'institut", href: "/institut", disponible: true },
   { libelle: "Formations", href: "/formations", disponible: true },
   { libelle: "Admissions", href: "/admissions", disponible: true },
-  { libelle: "Actualités", href: "/actualites", disponible: false },
+  { libelle: "Actualités", href: "/actualites", disponible: true },
   { libelle: "Contact", href: "/contact", disponible: true },
 ];
 
@@ -22,10 +22,13 @@ const utilitaires: Lien[] = [
 export const navigationPrincipale = principale.filter((l) => l.disponible);
 export const liensUtilitaires = utilitaires.filter((l) => l.disponible);
 
-/** Espaces connectés : activés avec l'authentification. */
-export const espacesDisponibles = false;
+/** Bouton « Connexion » : personnel (et bientôt enseignants, étudiants, candidats). */
+export const espacesDisponibles = true;
+
+/** Dépôt des candidatures en ligne : ouvert avec le module d'admissions. */
+export const candidatureEnLigne = false;
 
 /** Destination du bouton « Candidater » tant que le dépôt en ligne n'est pas ouvert. */
-export const lienCandidature = espacesDisponibles
+export const lienCandidature = candidatureEnLigne
   ? "/admissions/candidater"
   : "/admissions#dossier";
