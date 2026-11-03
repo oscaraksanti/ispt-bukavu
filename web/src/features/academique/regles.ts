@@ -1,6 +1,6 @@
 /** Règles pures de la structure académique LMD (testées unitairement). */
 
-/** Semestres d'un niveau : L1 → S1 et S2, L2 → S3 et S4, etc. */
+/** Semestres d'un niveau : BAC 1 → S1 et S2, BAC 2 → S3 et S4, etc. */
 export function semestresDuNiveau(ordre: number) {
   return [ordre * 2 - 1, ordre * 2];
 }

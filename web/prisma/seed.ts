@@ -67,10 +67,11 @@ async function permissionsEtRoles() {
 
 async function referentiels() {
   const niveaux = [
-    { code: "L1", libelle: "Licence 1", ordre: 1 },
-    { code: "L2", libelle: "Licence 2", ordre: 2 },
-    { code: "L3", libelle: "Licence 3", ordre: 3 },
-    { code: "L4", libelle: "Licence 4", ordre: 4 },
+    // Dénomination en usage à l'institut (horaires, registres).
+    { code: "BAC1", libelle: "BAC 1", ordre: 1 },
+    { code: "BAC2", libelle: "BAC 2", ordre: 2 },
+    { code: "BAC3", libelle: "BAC 3", ordre: 3 },
+    { code: "BAC4", libelle: "BAC 4", ordre: 4 },
   ];
   for (const n of niveaux) {
     await db.niveau.upsert({ where: { code: n.code }, update: {}, create: n });

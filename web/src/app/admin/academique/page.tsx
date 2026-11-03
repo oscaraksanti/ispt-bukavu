@@ -118,7 +118,7 @@ export default async function Structure() {
           <div className="mt-6">
             <EtatVide
               titre="Aucune promotion pour l'année courante"
-              description="Créez-les en un clic : une par filière ouverte et par niveau (L1 à L4)."
+              description="Créez-les en un clic : une par filière ouverte et par niveau (BAC 1 à BAC 4)."
             />
           </div>
         ) : (
