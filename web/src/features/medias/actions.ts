@@ -1,6 +1,6 @@
 "use server";
 
-import { updateTag } from "next/cache";
+import { refresh, updateTag } from "next/cache";
 import sharp, { type OutputInfo } from "sharp";
 import { z } from "zod";
 import { exigerPermission } from "@/features/auth/acces";
@@ -115,6 +115,7 @@ export async function modifierMedia(
     apres: r.data,
   });
   updateTag(ETIQUETTES.medias);
+  refresh();
   return succes("Description enregistrée.");
 }
 
@@ -161,5 +162,6 @@ export async function supprimerMedia(id: string): Promise<EtatFormulaire> {
     avant: { nomFichier: media.nomFichier, cle: media.cle },
   });
   updateTag(ETIQUETTES.medias);
+  refresh();
   return succes("Image supprimée.");
 }
