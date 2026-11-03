@@ -28,6 +28,9 @@ export const ETIQUETTES = {
   autorites: "autorites",
   partenaires: "partenaires",
   medias: "medias",
+  actualites: "actualites",
+  agenda: "agenda",
+  faq: "faq",
 } as const;
 
 function signalerPanne(origine: string, erreur: unknown) {
@@ -296,5 +299,141 @@ export async function lirePartenaires(): Promise<Partenaires> {
       employeurs: [...debouchesAnciens.professionnels],
       institutionnels: [...debouchesAnciens.enseignement],
     };
+  }
+}
+
+/* ---------- Actualités ---------- */
+
+export type ActualiteResume = {
+  slug: string;
+  titre: string;
+  resume: string;
+  publieLe: string;
+  couverture: ImageResolue | null;
+};
+
+export type ActualiteComplete = ActualiteResume & { contenu: string; majLe: string };
+
+export const ACTUALITES_PAR_PAGE = 9;
+
+export async function lireActualites(
+  page = 1,
+): Promise<{ actualites: ActualiteResume[]; total: number }> {
+  "use cache";
+  cacheTag(ETIQUETTES.actualites, ETIQUETTES.medias);
+  try {
+    const where = { statut: "PUBLIE" as const, publieLe: { not: null } };
+    const [total, lignes] = await Promise.all([
+      db.actualite.count({ where }),
+      db.actualite.findMany({
+        where,
+        orderBy: { publieLe: "desc" },
+        skip: (page - 1) * ACTUALITES_PAR_PAGE,
+        take: ACTUALITES_PAR_PAGE,
+        include: { couverture: true },
+      }),
+    ]);
+    cacheLife("max");
+    return {
+      total,
+      actualites: lignes.map((a) => ({
+        slug: a.slug,
+        titre: a.titre,
+        resume: a.resume,
+        publieLe: a.publieLe!.toISOString(),
+        couverture: a.couverture ? versImage(a.couverture) : null,
+      })),
+    };
+  } catch (erreur) {
+    signalerPanne("actualités", erreur);
+    cacheLife("minutes");
+    return { actualites: [], total: 0 };
+  }
+}
+
+export async function lireActualite(slug: string): Promise<ActualiteComplete | null> {
+  "use cache";
+  cacheTag(ETIQUETTES.actualites, ETIQUETTES.medias);
+  try {
+    const a = await db.actualite.findUnique({ where: { slug }, include: { couverture: true } });
+    cacheLife("max");
+    if (!a || a.statut !== "PUBLIE" || !a.publieLe) return null;
+    return {
+      slug: a.slug,
+      titre: a.titre,
+      resume: a.resume,
+      contenu: a.contenu,
+      publieLe: a.publieLe.toISOString(),
+      majLe: a.majLe.toISOString(),
+      couverture: a.couverture ? versImage(a.couverture) : null,
+    };
+  } catch (erreur) {
+    signalerPanne("actualité", erreur);
+    cacheLife("minutes");
+    return null;
+  }
+}
+
+/* ---------- Agenda ---------- */
+
+export type EvenementPublic = {
+  id: string;
+  titre: string;
+  description: string | null;
+  debut: string;
+  fin: string | null;
+  lieu: string | null;
+};
+
+/** Événements publiés à venir (ou en cours), du plus proche au plus lointain. */
+export async function lireAgenda(): Promise<EvenementPublic[]> {
+  "use cache";
+  cacheTag(ETIQUETTES.agenda);
+  try {
+    const maintenant = new Date();
+    // Un événement sans heure de fin reste affiché le jour même.
+    const ilYaDouzeHeures = new Date(maintenant.getTime() - 12 * 3600 * 1000);
+    const lignes = await db.evenement.findMany({
+      where: {
+        statut: "PUBLIE",
+        OR: [{ fin: { gte: maintenant } }, { fin: null, debut: { gte: ilYaDouzeHeures } }],
+      },
+      orderBy: { debut: "asc" },
+      take: 12,
+    });
+    cacheLife("hours");
+    return lignes.map((e) => ({
+      id: e.id,
+      titre: e.titre,
+      description: e.description,
+      debut: e.debut.toISOString(),
+      fin: e.fin?.toISOString() ?? null,
+      lieu: e.lieu,
+    }));
+  } catch (erreur) {
+    signalerPanne("agenda", erreur);
+    cacheLife("minutes");
+    return [];
+  }
+}
+
+/* ---------- Questions fréquentes ---------- */
+
+export type QuestionPublique = { id: string; question: string; reponse: string };
+
+export async function lireFaq(rubrique = "admissions"): Promise<QuestionPublique[]> {
+  "use cache";
+  cacheTag(ETIQUETTES.faq);
+  try {
+    const lignes = await db.questionFrequente.findMany({
+      where: { rubrique, visible: true },
+      orderBy: { ordre: "asc" },
+    });
+    cacheLife("max");
+    return lignes.map(({ id, question, reponse }) => ({ id, question, reponse }));
+  } catch (erreur) {
+    signalerPanne("questions fréquentes", erreur);
+    cacheLife("minutes");
+    return [];
   }
 }

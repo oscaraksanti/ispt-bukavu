@@ -315,8 +315,12 @@ model MessageContact {
   telephone String?
   sujet     String
   message   String
+  ip        String?
   traite    Boolean  @default(false)
   creeLe    DateTime @default(now())
+
+  @@index([creeLe])
+  @@index([ip, creeLe])
 }
 
 // ============================================================================

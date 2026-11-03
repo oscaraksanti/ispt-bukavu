@@ -42,6 +42,12 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
         permission: "contenu.modifier",
       },
       {
+        libelle: "Questions fréquentes",
+        href: "/admin/site/faq",
+        icone: "CircleHelp",
+        permission: "contenu.modifier",
+      },
+      {
         libelle: "Médiathèque",
         href: "/admin/medias",
         icone: "Images",
@@ -51,6 +57,29 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
         libelle: "Identité et contacts",
         href: "/admin/site/reglages",
         icone: "Settings2",
+        permission: "contenu.modifier",
+      },
+    ],
+  },
+  {
+    titre: "Communication",
+    entrees: [
+      {
+        libelle: "Actualités",
+        href: "/admin/actualites",
+        icone: "Newspaper",
+        permission: "actualites.gerer",
+      },
+      {
+        libelle: "Agenda",
+        href: "/admin/agenda",
+        icone: "CalendarDays",
+        permission: "actualites.gerer",
+      },
+      {
+        libelle: "Messages reçus",
+        href: "/admin/messages",
+        icone: "Inbox",
         permission: "contenu.modifier",
       },
     ],

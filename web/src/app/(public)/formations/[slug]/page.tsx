@@ -1,3 +1,4 @@
+import { cacheLife } from "next/cache";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -36,6 +37,7 @@ async function ContenuFiliere({ params }: { params: PageProps<"/formations/[slug
 
 async function FicheFiliere({ slug }: { slug: string }) {
   "use cache";
+  cacheLife("max");
   const [filieres, institut, pageInstitut] = await Promise.all([
     lireFilieres(),
     lireInstitut(),

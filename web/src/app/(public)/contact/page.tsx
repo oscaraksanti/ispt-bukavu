@@ -1,7 +1,8 @@
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import type { Metadata } from "next";
 import { Carte } from "@/components/public/carte";
-import { EntetePage } from "@/components/public/entete-page";
+import { BlocPage, EntetePage } from "@/components/public/entete-page";
+import { FormulaireContact } from "@/components/public/formulaire-contact";
 import { majuscule } from "@/lib/cn";
 import { lireInstitut, lirePage } from "@/features/contenu/lecture";
 import { lecteur } from "@/features/contenu/lecteur";
@@ -93,6 +94,9 @@ export default async function PageContact() {
           </a>
         </div>
       </section>
+      <BlocPage numero="Écrire" titre="Envoyer un message au secrétariat" fond="blanc">
+        <FormulaireContact />
+      </BlocPage>
     </>
   );
 }

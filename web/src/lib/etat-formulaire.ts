@@ -3,6 +3,8 @@ export type EtatFormulaire = {
   statut: "succes" | "erreur" | null;
   message?: string;
   erreurs?: Record<string, string>;
+  /** Saisies renvoyées après une erreur, pour ne pas les perdre (formulaires publics). */
+  valeurs?: Record<string, string>;
   /** Change à chaque envoi pour rejouer l'annonce, même si le message est identique. */
   horodatage?: number;
 };

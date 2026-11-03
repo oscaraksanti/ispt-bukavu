@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { BlocPage, EntetePage } from "@/components/public/entete-page";
 import { LienBouton } from "@/components/ui/bouton";
 import { Encadre } from "@/components/ui/elements";
-import { lireFilieres, lireInstitut, lirePage } from "@/features/contenu/lecture";
+import { lireFaq, lireFilieres, lireInstitut, lirePage } from "@/features/contenu/lecture";
 import { lecteur } from "@/features/contenu/lecteur";
 
 export const metadata: Metadata = {
@@ -13,10 +13,11 @@ export const metadata: Metadata = {
 };
 
 export default async function PageAdmissions() {
-  const [page, institut, filieres] = await Promise.all([
+  const [page, institut, filieres, faq] = await Promise.all([
     lirePage("admissions"),
     lireInstitut(),
     lireFilieres(),
+    lireFaq("admissions"),
   ]);
   const entete = lecteur(page.entete);
   const pieces = lecteur(page.pieces);
@@ -92,6 +93,28 @@ export default async function PageAdmissions() {
           )}
         </div>
       </BlocPage>
+      {faq.length > 0 && (
+        <BlocPage numero="04" titre="Questions fréquentes" fond="blanc">
+          <div className="divide-y divide-pierre-200 border-y border-pierre-200">
+            {faq.map((q) => (
+              <details key={q.id} className="group py-1">
+                <summary className="flex cursor-pointer list-none items-start justify-between gap-6 py-4 font-serif text-xl text-encre [&::-webkit-details-marker]:hidden">
+                  {q.question}
+                  <span
+                    aria-hidden
+                    className="mt-1 font-sans text-xl leading-none text-ispt-600 transition-transform duration-300 group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="pb-5 leading-relaxed whitespace-pre-line text-pierre-700">
+                  {q.reponse}
+                </p>
+              </details>
+            ))}
+          </div>
+        </BlocPage>
+      )}
     </>
   );
 }

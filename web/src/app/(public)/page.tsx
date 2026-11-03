@@ -1,13 +1,16 @@
 import { ArrowRight, Check, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import { lienCandidature } from "@/components/public/navigation";
+import { CarteActualite } from "@/components/public/carte-actualite";
 import { Legende, Photo } from "@/components/public/photo";
 import { LienBouton } from "@/components/ui/bouton";
 import { EnteteSection, FiletCote, LienFleche } from "@/components/ui/elements";
 import {
+  type ActualiteResume,
   type AutoritePublique,
   type FilierePublique,
   type Institut as DonneesInstitut,
+  lireActualites,
   lireAutorites,
   lireFilieres,
   lireInstitut,
@@ -414,11 +417,30 @@ function Anciens({ bloc, partenaires }: { bloc: LecteurBloc; partenaires: Parten
   );
 }
 
-function Autorites({ autorites }: { autorites: AutoritePublique[] }) {
+function Actualites({ actualites }: { actualites: ActualiteResume[] }) {
+  if (actualites.length === 0) return null;
+  return (
+    <section className="conteneur py-20 lg:py-28">
+      <EnteteSection
+        numero="06"
+        surtitre="Actualités"
+        titre="Dernières nouvelles de l'institut"
+        action={<LienFleche href="/actualites">Toutes les actualités</LienFleche>}
+      />
+      <div className="mt-14 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+        {actualites.map((a, i) => (
+          <CarteActualite key={a.slug} actualite={a} index={i} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Autorites({ autorites, numero }: { autorites: AutoritePublique[]; numero: string }) {
   if (autorites.length === 0) return null;
   return (
     <section className="conteneur py-20 lg:py-28">
-      <EnteteSection numero="06" surtitre="Gouvernance" titre="Autorités académiques" />
+      <EnteteSection numero={numero} surtitre="Gouvernance" titre="Autorités académiques" />
       <ul className="mt-12 grid gap-px overflow-hidden rounded-md border border-pierre-200 bg-pierre-200 md:grid-cols-3">
         {autorites.map((a, i) => (
           <li key={a.id} className="revele bg-papier p-8" style={{ "--i": i } as Style}>
@@ -464,14 +486,16 @@ function Contact({ institut }: { institut: DonneesInstitut }) {
 }
 
 export default async function Accueil() {
-  const [page, pageInstitut, institut, filieres, autorites, partenaires] = await Promise.all([
-    lirePage("accueil"),
-    lirePage("institut"),
-    lireInstitut(),
-    lireFilieres(),
-    lireAutorites(),
-    lirePartenaires(),
-  ]);
+  const [page, pageInstitut, institut, filieres, autorites, partenaires, actualites] =
+    await Promise.all([
+      lirePage("accueil"),
+      lirePage("institut"),
+      lireInstitut(),
+      lireFilieres(),
+      lireAutorites(),
+      lirePartenaires(),
+      lireActualites(1),
+    ]);
   const bloc = (cle: string) => lecteur(page[cle]);
   const visible = (cle: string) => bloc(cle).visible;
   const pieces = lecteur((await lirePage("admissions")).pieces);
@@ -491,7 +515,8 @@ export default async function Accueil() {
       {visible("admissions") && <Admissions bloc={bloc("admissions")} pieces={pieces} />}
       {visible("images") && <EnImages bloc={bloc("images")} />}
       {visible("debouches") && <Anciens bloc={bloc("debouches")} partenaires={partenaires} />}
-      <Autorites autorites={autorites} />
+      <Actualites actualites={actualites.actualites.slice(0, 3)} />
+      <Autorites autorites={autorites} numero={actualites.actualites.length > 0 ? "07" : "06"} />
       <Contact institut={institut} />
     </>
   );

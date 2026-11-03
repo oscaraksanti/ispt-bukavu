@@ -20,6 +20,18 @@ export const LIBELLES_ACTIONS: Record<string, string> = {
   utilisateur_reactive: "Compte réactivé",
   invitation_renvoyee: "Invitation renvoyée",
   role_modifie: "Permissions d'un rôle modifiées",
+  actualite_creee: "Article créé",
+  actualite_modifiee: "Article modifié",
+  actualite_publiee: "Article publié",
+  actualite_retiree: "Article retiré du site",
+  actualite_supprimee: "Article supprimé",
+  evenement_cree: "Événement ajouté",
+  evenement_modifie: "Événement modifié",
+  evenement_supprime: "Événement supprimé",
+  faq_modifiee: "Questions fréquentes modifiées",
+  message_traite: "Message classé",
+  message_rouvert: "Message rouvert",
+  message_supprime: "Message supprimé",
 };
 
 export function libelleAction(action: string) {

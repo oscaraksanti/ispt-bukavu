@@ -1,15 +1,19 @@
 "use client";
 
 import {
+  CalendarDays,
+  CircleHelp,
   FileText,
   GraduationCap,
   Handshake,
   History,
   Images,
+  Inbox,
   Landmark,
   LayoutDashboard,
   LogOut,
   Menu,
+  Newspaper,
   Settings2,
   ShieldCheck,
   Users,
@@ -25,13 +29,17 @@ import { cn } from "@/lib/cn";
 import type { GroupeNavigation } from "./navigation";
 
 const ICONES: Record<string, LucideIcon> = {
+  CalendarDays,
+  CircleHelp,
   FileText,
   GraduationCap,
   Handshake,
   History,
   Images,
+  Inbox,
   Landmark,
   LayoutDashboard,
+  Newspaper,
   Settings2,
   ShieldCheck,
   Users,
