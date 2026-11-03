@@ -1,0 +1,36 @@
+@startuml cas-utilisation-public
+!include _style.iuml
+left to right direction
+skinparam linetype polyline
+title Cas d'utilisation — visiteurs et candidats
+
+actor "Visiteur" as V
+actor "Candidat" as C
+actor "Appariteur /\nsection" as S
+
+rectangle "Site public et admissions" {
+  usecase "Consulter l'institut, les filières,\nles actualités et la galerie" as U1
+  usecase "Vérifier l'authenticité\nd'un document" as U2
+  usecase "Envoyer un message\nà l'institut" as U3
+  usecase "Créer un compte candidat" as U4
+  usecase "Remplir la candidature" as U5
+  usecase "Téléverser les pièces" as U6
+  usecase "Déclarer le paiement\ndes frais de dossier" as U7
+  usecase "Suivre l'état\nde sa candidature" as U8
+  usecase "Instruire une candidature" as U9
+  usecase "Demander un complément" as U10
+  usecase "Inscrire le candidat admis" as U11
+}
+
+V --> U1
+V --> U2
+V --> U3
+C --> U4
+C --> U5
+C --> U8
+U5 ..> U6 : <<include>>
+U5 ..> U7 : <<include>>
+U10 ..> U9 : <<extend>>
+U11 ..> U9 : <<extend>>
+U9 <-- S
+@enduml

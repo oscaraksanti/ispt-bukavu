@@ -1,0 +1,42 @@
+@startuml sequence-candidature
+!include _style.iuml
+title Séquence — dépôt et instruction d'une candidature
+autonumber "<b>0."
+actor Candidat as C
+participant "Interface web" as UI
+participant "Serveur\n(actions)" as S
+database "Base de\ndonnées" as DB
+participant "Stockage\nfichiers" as F
+participant "Service\nemail" as M
+actor "Appariteur" as A
+
+C -> UI : Crée son compte
+UI -> S : inscrireCandidat(email, mot de passe)
+S -> DB : créer Utilisateur (rôle candidat)
+S -> M : email de vérification
+C -> UI : Remplit les étapes de la candidature
+UI -> S : enregistrerBrouillon(données)
+S -> DB : upsert Candidature (BROUILLON)
+loop pour chaque pièce exigée
+  C -> UI : Téléverse la pièce
+  UI -> S : deposerPiece(fichier)
+  S -> S : contrôler type et taille
+  S -> F : enregistrer le fichier
+  S -> DB : créer PieceDeposee
+end
+C -> UI : Déclare le paiement et soumet
+UI -> S : soumettreCandidature(référence)
+S -> DB : contrôler les pièces obligatoires
+alt dossier complet
+  S -> DB : statut = SOUMISE, historique
+  S -> M : accusé de réception
+  S --> UI : numéro de candidature
+else pièces manquantes
+  S --> UI : liste des pièces manquantes
+end
+A -> UI : Ouvre la candidature
+UI -> S : decider(candidature, décision, motif)
+S -> S : vérifier la permission « admissions.decider »
+S -> DB : statut = ADMISE / REFUSÉE / COMPLÉMENT, journal
+S -> M : notification au candidat
+@enduml

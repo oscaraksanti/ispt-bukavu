@@ -1,0 +1,39 @@
+@startuml activite-admission
+!include _style.iuml
+title Activité — parcours d'admission en première année
+|Candidat|
+start
+:Créer son compte et vérifier l'email;
+:Remplir identité, études secondaires\net filière souhaitée;
+:Téléverser les pièces exigées;
+:Payer les frais de dossier à la banque\net saisir la référence;
+:Soumettre la candidature;
+|Appariteur / section|
+:Contrôler les pièces et la référence de paiement;
+if (Dossier complet ?) then (non)
+  :Demander un complément;
+  |Candidat|
+  :Compléter le dossier;
+  |Appariteur / section|
+  :Contrôler à nouveau;
+else (oui)
+endif
+if (Pourcentage à l'examen d'État) then (≥ seuil d'admission sur titre)
+  :Admettre sur titre;
+else (sous le seuil)
+  :Convoquer au concours;
+  if (Concours réussi ?) then (oui)
+    :Admettre;
+  else (non)
+    :Refuser avec motif;
+    stop
+  endif
+endif
+|Caisse|
+:Enregistrer les frais d'inscription;
+|Appariteur / section|
+:Convertir en inscription\net générer le matricule;
+|Candidat|
+:Recevoir ses identifiants étudiant;
+stop
+@enduml

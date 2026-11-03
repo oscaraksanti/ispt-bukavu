@@ -65,7 +65,7 @@ Rôles prévus, calqués sur l'organigramme : Directeur Général, Secrétaire G
 | Phase | Contenu | Semaines |
 |---|---|---|
 | 0 | Dépôt, conventions, intégration continue, environnements, cadrage | 1 |
-| 1 | Étude de l'existant, enquête, entretiens, benchmark, cadre réglementaire | 1-2 |
+| 1 | Étude de l'existant, collecte des données auprès de l'institut, benchmark, cadre réglementaire | 1-2 |
 | 2 | Personas, parcours, UML, modèle de données, maquettes | 2-3 |
 | 3 | Identité visuelle, système de design, nouveau dépliant | 3-4 |
 | 4 | Socle : authentification, rôles, journaux, médiathèque, CMS, préproduction | 4-5 |

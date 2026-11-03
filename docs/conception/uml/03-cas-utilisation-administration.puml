@@ -1,0 +1,46 @@
+@startuml cas-utilisation-administration
+!include _style.iuml
+left to right direction
+skinparam linetype polyline
+title Cas d'utilisation — administration
+
+actor "Direction" as D
+actor "Secrétariat\nacadémique" as A
+actor "Appariteur /\nsection" as S
+actor "Caisse" as K
+actor "Communication" as M
+actor "Administrateur\ntechnique" as X
+
+rectangle "Administration" {
+  usecase "Consulter le tableau\nde bord de pilotage" as U1
+  usecase "Signer les documents\nofficiels" as U2
+  usecase "Gérer la structure\nacadémique (LMD)" as U3
+  usecase "Valider et publier\nles notes" as U4
+  usecase "Émettre un document\nvérifiable" as U5
+  usecase "Construire et publier\nl'horaire" as U6
+  usecase "Publier un communiqué" as U7
+  usecase "Gérer les stages" as U8
+  usecase "Enregistrer un paiement\net émettre le reçu" as U9
+  usecase "Suivre les impayés" as U10
+  usecase "Modifier les pages,\ntextes et images" as U11
+  usecase "Publier actualités,\névénements et galerie" as U12
+  usecase "Gérer les comptes" as U13
+  usecase "Gérer rôles et permissions" as U14
+  usecase "Consulter le journal\nd'activité" as U15
+}
+D --> U1
+D --> U2
+A --> U3
+A --> U4
+A --> U5
+S --> U6
+S --> U7
+S --> U8
+U9 <-- K
+U10 <-- K
+U11 <-- M
+U12 <-- M
+U13 <-- X
+U14 <-- X
+U15 <-- X
+@enduml

@@ -1,0 +1,91 @@
+@startuml classes-admissions-valve
+!include _style.iuml
+skinparam linetype polyline
+title Diagramme de classes — admissions, valve, frais et documents
+
+class Utilisateur
+class Filiere
+class Promotion
+class ProfilEtudiant
+class CampagneAdmission {
+  annee : Texte
+  ouverture : Date
+  cloture : Date
+  fraisDossier : Montant
+}
+class PieceExigee {
+  libelle : Texte
+  obligatoire : Booléen
+  ordre : Entier
+}
+class Candidature {
+  numero : Texte
+  pourcentageExamenEtat : Décimal
+  sectionHumanites : Texte
+  statut : StatutCandidature
+  referencePaiement : Texte
+}
+class PieceDeposee {
+  fichier : Fichier
+  statut : StatutPiece
+}
+class Communique {
+  titre : Texte
+  contenu : TexteRiche
+  cible : TypeCible
+  statut : StatutPublication
+  epingle : Booléen
+  publieLe : DateHeure
+  expireLe : DateHeure
+}
+class Lecture {
+  luLe : DateHeure
+}
+class BaremeFrais {
+  libelle : Texte
+  montant : Montant
+  devise : USD | CDF
+  echeance : Date
+}
+class Paiement {
+  montant : Montant
+  devise : USD | CDF
+  mode : ModePaiement
+  reference : Texte
+  numeroRecu : Texte
+}
+class DocumentOfficiel {
+  type : TypeDocument
+  codeVerification : Texte
+  emisLe : DateHeure
+  revoque : Booléen
+}
+class Stage {
+  type : Pédagogique | Professionnel
+  debut : Date
+  fin : Date
+  evaluation : Décimal
+}
+class LieuStage {
+  nom : Texte
+  categorie : Texte
+}
+
+CampagneAdmission "1" *-- "*" PieceExigee
+CampagneAdmission "1" -- "*" Candidature
+Candidature "*" -- "1" Utilisateur : déposée par >
+Candidature "*" -- "1" Filiere : souhaite >
+Candidature "1" *-- "*" PieceDeposee
+PieceDeposee "*" -- "1" PieceExigee
+Candidature "0..1" -- "0..1" ProfilEtudiant : devient >
+Communique "*" -- "1" Utilisateur : auteur >
+Communique "1" *-- "*" Lecture
+Lecture "*" -- "1" Utilisateur
+Communique "*" -- "0..1" Filiere : cible >
+Communique "*" -- "0..1" Promotion : cible >
+BaremeFrais "*" -- "1" Promotion
+Paiement "*" -- "1" ProfilEtudiant
+DocumentOfficiel "*" -- "1" ProfilEtudiant
+Stage "*" -- "1" ProfilEtudiant
+Stage "*" -- "1" LieuStage
+@enduml

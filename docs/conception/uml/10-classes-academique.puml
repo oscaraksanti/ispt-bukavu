@@ -1,0 +1,96 @@
+@startuml classes-academique
+!include _style.iuml
+skinparam linetype polyline
+title Diagramme de classes — structure académique et évaluation
+
+class Utilisateur {
+  email : Texte
+  nom : Texte
+  postnom : Texte
+  prenom : Texte
+  telephone : Texte
+  statut : StatutCompte
+}
+class ProfilEtudiant {
+  matricule : Texte
+}
+class ProfilEnseignant {
+  titre : Texte
+  domaine : Texte
+}
+class AnneeAcademique {
+  libelle : Texte
+  debut : Date
+  fin : Date
+  courante : Booléen
+  seuilReussite : Décimal
+}
+class Filiere {
+  nom : Texte
+  slug : Texte
+  presentation : TexteRiche
+  metiers : TexteRiche
+  debouches : TexteRiche
+  ouverte : Booléen
+}
+class Niveau {
+  code : L1..L4
+  ordre : Entier
+}
+class Promotion
+class Inscription {
+  statut : StatutInscription
+  inscritLe : Date
+}
+class UniteEnseignement {
+  code : Texte
+  intitule : Texte
+  semestre : 1..8
+  credits : Entier
+}
+class Cours {
+  intitule : Texte
+  credits : Entier
+  volumeHoraire : Entier
+}
+class CoursOffert
+class Evaluation {
+  type : TypeEvaluation
+  ponderation : Décimal
+  date : Date
+}
+class Note {
+  valeur : Décimal
+  statut : StatutNote
+}
+class Seance {
+  date : Date
+  debut : Heure
+  fin : Heure
+  salle : Texte
+  statut : StatutSeance
+}
+class Support {
+  titre : Texte
+  type : TypeSupport
+}
+
+Utilisateur "1" -- "0..1" ProfilEtudiant
+Utilisateur "1" -- "0..1" ProfilEnseignant
+Filiere "1" -- "*" UniteEnseignement
+Niveau "1" -- "*" UniteEnseignement
+UniteEnseignement "1" *-- "1..*" Cours
+Promotion "*" -- "1" Filiere
+Promotion "*" -- "1" Niveau
+Promotion "*" -- "1" AnneeAcademique
+ProfilEtudiant "1" -- "*" Inscription
+Inscription "*" -- "1" Promotion
+CoursOffert "*" -- "1" Cours
+CoursOffert "*" -- "1" Promotion
+CoursOffert "*" -- "1..*" ProfilEnseignant : enseigné par >
+CoursOffert "1" *-- "*" Evaluation
+Evaluation "1" *-- "*" Note
+Note "*" -- "1" ProfilEtudiant
+CoursOffert "1" *-- "*" Seance
+CoursOffert "1" *-- "*" Support
+@enduml

@@ -45,7 +45,7 @@ Comment doter l'ISPT-Bukavu d'un outil numérique unique, fiable et adapté aux 
 ## Méthodologie
 
 - **Méthodes** : approche systémique pour l'analyse de l'existant ; processus de développement itératif et incrémental ; modélisation UML.
-- **Techniques** : observation, entretiens avec les services concernés, questionnaire auprès des étudiants et des enseignants, recherche documentaire, tests utilisateurs.
+- **Techniques** : observation directe du fonctionnement de l'institut ; analyse documentaire (textes officiels, dépliant, horaires, registres) ; fiche de collecte de données remplie par l'institut ; échanges avec la direction et le support technique ; benchmark d'établissements congolais et étrangers ; tests fonctionnels, de performance et d'accessibilité.
 
 ## Délimitation
 

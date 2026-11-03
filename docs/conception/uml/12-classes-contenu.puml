@@ -1,0 +1,80 @@
+@startuml classes-contenu
+!include _style.iuml
+skinparam linetype polyline
+title Diagramme de classes — contenus, accès et traçabilité
+
+class Utilisateur
+class Role {
+  code : Texte
+  libelle : Texte
+}
+class Permission {
+  code : Texte
+  description : Texte
+}
+class Media {
+  fichier : Fichier
+  texteAlternatif : Texte
+  largeur : Entier
+  hauteur : Entier
+}
+class Page {
+  slug : Texte
+  titre : Texte
+  statut : StatutPublication
+}
+class BlocPage {
+  type : TypeBloc
+  ordre : Entier
+  contenu : JSON
+}
+class Actualite {
+  titre : Texte
+  resume : Texte
+  contenu : TexteRiche
+  publieLe : DateHeure
+}
+class Evenement {
+  titre : Texte
+  debut : DateHeure
+  lieu : Texte
+}
+class Album {
+  titre : Texte
+}
+class Partenaire {
+  nom : Texte
+  categorie : Texte
+}
+class Autorite {
+  fonction : Texte
+  nom : Texte
+  ordre : Entier
+}
+class Reglage {
+  cle : Texte
+  valeur : JSON
+}
+class Notification {
+  type : TypeNotification
+  lue : Booléen
+}
+class JournalActivite {
+  action : Texte
+  entite : Texte
+  avant : JSON
+  apres : JSON
+  date : DateHeure
+}
+
+Utilisateur "*" -- "*" Role
+Role "*" -- "*" Permission
+Page "1" *-- "*" BlocPage
+BlocPage "*" -- "*" Media
+Actualite "*" -- "0..1" Media : couverture >
+Album "1" -- "*" Media
+Partenaire "*" -- "0..1" Media : logo >
+Autorite "*" -- "0..1" Media : photo >
+Notification "*" -- "1" Utilisateur
+JournalActivite "*" -- "1" Utilisateur : auteur >
+@enduml

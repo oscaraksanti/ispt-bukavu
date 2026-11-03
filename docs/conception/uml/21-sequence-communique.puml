@@ -1,0 +1,35 @@
+@startuml sequence-communique
+!include _style.iuml
+title Séquence — publication d'un communiqué ciblé sur la valve
+autonumber "<b>0."
+actor "Auteur\n(section / enseignant)" as A
+participant "Interface web" as UI
+participant "Serveur" as S
+database "Base de\ndonnées" as DB
+participant "Service\nemail" as M
+actor "Validateur\n(SGAc / Direction)" as V
+actor "Étudiant ciblé" as E
+
+A -> UI : Rédige, joint un PDF, choisit la cible
+UI -> S : creerCommunique(titre, contenu, cible)
+S -> S : vérifier que l'auteur peut cibler ce périmètre
+alt l'auteur peut publier directement
+  S -> DB : statut = PUBLIÉ
+else validation requise
+  S -> DB : statut = EN_VALIDATION
+  S -> V : notification
+  V -> UI : Relit et approuve
+  UI -> S : approuver(communiqué)
+  S -> DB : statut = PUBLIÉ, journal
+end
+S -> DB : calculer les destinataires (filière, promotion, cours)
+S -> DB : créer les notifications
+S -> M : email aux destinataires ayant activé l'option
+E -> UI : Ouvre sa valve
+UI -> S : valve(utilisateur)
+S -> DB : communiqués visibles pour son profil
+S --> UI : liste triée (épinglés d'abord)
+E -> UI : Ouvre le communiqué
+UI -> S : marquerLu(communiqué)
+S -> DB : créer Lecture
+@enduml

@@ -1,0 +1,118 @@
+' Style commun des diagrammes du projet ISPT-Bukavu
+skinparam dpi 200
+skinparam defaultFontName "IBM Plex Sans"
+skinparam defaultFontSize 12
+skinparam defaultFontColor #1C2033
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundCorner 10
+skinparam ArrowColor #5B6178
+skinparam ArrowThickness 1
+skinparam ArrowFontSize 11
+skinparam ArrowFontColor #5B6178
+skinparam linetype ortho
+skinparam padding 2
+skinparam nodesep 40
+skinparam ranksep 50
+
+skinparam title {
+  FontSize 15
+  FontStyle bold
+  FontColor #283890
+}
+skinparam actor {
+  BorderColor #283890
+  BackgroundColor #FFFFFF
+  FontColor #1C2033
+}
+skinparam usecase {
+  BackgroundColor #F2F4FB
+  BorderColor #283890
+  BorderThickness 1
+}
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #C9CDDB
+  FontStyle bold
+  FontColor #283890
+}
+skinparam package {
+  BackgroundColor #FAFAF7
+  BorderColor #C9CDDB
+  FontColor #283890
+  FontStyle bold
+}
+skinparam classFontColor #283890
+skinparam classFontStyle bold
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #283890
+  HeaderBackgroundColor #E9ECF8
+  AttributeFontColor #1C2033
+  AttributeFontSize 11
+  StereotypeFontColor #E6E8F2
+}
+skinparam stereotypeCBackgroundColor #E31D2F
+skinparam stereotypeEBackgroundColor #FEF200
+skinparam sequence {
+  LifeLineBorderColor #9AA0B4
+  LifeLineBackgroundColor #F2F4FB
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #283890
+  ParticipantFontColor #1C2033
+  ActorBorderColor #283890
+  ActorBackgroundColor #FFFFFF
+  BoxBackgroundColor #FAFAF7
+  BoxBorderColor #C9CDDB
+  GroupBackgroundColor #F2F4FB
+  GroupBorderColor #C9CDDB
+  DividerBackgroundColor #FAFAF7
+  DividerBorderColor #C9CDDB
+}
+skinparam activity {
+  BackgroundColor #F2F4FB
+  BorderColor #283890
+  DiamondBackgroundColor #FFFFFF
+  DiamondBorderColor #283890
+  StartColor #283890
+  EndColor #283890
+  BarColor #283890
+}
+skinparam partition {
+  BackgroundColor #FAFAF7
+  BorderColor #C9CDDB
+}
+skinparam swimlane {
+  BorderColor #C9CDDB
+  TitleFontColor #283890
+  TitleFontStyle bold
+}
+skinparam state {
+  BackgroundColor #F2F4FB
+  BorderColor #283890
+  StartColor #283890
+  EndColor #283890
+}
+skinparam note {
+  BackgroundColor #FFF9D6
+  BorderColor #E0C200
+  FontSize 11
+}
+skinparam node {
+  BackgroundColor #F2F4FB
+  BorderColor #283890
+}
+skinparam database {
+  BackgroundColor #F2F4FB
+  BorderColor #283890
+}
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #283890
+}
+skinparam cloud {
+  BackgroundColor #FAFAF7
+  BorderColor #C9CDDB
+}
+hide circle
+hide empty methods

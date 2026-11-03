@@ -1,0 +1,18 @@
+@startuml etats-note
+!include _style.iuml
+skinparam linetype polyline
+hide empty description
+title États d'une note
+state "Brouillon" as Brouillon
+state "Soumise" as Soumise
+state "Validée" as Validee
+state "Publiée" as Publiee
+[*] --> Brouillon
+Brouillon --> Soumise : soumettre (enseignant)
+Soumise --> Brouillon : renvoyer pour correction
+Soumise --> Validee : valider (secrétariat académique)
+Validee --> Publiee : publier
+Validee --> Brouillon : modification
+Publiee --> Brouillon : rectification\n[journalisée, notification]
+Publiee : visible par l'étudiant
+@enduml
