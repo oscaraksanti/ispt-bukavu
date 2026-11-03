@@ -53,8 +53,12 @@ export default function PageInstitut() {
 
       <BlocPage numero="01" titre="Historique">
         <ol className="relative border-l border-pierre-300">
-          {jalons.map((j) => (
-            <li key={j.annee} className="relative pb-10 pl-8 last:pb-0">
+          {jalons.map((j, i) => (
+            <li
+              key={j.annee}
+              className="revele relative pb-10 pl-8 last:pb-0"
+              style={{ "--i": i } as React.CSSProperties}
+            >
               <span
                 aria-hidden
                 className="absolute top-1.5 -left-[5px] size-[9px] bg-chantier ring-4 ring-papier"
@@ -155,7 +159,7 @@ export default function PageInstitut() {
             </p>
           </div>
         </div>
-        <figure className="relative mt-10 aspect-[16/9] overflow-hidden rounded-md">
+        <figure className="revele-image relative mt-10 aspect-[16/9] overflow-hidden rounded-md">
           <Image
             src="/photos/collation-2026-corps-academique.jpg"
             alt="Membres du corps académique lors de la collation des grades 2026."
@@ -164,7 +168,7 @@ export default function PageInstitut() {
             className="object-cover object-[50%_30%]"
           />
           <figcaption className="absolute bottom-0 left-0 bg-encre/85 px-2.5 py-1 font-mono text-[0.625rem] tracking-wide text-white uppercase">
-            Corps académique · Collation 2026 · Photo Eben Shoot
+            Corps académique · Collation 2026
           </figcaption>
         </figure>
       </BlocPage>

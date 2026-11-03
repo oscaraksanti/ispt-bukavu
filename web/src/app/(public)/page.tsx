@@ -26,29 +26,38 @@ function Accroche() {
     <section className="trame relative overflow-hidden border-b border-pierre-200">
       <div className="conteneur grid gap-12 py-12 lg:grid-cols-12 lg:gap-8 lg:py-20">
         <div className="flex flex-col justify-center lg:col-span-6">
-          <p className="surtitre flex items-center gap-3">
+          <p className="surtitre entree flex items-center gap-3">
             <span>Bukavu · Sud-Kivu</span>
             <FiletCote className="w-8" />
             <span>Depuis {institut.creation.operationnel}</span>
           </p>
-          <h1 className="mt-6 text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[4.5rem]">
+          <h1
+            className="entree mt-6 text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[4.5rem]"
+            style={{ "--i": 1 } as React.CSSProperties}
+          >
             Ingénieurs de terrain.
             <br />
             <span className="relative">
               Enseignants
               <span
                 aria-hidden
-                className="absolute inset-x-0 bottom-[0.08em] -z-10 h-[0.28em] bg-chantier"
+                className="entree-trait absolute inset-x-0 bottom-[0.08em] -z-10 h-[0.28em] bg-chantier"
               />
             </span>{" "}
             de métier.
           </h1>
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-pierre-700">
+          <p
+            className="entree mt-6 max-w-xl text-lg leading-relaxed text-pierre-700"
+            style={{ "--i": 2 } as React.CSSProperties}
+          >
             L&apos;ISPT-Bukavu forme des ingénieurs en techniques appliquées, prêts pour
             l&apos;industrie comme pour l&apos;enseignement technique, en quatre ans et deux stages
             obligatoires.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div
+            className="entree mt-8 flex flex-wrap gap-3"
+            style={{ "--i": 3 } as React.CSSProperties}
+          >
             <LienBouton href="/formations" taille="lg" className="w-full sm:w-auto">
               Découvrir les formations
             </LienBouton>
@@ -61,7 +70,10 @@ function Accroche() {
               Conditions d&apos;admission
             </LienBouton>
           </div>
-          <dl className="mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-pierre-300 pt-6">
+          <dl
+            className="entree mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-pierre-300 pt-6"
+            style={{ "--i": 4 } as React.CSSProperties}
+          >
             {[
               ["4", "filières LMD"],
               ["8", "semestres"],
@@ -83,45 +95,57 @@ function Accroche() {
             className="grid grid-cols-6 grid-rows-6 gap-3 sm:gap-4"
             style={{ aspectRatio: "1 / 1" }}
           >
-            <figure className="relative col-span-4 row-span-4 overflow-hidden rounded-md">
+            <figure
+              className="entree-image relative col-span-4 row-span-4 overflow-hidden rounded-md"
+              style={{ "--i": 0, "--parallaxe": "-24px" } as React.CSSProperties}
+            >
               <Image
                 src="/photos/tp-topographie-2.jpg"
                 alt="Travaux pratiques de topographie : un étudiant règle un niveau sur trépied en plein air."
                 fill
                 sizes="(min-width: 1024px) 400px, 66vw"
-                className="object-cover"
+                className="parallaxe object-cover"
                 loading="eager"
                 fetchPriority="high"
               />
               <Legende>TP de topographie · Génie Civil</Legende>
             </figure>
-            <figure className="relative col-span-2 row-span-3 overflow-hidden rounded-md">
+            <figure
+              className="entree-image relative col-span-2 row-span-3 overflow-hidden rounded-md"
+              style={{ "--i": 1, "--parallaxe": "-56px" } as React.CSSProperties}
+            >
               <Image
                 src="/photos/collation-2026-remise-casque-1.jpg"
                 alt="Remise du casque à un lauréat lors de la collation des grades 2026."
                 fill
                 sizes="(min-width: 1024px) 200px, 33vw"
-                className="object-cover"
+                className="parallaxe object-cover"
               />
               <Legende>Collation 2026</Legende>
             </figure>
-            <figure className="relative col-span-2 row-span-3 overflow-hidden rounded-md">
+            <figure
+              className="entree-image relative col-span-2 row-span-3 overflow-hidden rounded-md"
+              style={{ "--i": 2, "--parallaxe": "-40px" } as React.CSSProperties}
+            >
               <Image
                 src="/photos/stage-centrale-electrique.jpg"
                 alt="Étudiants en tenue de travail lors d'un stage dans une centrale électrique."
                 fill
                 sizes="(min-width: 1024px) 200px, 33vw"
-                className="object-cover"
+                className="parallaxe object-cover"
               />
               <Legende>Stage</Legende>
             </figure>
-            <figure className="relative col-span-4 row-span-2 overflow-hidden rounded-md">
+            <figure
+              className="entree-image relative col-span-4 row-span-2 overflow-hidden rounded-md"
+              style={{ "--i": 3, "--parallaxe": "-16px" } as React.CSSProperties}
+            >
               <Image
                 src="/photos/salle-informatique-cours.jpg"
                 alt="Étudiants travaillant sur ordinateur en salle de cours."
                 fill
                 sizes="(min-width: 1024px) 400px, 66vw"
-                className="object-cover object-[50%_35%]"
+                className="parallaxe object-cover object-[50%_35%]"
               />
               <Legende>Génie Informatique</Legende>
             </figure>
@@ -160,7 +184,7 @@ function Institut() {
           </div>
         </div>
         <div className="min-w-0 lg:col-span-5 lg:col-start-8">
-          <figure className="relative aspect-[4/3] overflow-hidden rounded-md">
+          <figure className="revele-image relative aspect-[4/3] overflow-hidden rounded-md">
             <Image
               src="/photos/campus-batiment-facade.jpg"
               alt="Façade d'un bâtiment du campus, entouré de végétation, avenue de l'Hippodrome."
@@ -197,7 +221,7 @@ function EnImages() {
     {
       src: "/photos/collation-2026-laureats-salle.jpg",
       alt: "Lauréats et membres du corps académique réunis en salle lors de la collation 2026.",
-      legende: "Collation 2026 · Photo Eben Shoot",
+      legende: "Collation 2026",
       classe: "col-span-2 row-span-2",
     },
     {
@@ -209,7 +233,7 @@ function EnImages() {
     {
       src: "/photos/collation-2026-remise-casque-2.jpg",
       alt: "Un professeur remet le casque à un lauréat.",
-      legende: "Remise du casque · Photo Eben Shoot",
+      legende: "Remise du casque",
       classe: "",
     },
     {
@@ -228,8 +252,12 @@ function EnImages() {
   return (
     <section aria-label="L'institut en images" className="bg-encre py-3">
       <div className="grid auto-rows-[9rem] grid-cols-2 gap-3 px-3 sm:auto-rows-[13rem] md:grid-cols-4 lg:auto-rows-[15rem]">
-        {photos.map((p) => (
-          <figure key={p.src} className={`relative overflow-hidden ${p.classe}`}>
+        {photos.map((p, i) => (
+          <figure
+            key={p.src}
+            className={`revele-image relative overflow-hidden ${p.classe}`}
+            style={{ "--i": i } as React.CSSProperties}
+          >
             <Image
               src={p.src}
               alt={p.alt}
@@ -258,7 +286,11 @@ function Formations() {
         />
         <ul className="mt-14 grid gap-px overflow-hidden rounded-md border border-pierre-200 bg-pierre-200 sm:grid-cols-2 lg:grid-cols-4">
           {filieres.map((f, i) => (
-            <li key={f.slug} className="bg-white">
+            <li
+              key={f.slug}
+              className="revele bg-white"
+              style={{ "--i": i } as React.CSSProperties}
+            >
               <Link href={`/formations/${f.slug}`} className="group flex h-full flex-col">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <Image
@@ -305,7 +337,7 @@ function Stages() {
             titre="Apprendre au contact du métier"
             intro="Deux stages structurent le parcours : l'un dans les écoles techniques, l'autre en entreprise. Le stage professionnel est obligatoire pour chaque promotion."
           />
-          <figure className="relative mt-10 aspect-[4/3] overflow-hidden rounded-md">
+          <figure className="revele-image relative mt-10 aspect-[4/3] overflow-hidden rounded-md">
             <Image
               src="/photos/stage-genie-civil-chantier.jpg"
               alt="Étudiants en casque et gilet de sécurité sur un chantier routier."
@@ -318,7 +350,7 @@ function Stages() {
         </div>
         <div className="grid gap-px self-start bg-white/15 lg:col-span-6 lg:col-start-7">
           {blocs.map((b) => (
-            <div key={b.titre} className="bg-encre py-8 first:pt-0">
+            <div key={b.titre} className="revele bg-encre py-8 first:pt-0">
               <h3 className="text-3xl text-white">{b.titre}</h3>
               <p className="mt-3 max-w-md text-white/70">{b.description}</p>
               <ul className="mt-6 grid gap-x-6 gap-y-3 sm:grid-cols-2">
@@ -358,14 +390,18 @@ function Admissions() {
       <div className="mt-14 grid gap-12 lg:grid-cols-12">
         <ol className="grid gap-px overflow-hidden rounded-md border border-pierre-200 bg-pierre-200 sm:grid-cols-2 lg:col-span-7">
           {etapes.map(([titre, texte], i) => (
-            <li key={titre} className="bg-papier p-6">
+            <li
+              key={titre}
+              className="revele bg-papier p-6"
+              style={{ "--i": i } as React.CSSProperties}
+            >
               <span className="font-mono text-xs text-ispt-600">Étape {i + 1}</span>
               <p className="mt-3 font-serif text-xl text-encre">{titre}</p>
               <p className="mt-2 text-[0.9375rem] leading-relaxed text-pierre-600">{texte}</p>
             </li>
           ))}
         </ol>
-        <div className="lg:col-span-5">
+        <div className="revele lg:col-span-5">
           <h3 className="font-sans text-sm font-medium tracking-wide text-pierre-500 uppercase">
             Pièces du dossier
           </h3>
@@ -403,7 +439,7 @@ function Anciens() {
             titre="Où exercent nos diplômés"
             intro="Les anciens de l'institut travaillent dans l'énergie, l'eau, les télécommunications, la finance et l'industrie, ou enseignent dans les écoles techniques de la région."
           />
-          <figure className="relative mt-10 aspect-[3/2] overflow-hidden rounded-md">
+          <figure className="revele-image relative mt-10 aspect-[3/2] overflow-hidden rounded-md">
             <Image
               src="/photos/collation-2026-laureats-exterieur.jpg"
               alt="Cinq lauréats en costume, casque et gilet, lors de la collation des grades 2026."
@@ -411,10 +447,10 @@ function Anciens() {
               sizes="(min-width: 1024px) 480px, 100vw"
               className="object-cover"
             />
-            <Legende>Lauréats 2026 · Photo Eben Shoot</Legende>
+            <Legende>Lauréats 2026</Legende>
           </figure>
         </div>
-        <div className="grid gap-12 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
+        <div className="revele grid gap-12 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
           <div>
             <h3 className="surtitre !font-mono">Parcours professionnel</h3>
             <ul className="mt-5 space-y-3">
@@ -452,8 +488,12 @@ function Autorites() {
     <section className="conteneur py-20 lg:py-28">
       <EnteteSection numero="06" surtitre="Gouvernance" titre="Autorités académiques" />
       <ul className="mt-12 grid gap-px overflow-hidden rounded-md border border-pierre-200 bg-pierre-200 md:grid-cols-3">
-        {autorites.map((a) => (
-          <li key={a.fonction} className="bg-papier p-8">
+        {autorites.map((a, i) => (
+          <li
+            key={a.fonction}
+            className="revele bg-papier p-8"
+            style={{ "--i": i } as React.CSSProperties}
+          >
             <p className="surtitre !font-mono text-pierre-500">{a.fonction}</p>
             <p className="mt-4 font-serif text-2xl leading-snug text-encre">{a.nom}</p>
           </li>

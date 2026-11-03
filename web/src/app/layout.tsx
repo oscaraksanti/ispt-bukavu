@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
+import { AnimationsDefilement } from "@/components/mouvement/animations-defilement";
 import "./globals.css";
 
 const plexSans = IBM_Plex_Sans({
@@ -43,8 +44,18 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="fr"
       className={`${plexSans.variable} ${plexMono.variable} ${newsreader.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <head>
+        <script
+          // Active les animations seulement si JavaScript s'exécute.
+          dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }}
+        />
+      </head>
+      <body className="flex min-h-full flex-col">
+        {children}
+        <AnimationsDefilement />
+      </body>
     </html>
   );
 }

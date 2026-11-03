@@ -99,7 +99,10 @@ export function EnteteSection({
   const Titre = niveau;
   return (
     <div
-      className={cn("flex flex-col gap-6 md:flex-row md:items-end md:justify-between", className)}
+      className={cn(
+        "revele flex flex-col gap-6 md:flex-row md:items-end md:justify-between",
+        className,
+      )}
     >
       <div className="max-w-2xl">
         {(numero || surtitre) && (
@@ -147,7 +150,7 @@ export function Chiffre({
   clair?: boolean;
 }) {
   return (
-    <div className={cn("border-t pt-4", clair ? "border-white/20" : "border-pierre-300")}>
+    <div className={cn("revele border-t pt-4", clair ? "border-white/20" : "border-pierre-300")}>
       <p
         className={cn(
           "font-serif text-[2.75rem] leading-none tracking-tight",

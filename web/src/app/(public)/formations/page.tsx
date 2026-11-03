@@ -24,7 +24,7 @@ export default function PageFormations() {
       <section className="conteneur py-16 lg:py-20">
         <ul className="divide-y divide-pierre-200 border-y border-pierre-200">
           {filieres.map((f, i) => (
-            <li key={f.slug}>
+            <li key={f.slug} className="revele">
               <Link
                 href={`/formations/${f.slug}`}
                 className="group grid gap-6 py-8 md:grid-cols-12 md:items-center md:gap-8"

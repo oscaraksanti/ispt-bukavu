@@ -87,7 +87,7 @@ export async function PiedDePage() {
           <p>
             © {annee} {institut.sigle} · {institut.creation.acte}
           </p>
-          <p>Photographies de la collation 2026 : Eben Shoot · {institut.coordonnees.libelle}</p>
+          <p>{institut.coordonnees.libelle}</p>
         </div>
       </div>
     </footer>
