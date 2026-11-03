@@ -4,7 +4,9 @@ import { hash, verify } from "@node-rs/argon2";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { espaceParDefaut } from "@/features/admissions/regles";
 import { envoyerEmail, urlSite } from "@/lib/email";
+import { ROLES_PERSONNEL } from "@/lib/permissions";
 import { journaliser } from "@/lib/journal";
 import { empreinte, jetonAleatoire } from "@/lib/securite";
 import {
@@ -38,6 +40,7 @@ export async function seConnecter(_: EtatFormulaire, donnees: FormData): Promise
   });
   if (!saisie.success) return { erreur: MESSAGE_IDENTIFIANTS };
 
+  let destination = "/";
   try {
     const email = normaliserEmail(saisie.data.email);
     const ip = await ipDuClient();
@@ -54,7 +57,10 @@ export async function seConnecter(_: EtatFormulaire, donnees: FormData): Promise
       };
     }
 
-    const utilisateur = await db.utilisateur.findUnique({ where: { email } });
+    const utilisateur = await db.utilisateur.findUnique({
+      where: { email },
+      include: { roles: { include: { role: { select: { code: true } } } } },
+    });
     const valide = await verify(
       utilisateur?.motDePasseHash ?? EMPREINTE_FACTICE,
       saisie.data.motDePasse,
@@ -75,6 +81,13 @@ export async function seConnecter(_: EtatFormulaire, donnees: FormData): Promise
       entite: "Utilisateur",
       entiteId: utilisateur.id,
     });
+    destination = destinationSure(
+      saisie.data.suite,
+      espaceParDefaut(
+        utilisateur.roles.map((r) => r.role.code),
+        ROLES_PERSONNEL,
+      ),
+    );
   } catch (erreur) {
     console.error("[connexion] service indisponible", erreur);
     return {
@@ -82,7 +95,7 @@ export async function seConnecter(_: EtatFormulaire, donnees: FormData): Promise
         "Le service de connexion est momentanément indisponible. Réessayez dans quelques minutes.",
     };
   }
-  redirect(destinationSure(saisie.data.suite));
+  redirect(destination);
 }
 
 export async function seDeconnecter() {
@@ -158,6 +171,7 @@ export async function definirMotDePasse(
         statut: "ACTIF",
         emailVerifieLe: new Date(),
         doitChangerMotDePasse: false,
+        derniereConnexion: new Date(),
       },
     }),
     db.jetonReinitialisation.update({
@@ -174,5 +188,14 @@ export async function definirMotDePasse(
     entiteId: enregistrement.utilisateurId,
   });
   await ouvrirSession(enregistrement.utilisateurId);
-  redirect("/admin");
+  const roles = await db.utilisateurRole.findMany({
+    where: { utilisateurId: enregistrement.utilisateurId },
+    include: { role: { select: { code: true } } },
+  });
+  redirect(
+    espaceParDefaut(
+      roles.map((r) => r.role.code),
+      ROLES_PERSONNEL,
+    ),
+  );
 }
