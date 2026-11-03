@@ -16,6 +16,7 @@ Le projet fait également l'objet d'un Travail de Fin de Cycle en Génie Informa
 | [`docs/tfc/`](docs/tfc) | Charte de rédaction et chapitres du travail de fin de cycle |
 | [`docs/sources/`](docs/sources) | Documents officiels de l'institut utilisés comme sources |
 | [`brand/`](brand) | Fichiers sources de l'identité visuelle |
+| [`assets/photos/`](assets/photos) | Photographies officielles transmises par l'institut |
 
 ## Démarrer en local
 
