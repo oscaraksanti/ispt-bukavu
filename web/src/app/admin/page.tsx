@@ -4,6 +4,9 @@ import { EnteteAdmin, Panneau } from "@/components/admin/entete-admin";
 import { utilisateurConnecte } from "@/features/auth/acces";
 import { db } from "@/lib/db";
 
+/** Page authentifiée : rendue à chaque requête, sans coquille statique. */
+export const instant = false;
+
 const formatDate = new Intl.DateTimeFormat("fr-FR", {
   dateStyle: "medium",
   timeStyle: "short",

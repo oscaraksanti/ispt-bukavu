@@ -11,6 +11,11 @@ const entetesSecurite = [
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
+  experimental: {
+    // Les photos sont réduites dans le navigateur avant l'envoi (une par requête) ;
+    // la limite reste sous le plafond de 4,5 Mo des fonctions Vercel.
+    serverActions: { bodySizeLimit: "4mb" },
+  },
   images: {
     // AVIF d'abord : fichiers nettement plus légers pour les connexions mobiles.
     formats: ["image/avif", "image/webp"],
