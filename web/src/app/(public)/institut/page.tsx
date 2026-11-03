@@ -1,3 +1,4 @@
+import { TransitionPage } from "@/components/public/transition-page";
 import type { Metadata } from "next";
 import { BlocPage, EntetePage } from "@/components/public/entete-page";
 import { Legende, Photo } from "@/components/public/photo";
@@ -42,7 +43,7 @@ export default async function PageInstitut() {
   ];
 
   return (
-    <>
+    <TransitionPage>
       <EntetePage
         ariane={[{ libelle: "Accueil", href: "/" }, { libelle: "L'institut" }]}
         surtitre="L'institut"
@@ -163,6 +164,6 @@ export default async function PageInstitut() {
           </figure>
         </BlocPage>
       )}
-    </>
+    </TransitionPage>
   );
 }

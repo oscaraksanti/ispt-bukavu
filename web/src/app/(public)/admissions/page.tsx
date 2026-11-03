@@ -1,3 +1,4 @@
+import { TransitionPage } from "@/components/public/transition-page";
 import { Check, Mail, Phone } from "lucide-react";
 import type { Metadata } from "next";
 import { BlocPage, EntetePage } from "@/components/public/entete-page";
@@ -23,7 +24,7 @@ export default async function PageAdmissions() {
   const pieces = lecteur(page.pieces);
   const depot = lecteur(page.depot);
   return (
-    <>
+    <TransitionPage>
       <EntetePage
         ariane={[{ libelle: "Accueil", href: "/" }, { libelle: "Admissions" }]}
         surtitre="Admissions"
@@ -115,6 +116,6 @@ export default async function PageAdmissions() {
           </div>
         </BlocPage>
       )}
-    </>
+    </TransitionPage>
   );
 }

@@ -1,3 +1,4 @@
+import { TransitionPage } from "@/components/public/transition-page";
 import { cacheLife } from "next/cache";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -24,9 +25,11 @@ export async function generateMetadata({
 
 export default function PageFiliere({ params }: PageProps<"/formations/[slug]">) {
   return (
-    <Suspense fallback={<div className="trame min-h-[60vh] border-b border-pierre-200" />}>
-      <ContenuFiliere params={params} />
-    </Suspense>
+    <TransitionPage>
+      <Suspense fallback={<div className="trame min-h-[60vh] border-b border-pierre-200" />}>
+        <ContenuFiliere params={params} />
+      </Suspense>
+    </TransitionPage>
   );
 }
 
@@ -61,6 +64,7 @@ async function FicheFiliere({ slug }: { slug: string }) {
         intro={filiere.presentation}
         photo={filiere.photo}
         legende={filiere.nomCourt}
+        nomPhoto={`filiere-${filiere.slug}`}
         enfants={
           <div className="mt-8 flex flex-wrap gap-3">
             <LienBouton href={lienCandidature}>Candidater</LienBouton>

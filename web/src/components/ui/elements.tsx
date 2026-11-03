@@ -99,14 +99,11 @@ export function EnteteSection({
   const Titre = niveau;
   return (
     <div
-      className={cn(
-        "revele flex flex-col gap-6 md:flex-row md:items-end md:justify-between",
-        className,
-      )}
+      className={cn("flex flex-col gap-6 md:flex-row md:items-end md:justify-between", className)}
     >
       <div className="max-w-2xl">
         {(numero || surtitre) && (
-          <p className={cn("surtitre flex items-center gap-3", clair && "text-chantier")}>
+          <p className={cn("revele surtitre flex items-center gap-3", clair && "text-chantier")}>
             {numero && <span>{numero}</span>}
             {numero && surtitre && <FiletCote clair={clair} className="w-8" />}
             {surtitre && <span>{surtitre}</span>}
@@ -114,16 +111,17 @@ export function EnteteSection({
         )}
         <Titre
           className={cn(
-            "mt-4 text-[2rem] sm:text-[2.5rem] lg:text-[2.75rem]",
+            "revele-titre ligne-masquee mt-4 text-[2rem] sm:text-[2.5rem] lg:text-[2.75rem]",
             clair && "text-white",
           )}
         >
-          {titre}
+          <span>{titre}</span>
         </Titre>
         {intro && (
           <p
+            style={{ "--i": 1 } as React.CSSProperties}
             className={cn(
-              "mt-4 text-[1.0625rem] leading-relaxed",
+              "revele mt-4 text-[1.0625rem] leading-relaxed",
               clair ? "text-white/75" : "text-pierre-600",
             )}
           >
@@ -131,7 +129,11 @@ export function EnteteSection({
           </p>
         )}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && (
+        <div className="revele shrink-0" style={{ "--i": 2 } as React.CSSProperties}>
+          {action}
+        </div>
+      )}
     </div>
   );
 }

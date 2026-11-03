@@ -1,8 +1,10 @@
+import { TransitionPage } from "@/components/public/transition-page";
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { BlocPage, EntetePage } from "@/components/public/entete-page";
 import { Photo } from "@/components/public/photo";
+import { PhotoPartagee } from "@/components/public/transition-page";
 import { lireFilieres, lireInstitut, lirePage } from "@/features/contenu/lecture";
 import { lecteur } from "@/features/contenu/lecteur";
 
@@ -20,7 +22,7 @@ export default async function PageFormations() {
   ]);
   const entete = lecteur(page.entete);
   return (
-    <>
+    <TransitionPage>
       <EntetePage
         ariane={[{ libelle: "Accueil", href: "/" }, { libelle: "Formations" }]}
         surtitre="Formations"
@@ -36,13 +38,15 @@ export default async function PageFormations() {
                 href={`/formations/${f.slug}`}
                 className="group grid gap-6 py-8 md:grid-cols-12 md:items-center md:gap-8"
               >
-                <div className="relative aspect-[4/3] overflow-hidden rounded-md md:col-span-4 lg:col-span-3">
-                  <Photo
-                    image={f.photo}
-                    sizes="(min-width: 768px) 320px, 100vw"
-                    className="transition-transform duration-300 ease-doux group-hover:scale-[1.03]"
-                  />
-                </div>
+                <PhotoPartagee nom={`filiere-${f.slug}`}>
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-md md:col-span-4 lg:col-span-3">
+                    <Photo
+                      image={f.photo}
+                      sizes="(min-width: 768px) 320px, 100vw"
+                      className="zoom-survol"
+                    />
+                  </div>
+                </PhotoPartagee>
                 <div className="md:col-span-8 lg:col-span-9 lg:grid lg:grid-cols-9 lg:gap-8">
                   <div className="lg:col-span-5">
                     <p className="font-mono text-xs text-pierre-500">
@@ -93,6 +97,6 @@ export default async function PageFormations() {
           ))}
         </dl>
       </BlocPage>
-    </>
+    </TransitionPage>
   );
 }

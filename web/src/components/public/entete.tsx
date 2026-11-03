@@ -14,7 +14,10 @@ import {
 export async function Entete() {
   const institut = await lireInstitut();
   return (
-    <header className="entete-site sticky top-0 z-40 border-b border-pierre-200 bg-papier/95 backdrop-blur-sm">
+    <header
+      className="entete-site sticky top-0 z-40 border-b border-pierre-200 bg-papier/95 backdrop-blur-sm"
+      style={{ viewTransitionName: "entete-site" }}
+    >
       <div className="barre-utilitaire hidden border-b border-pierre-200 bg-encre text-white/75 lg:block">
         <div className="conteneur flex h-9 items-center justify-between font-mono text-[0.6875rem] tracking-wide uppercase">
           <p>{institut.statut}</p>

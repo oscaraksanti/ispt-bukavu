@@ -1,8 +1,10 @@
+import { TransitionPage } from "@/components/public/transition-page";
 import { ArrowRight, Check, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import { lienCandidature } from "@/components/public/navigation";
 import { CarteActualite } from "@/components/public/carte-actualite";
 import { Legende, Photo } from "@/components/public/photo";
+import { PhotoPartagee } from "@/components/public/transition-page";
 import { LienBouton } from "@/components/ui/bouton";
 import { EnteteSection, FiletCote, LienFleche } from "@/components/ui/elements";
 import {
@@ -61,28 +63,30 @@ function Accroche({ bloc, institut }: { bloc: LecteurBloc; institut: DonneesInst
             <FiletCote className="w-8" />
             <span>Depuis {institut.anneeOuverture}</span>
           </p>
-          <h1
-            className="entree mt-6 text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[4.5rem]"
-            style={{ "--i": 1 } as Style}
-          >
-            {bloc.texte("titreDebut")}
-            <br />
-            <span className="relative">
-              {bloc.texte("titreSouligne")}
-              <span
-                aria-hidden
-                className="entree-trait absolute inset-x-0 bottom-[0.08em] -z-10 h-[0.28em] bg-chantier"
-              />
+          <h1 className="mt-6 text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[4.5rem]">
+            <span className="entree-ligne ligne-masquee" style={{ "--i": 1 } as Style}>
+              <span>{bloc.texte("titreDebut")}</span>
             </span>{" "}
-            {bloc.texte("titreFin")}
+            <span className="entree-ligne ligne-masquee" style={{ "--i": 2 } as Style}>
+              <span>
+                <span className="relative isolate">
+                  {bloc.texte("titreSouligne")}
+                  <span
+                    aria-hidden
+                    className="entree-trait absolute inset-x-0 bottom-[0.08em] -z-10 h-[0.28em] bg-chantier"
+                  />
+                </span>{" "}
+                {bloc.texte("titreFin")}
+              </span>
+            </span>
           </h1>
           <p
             className="entree mt-6 max-w-xl text-lg leading-relaxed text-pierre-700"
-            style={{ "--i": 2 } as Style}
+            style={{ "--i": 3 } as Style}
           >
             {bloc.texte("texte")}
           </p>
-          <div className="entree mt-8 flex flex-wrap gap-3" style={{ "--i": 3 } as Style}>
+          <div className="entree mt-8 flex flex-wrap gap-3" style={{ "--i": 4 } as Style}>
             <LienBouton href="/formations" taille="lg" className="w-full sm:w-auto">
               Découvrir les formations
             </LienBouton>
@@ -98,7 +102,7 @@ function Accroche({ bloc, institut }: { bloc: LecteurBloc; institut: DonneesInst
           {chiffres.length > 0 && (
             <dl
               className="entree mt-10 grid max-w-lg grid-cols-3 gap-6 border-t border-pierre-300 pt-6"
-              style={{ "--i": 4 } as Style}
+              style={{ "--i": 5 } as Style}
             >
               {chiffres.map((c, i) => (
                 <div key={i}>
@@ -235,15 +239,21 @@ function Formations({ bloc, filieres }: { bloc: LecteurBloc; filieres: FilierePu
         />
         <ul className="mt-14 grid gap-px overflow-hidden rounded-md border border-pierre-200 bg-pierre-200 sm:grid-cols-2 lg:grid-cols-4">
           {filieres.map((f, i) => (
-            <li key={f.slug} className="revele bg-white" style={{ "--i": i } as Style}>
-              <Link href={`/formations/${f.slug}`} className="group flex h-full flex-col">
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <Photo
-                    image={f.photo}
-                    sizes="(min-width: 1024px) 300px, (min-width: 640px) 50vw, 100vw"
-                    className="transition-transform duration-300 ease-doux group-hover:scale-[1.03]"
-                  />
-                </div>
+            <li key={f.slug} className="bg-white">
+              <Link
+                href={`/formations/${f.slug}`}
+                className="revele group flex h-full flex-col"
+                style={{ "--i": i } as Style}
+              >
+                <PhotoPartagee nom={`filiere-${f.slug}`}>
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <Photo
+                      image={f.photo}
+                      sizes="(min-width: 1024px) 300px, (min-width: 640px) 50vw, 100vw"
+                      className="zoom-survol"
+                    />
+                  </div>
+                </PhotoPartagee>
                 <div className="flex flex-1 flex-col p-6">
                   <p className="font-mono text-xs text-pierre-500">
                     {String(i + 1).padStart(2, "0")}
@@ -308,10 +318,15 @@ function Stages({
         </div>
         <div className="grid gap-px self-start bg-white/15 lg:col-span-6 lg:col-start-7">
           {blocs.map((b) => (
-            <div key={b.titre} className="revele bg-encre py-8 first:pt-0">
-              <h3 className="text-3xl text-white">{b.titre}</h3>
-              <p className="mt-3 max-w-md text-white/70">{b.description}</p>
-              <ul className="mt-6 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+            <div key={b.titre} className="bg-encre py-8 first:pt-0">
+              <h3 className="revele-titre ligne-masquee text-3xl text-white">
+                <span>{b.titre}</span>
+              </h3>
+              <p className="revele mt-3 max-w-md text-white/70">{b.description}</p>
+              <ul
+                className="revele mt-6 grid gap-x-6 gap-y-3 sm:grid-cols-2"
+                style={{ "--i": 1 } as Style}
+              >
                 {b.lieux.map((l) => (
                   <li key={l} className="flex items-start gap-3 text-[0.9375rem]">
                     <span aria-hidden className="mt-2 h-2 w-2 shrink-0 bg-chantier" />
@@ -339,12 +354,14 @@ function Admissions({ bloc, pieces }: { bloc: LecteurBloc; pieces: LecteurBloc }
       <div className="mt-14 grid gap-12 lg:grid-cols-12">
         <ol className="grid gap-px self-start overflow-hidden rounded-md border border-pierre-200 bg-pierre-200 sm:grid-cols-2 lg:col-span-7">
           {bloc.liste("etapes").map((e, i) => (
-            <li key={i} className="revele bg-papier p-6" style={{ "--i": i } as Style}>
-              <span className="font-mono text-xs text-ispt-600">Étape {i + 1}</span>
-              <p className="mt-3 font-serif text-xl text-encre">{e.texte("titre")}</p>
-              <p className="mt-2 text-[0.9375rem] leading-relaxed text-pierre-600">
-                {e.texte("texte")}
-              </p>
+            <li key={i} className="bg-papier p-6">
+              <div className="revele" style={{ "--i": i } as Style}>
+                <span className="font-mono text-xs text-ispt-600">Étape {i + 1}</span>
+                <p className="mt-3 font-serif text-xl text-encre">{e.texte("titre")}</p>
+                <p className="mt-2 text-[0.9375rem] leading-relaxed text-pierre-600">
+                  {e.texte("texte")}
+                </p>
+              </div>
             </li>
           ))}
         </ol>
@@ -443,9 +460,11 @@ function Autorites({ autorites, numero }: { autorites: AutoritePublique[]; numer
       <EnteteSection numero={numero} surtitre="Gouvernance" titre="Autorités académiques" />
       <ul className="mt-12 grid gap-px overflow-hidden rounded-md border border-pierre-200 bg-pierre-200 md:grid-cols-3">
         {autorites.map((a, i) => (
-          <li key={a.id} className="revele bg-papier p-8" style={{ "--i": i } as Style}>
-            <p className="surtitre !font-mono text-pierre-500">{a.fonction}</p>
-            <p className="mt-4 font-serif text-2xl leading-snug text-encre">{a.nom}</p>
+          <li key={a.id} className="bg-papier p-8">
+            <div className="revele" style={{ "--i": i } as Style}>
+              <p className="surtitre !font-mono text-pierre-500">{a.fonction}</p>
+              <p className="mt-4 font-serif text-2xl leading-snug text-encre">{a.nom}</p>
+            </div>
           </li>
         ))}
       </ul>
@@ -501,7 +520,7 @@ export default async function Accueil() {
   const pieces = lecteur((await lirePage("admissions")).pieces);
 
   return (
-    <>
+    <TransitionPage>
       {visible("accroche") && <Accroche bloc={bloc("accroche")} institut={institut} />}
       {visible("institut") && <Institut bloc={bloc("institut")} institut={institut} />}
       {visible("formations") && <Formations bloc={bloc("formations")} filieres={filieres} />}
@@ -518,6 +537,6 @@ export default async function Accueil() {
       <Actualites actualites={actualites.actualites.slice(0, 3)} />
       <Autorites autorites={autorites} numero={actualites.actualites.length > 0 ? "07" : "06"} />
       <Contact institut={institut} />
-    </>
+    </TransitionPage>
   );
 }

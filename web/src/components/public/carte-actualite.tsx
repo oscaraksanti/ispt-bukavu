@@ -2,6 +2,7 @@ import Link from "next/link";
 import { formatJour } from "@/features/actualites/dates";
 import type { ActualiteResume } from "@/features/contenu/lecture";
 import { Photo } from "./photo";
+import { PhotoPartagee } from "./transition-page";
 
 export function CarteActualite({
   actualite,
@@ -17,13 +18,11 @@ export function CarteActualite({
       className="revele group relative flex h-full flex-col"
       style={{ "--i": index } as React.CSSProperties}
     >
-      <div className="relative aspect-[3/2] overflow-hidden rounded-md bg-pierre-100">
-        <Photo
-          image={actualite.couverture}
-          sizes={sizes}
-          className="transition-transform duration-500 ease-doux group-hover:scale-[1.03]"
-        />
-      </div>
+      <PhotoPartagee nom={`actualite-${actualite.slug}`}>
+        <div className="relative aspect-[3/2] overflow-hidden rounded-md bg-pierre-100">
+          <Photo image={actualite.couverture} sizes={sizes} className="zoom-survol" />
+        </div>
+      </PhotoPartagee>
       <time
         dateTime={actualite.publieLe}
         className="mt-5 font-mono text-xs text-pierre-500 uppercase"

@@ -1,3 +1,4 @@
+import { TransitionPage } from "@/components/public/transition-page";
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import type { Metadata } from "next";
 import { Carte } from "@/components/public/carte";
@@ -37,7 +38,7 @@ export default async function PageContact() {
   ].filter((m) => m.valeur);
 
   return (
-    <>
+    <TransitionPage>
       <EntetePage
         ariane={[{ libelle: "Accueil", href: "/" }, { libelle: "Contact" }]}
         surtitre="Contact"
@@ -97,6 +98,6 @@ export default async function PageContact() {
       <BlocPage numero="Écrire" titre="Envoyer un message au secrétariat" fond="blanc">
         <FormulaireContact />
       </BlocPage>
-    </>
+    </TransitionPage>
   );
 }

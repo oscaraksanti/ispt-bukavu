@@ -1,3 +1,4 @@
+import { TransitionPage } from "@/components/public/transition-page";
 import { cacheLife } from "next/cache";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -5,6 +6,7 @@ import { Suspense } from "react";
 import { CarteActualite } from "@/components/public/carte-actualite";
 import { Photo } from "@/components/public/photo";
 import { TexteArticle } from "@/components/public/texte-article";
+import { PhotoPartagee } from "@/components/public/transition-page";
 import { FilAriane, LienFleche } from "@/components/ui/elements";
 import { formatJour } from "@/features/actualites/dates";
 import { tempsDeLecture } from "@/features/actualites/texte";
@@ -40,9 +42,11 @@ export async function generateMetadata({
 
 export default function PageActualite({ params }: PageProps<"/actualites/[slug]">) {
   return (
-    <Suspense fallback={<div className="trame min-h-[60vh] border-b border-pierre-200" />}>
-      <Contenu params={params} />
-    </Suspense>
+    <TransitionPage>
+      <Suspense fallback={<div className="trame min-h-[60vh] border-b border-pierre-200" />}>
+        <Contenu params={params} />
+      </Suspense>
+    </TransitionPage>
   );
 }
 
@@ -76,10 +80,10 @@ async function Article({ slug }: { slug: string }) {
               {tempsDeLecture(a.contenu)} min de lecture
             </p>
             <h1
-              className="entree mt-5 text-[2.25rem] leading-[1.08] sm:text-5xl"
+              className="entree-ligne ligne-masquee mt-5 text-[2.25rem] leading-[1.08] sm:text-5xl"
               style={{ "--i": 1 } as React.CSSProperties}
             >
-              {a.titre}
+              <span>{a.titre}</span>
             </h1>
             <p
               className="entree mt-6 text-xl leading-relaxed text-pierre-700"
@@ -91,9 +95,11 @@ async function Article({ slug }: { slug: string }) {
         </header>
         {a.couverture && (
           <figure className="conteneur max-w-5xl pt-10">
-            <div className="entree-image relative aspect-[16/9] overflow-hidden rounded-md">
-              <Photo image={a.couverture} sizes="(min-width: 1024px) 1024px, 100vw" prioritaire />
-            </div>
+            <PhotoPartagee nom={`actualite-${a.slug}`}>
+              <div className="entree-image relative aspect-[16/9] overflow-hidden rounded-md">
+                <Photo image={a.couverture} sizes="(min-width: 1024px) 1024px, 100vw" prioritaire />
+              </div>
+            </PhotoPartagee>
           </figure>
         )}
         <div className="conteneur max-w-3xl py-12 lg:py-16">

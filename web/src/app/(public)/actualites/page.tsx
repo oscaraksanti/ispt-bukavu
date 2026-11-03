@@ -1,3 +1,4 @@
+import { TransitionPage } from "@/components/public/transition-page";
 import { cacheLife } from "next/cache";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -75,7 +76,7 @@ async function Articles({ page }: { page: number }) {
 export default async function PageActualites(props: PageProps<"/actualites">) {
   const agenda = await lireAgenda();
   return (
-    <>
+    <TransitionPage>
       <EntetePage
         ariane={[{ libelle: "Accueil", href: "/" }, { libelle: "Actualités" }]}
         surtitre="Actualités"
@@ -106,6 +107,6 @@ export default async function PageActualites(props: PageProps<"/actualites">) {
           </aside>
         )}
       </div>
-    </>
+    </TransitionPage>
   );
 }

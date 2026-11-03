@@ -2,49 +2,50 @@
 
 import { useEffect } from "react";
 
-const SELECTEUR = ".revele, .revele-image, .revele-trait";
-const COURBE_DOUCE = "cubic-bezier(0.2, 0.7, 0.2, 1)";
-const COURBE_RIDEAU = "cubic-bezier(0.65, 0, 0.15, 1)";
+const SELECTEUR = ".revele, .revele-titre, .revele-image, .revele-trait";
+const EXPO = "cubic-bezier(0.16, 1, 0.3, 1)";
 
-/** Rang de l'élément dans sa série (variable CSS --i), pour décaler les entrées. */
-function rang(el: HTMLElement) {
-  return Number.parseFloat(el.style.getPropertyValue("--i")) || 0;
+/** Décalage dans une série (variable CSS --i), plafonné pour ne jamais faire attendre. */
+function decalage(el: HTMLElement, pas: number) {
+  const i = Number.parseFloat(el.style.getPropertyValue("--i")) || 0;
+  return Math.min(i, 4) * pas;
 }
 
 /**
  * Joue l'animation d'entrée avec l'API Web Animations : l'état final est porté
  * par l'animation elle-même, sans attribut ajouté au DOM. React peut ainsi
  * hydrater les sections diffusées en continu sans divergence.
+ * Un élément déjà dépassé (saut d'ancre, défilement rapide) est affiché sans délai.
  */
-function reveler(el: HTMLElement) {
-  const i = rang(el);
-  const fin = { fill: "forwards" as const };
+function reveler(el: HTMLElement, immediat: boolean) {
+  const options = (duree: number, delai: number): KeyframeAnimationOptions => ({
+    duration: immediat ? 0 : duree,
+    delay: immediat ? 0 : delai,
+    easing: EXPO,
+    fill: "forwards",
+  });
   if (el.classList.contains("revele-image")) {
-    el.animate([{ clipPath: "inset(98% 0 0 0)" }, { clipPath: "inset(0 0 0 0)" }], {
-      ...fin,
-      duration: 1100,
-      delay: i * 90,
-      easing: COURBE_RIDEAU,
-    });
-    el.querySelector("img")?.animate([{ transform: "scale(1.12)" }, { transform: "scale(1)" }], {
-      ...fin,
-      duration: 1600,
-      delay: i * 90,
-      easing: "cubic-bezier(0.2, 0.7, 0.2, 1)",
-    });
+    const delai = decalage(el, 100);
+    el.animate([{ opacity: 0 }, { opacity: 1 }], options(900, delai));
+    el.querySelector("img")?.animate([{ scale: "1.08" }, { scale: "1" }], options(1800, delai));
+  } else if (el.classList.contains("revele-titre")) {
+    const ligne = el.firstElementChild;
+    ligne?.animate(
+      [
+        { opacity: 0, translate: "0 0.6em" },
+        { opacity: 1, translate: "0 0" },
+      ],
+      options(1000, decalage(el, 80)),
+    );
   } else if (el.classList.contains("revele-trait")) {
-    el.animate([{ transform: "scaleX(0)" }, { transform: "scaleX(1)" }], {
-      ...fin,
-      duration: 900,
-      easing: COURBE_DOUCE,
-    });
+    el.animate([{ scale: "0 1" }, { scale: "1 1" }], options(900, 150));
   } else {
     el.animate(
       [
-        { opacity: 0, transform: "translate3d(0, 18px, 0)" },
-        { opacity: 1, transform: "none" },
+        { opacity: 0, translate: "0 16px" },
+        { opacity: 1, translate: "0 0" },
       ],
-      { ...fin, duration: 700, delay: i * 70, easing: COURBE_DOUCE },
+      options(900, decalage(el, 80)),
     );
   }
 }
@@ -63,20 +64,19 @@ export function AnimationsDefilement() {
 
     const surEntree = (entrees: IntersectionObserverEntry[], obs: IntersectionObserver) => {
       for (const entree of entrees) {
-        if (!entree.isIntersecting) continue;
+        const depasse = entree.boundingClientRect.bottom < 0;
+        if (!entree.isIntersecting && !depasse) continue;
         obs.unobserve(entree.target);
-        if (!reduit) reveler(entree.target as HTMLElement);
+        if (!reduit) reveler(entree.target as HTMLElement, depasse);
       }
     };
     const observateurTexte = new IntersectionObserver(surEntree, {
-      rootMargin: "0px 0px -8% 0px",
-      threshold: 0.12,
+      rootMargin: "0px 0px -6% 0px",
+      threshold: [0, 0.1],
     });
-    // Les images sont masquées par un clip-path : leur surface visible est presque
-    // nulle avant l'animation, d'où un seuil à zéro.
     const observateurImage = new IntersectionObserver(surEntree, {
-      rootMargin: "0px 0px -10% 0px",
-      threshold: 0,
+      rootMargin: "0px 0px -8% 0px",
+      threshold: [0, 0.15],
     });
     const suivre = (el: Element) => {
       if (vus.has(el)) return;
