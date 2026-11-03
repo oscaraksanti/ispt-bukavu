@@ -113,6 +113,7 @@ Détail et sources : [`../recherche/cadre-reglementaire.md`](../recherche/cadre-
 
 ## 9. Principes
 
+- **Tout est administrable par l'institut** : textes, photos, filières, pièces d'admission, frais, contacts, autorités, partenaires, menus et pages. Aucune modification de contenu ne doit nécessiter un développeur.
 - Toute information publiée est sourcée ou signalée comme à compléter dans l'administration.
 - Aucune donnée personnelle d'enquête dans le dépôt.
 - Accessibilité et sobriété : la plateforme doit rester utilisable sur un téléphone d'entrée de gamme et une connexion 3G.
