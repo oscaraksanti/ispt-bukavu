@@ -7,7 +7,7 @@ import { lireSession } from "./session";
 
 export type UtilisateurConnecte = {
   id: string;
-  email: string;
+  email: string | null;
   nom: string;
   prenom: string | null;
   nomComplet: string;

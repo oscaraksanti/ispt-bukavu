@@ -4,12 +4,12 @@ import { useActionState } from "react";
 import { definirMotDePasse } from "@/features/auth/actions";
 import { Champ, Saisie } from "@/components/ui/champs";
 import { Encadre } from "@/components/ui/elements";
-import { BoutonEnvoi } from "@/components/ui/formulaire";
+import { BoutonEnvoi, envoyerSansEffacer } from "@/components/ui/formulaire";
 
 export function FormulaireMotDePasse({ jeton }: { jeton: string }) {
-  const [etat, action] = useActionState(definirMotDePasse, undefined);
+  const [etat, action, enCours] = useActionState(definirMotDePasse, undefined);
   return (
-    <form action={action} className="space-y-5">
+    <form onSubmit={envoyerSansEffacer(action)} className="space-y-5">
       {etat?.erreur && <Encadre ton="erreur">{etat.erreur}</Encadre>}
       <input type="hidden" name="jeton" value={jeton} />
       <Champ
@@ -34,7 +34,7 @@ export function FormulaireMotDePasse({ jeton }: { jeton: string }) {
           required
         />
       </Champ>
-      <BoutonEnvoi className="w-full" enCours="Enregistrement…">
+      <BoutonEnvoi className="w-full" enCoursForce={enCours} enCours="Enregistrement…">
         Enregistrer et se connecter
       </BoutonEnvoi>
     </form>

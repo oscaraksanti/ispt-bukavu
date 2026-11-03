@@ -20,7 +20,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
   })).filter((g) => g.entrees.length > 0);
   return (
     <>
-      <BarreLaterale groupes={groupes} nom={u.nomComplet} email={u.email} />
+      <BarreLaterale groupes={groupes} nom={u.nomComplet} email={u.email ?? ""} />
       <div className="lg:pl-64">
         <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8 lg:py-12">{children}</main>
       </div>

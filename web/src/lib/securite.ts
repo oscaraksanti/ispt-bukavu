@@ -10,11 +10,23 @@ export function empreinte(valeur: string) {
   return createHash("sha256").update(valeur).digest("hex");
 }
 
-/** Code lisible pour les documents (sans caractères ambigus : 0/O, 1/I/L). */
-export function codeVerification(longueur = 12) {
-  const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
-  const octets = randomBytes(longueur);
+const ALPHABET_LISIBLE = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+
+/** Code aléatoire lisible, sans caractères ambigus (0/O, 1/I/L). */
+export function codeLisible(longueur = 12) {
+  // Tirage par rejet : chaque caractère est équiprobable.
+  const limite = 256 - (256 % ALPHABET_LISIBLE.length);
   let code = "";
-  for (let i = 0; i < longueur; i++) code += alphabet[octets[i] % alphabet.length];
-  return code.replace(/(.{4})(?=.)/g, "$1-");
+  while (code.length < longueur) {
+    for (const octet of randomBytes(longueur * 2)) {
+      if (octet < limite && code.length < longueur)
+        code += ALPHABET_LISIBLE[octet % ALPHABET_LISIBLE.length];
+    }
+  }
+  return code;
+}
+
+/** Code lisible pour les documents, groupé par quatre caractères. */
+export function codeVerification(longueur = 12) {
+  return codeLisible(longueur).replace(/(.{4})(?=.)/g, "$1-");
 }

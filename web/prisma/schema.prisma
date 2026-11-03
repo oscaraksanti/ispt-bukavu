@@ -22,7 +22,8 @@ enum StatutCompte {
 
 model Utilisateur {
   id                    String       @id @default(cuid())
-  email                 String       @unique
+  /// Facultatif pour les étudiants, qui se connectent avec leur matricule.
+  email                 String?      @unique
   nom                   String
   postnom               String?
   prenom                String?

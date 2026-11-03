@@ -336,11 +336,12 @@ export async function soumettreDossier(): Promise<EtatFormulaire> {
     entite: "Candidature",
     entiteId: dossier.id,
   });
-  await envoyerEmail({
-    a: u.email,
-    sujet: `Dossier n° ${dossier.numero} déposé — ISPT-Bukavu`,
-    texte: `Bonjour ${dossier.prenom ?? ""},\n\nVotre dossier de candidature n° ${dossier.numero} a bien été déposé. Le secrétariat l'examinera ; vous serez informé(e) par email de chaque étape.\n\nSuivi : ${urlSite()}/candidat\n\nISPT-Bukavu`,
-  }).catch(() => undefined);
+  if (u.email)
+    await envoyerEmail({
+      a: u.email,
+      sujet: `Dossier n° ${dossier.numero} déposé — ISPT-Bukavu`,
+      texte: `Bonjour ${dossier.prenom ?? ""},\n\nVotre dossier de candidature n° ${dossier.numero} a bien été déposé. Le secrétariat l'examinera ; vous serez informé(e) par email de chaque étape.\n\nSuivi : ${urlSite()}/candidat\n\nISPT-Bukavu`,
+    }).catch(() => undefined);
   updateTag(ETIQUETTES.admissions);
   refresh();
   return succes("Votre dossier est déposé. Vous serez informé(e) par email de la suite.");

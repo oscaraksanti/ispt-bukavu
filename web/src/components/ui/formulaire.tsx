@@ -1,7 +1,7 @@
 "use client";
 
 import { LoaderCircle } from "lucide-react";
-import type { ComponentProps } from "react";
+import { type ComponentProps, type FormEvent, startTransition } from "react";
 import { useFormStatus } from "react-dom";
 import { Bouton } from "./bouton";
 
@@ -26,4 +26,16 @@ export function BoutonEnvoi({
       )}
     </Bouton>
   );
+}
+
+/**
+ * Gestionnaire d'envoi qui transmet le formulaire à une action serveur sans
+ * que React efface les champs ensuite : en cas d'erreur, la saisie reste.
+ */
+export function envoyerSansEffacer(envoyer: (fd: FormData) => void) {
+  return (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget, (e.nativeEvent as SubmitEvent).submitter);
+    startTransition(() => envoyer(fd));
+  };
 }

@@ -10,6 +10,7 @@ import { ROLES_PERSONNEL } from "@/lib/permissions";
 import { journaliser } from "@/lib/journal";
 import { empreinte, jetonAleatoire } from "@/lib/securite";
 import {
+  normaliserIdentifiant,
   DUREE_JETON_REINITIALISATION_MS,
   FENETRE_TENTATIVES_MS,
   destinationSure,
@@ -29,7 +30,7 @@ const EMPREINTE_FACTICE =
 
 export async function seConnecter(_: EtatFormulaire, donnees: FormData): Promise<EtatFormulaire> {
   const schema = z.object({
-    email: z.string().email(),
+    email: z.string().trim().min(2).max(160),
     motDePasse: z.string().min(1).max(128),
     suite: z.string().optional(),
   });
@@ -42,7 +43,8 @@ export async function seConnecter(_: EtatFormulaire, donnees: FormData): Promise
 
   let destination = "/";
   try {
-    const email = normaliserEmail(saisie.data.email);
+    // Identifiant : adresse email, ou matricule pour les étudiants.
+    const email = normaliserIdentifiant(saisie.data.email);
     const ip = await ipDuClient();
     const depuis = new Date(Date.now() - FENETRE_TENTATIVES_MS);
     const [echecsEmail, echecsIp] = await Promise.all([
@@ -57,10 +59,15 @@ export async function seConnecter(_: EtatFormulaire, donnees: FormData): Promise
       };
     }
 
-    const utilisateur = await db.utilisateur.findUnique({
-      where: { email },
-      include: { roles: { include: { role: { select: { code: true } } } } },
-    });
+    const inclure = { roles: { include: { role: { select: { code: true } } } } };
+    const utilisateur = email.includes("@")
+      ? await db.utilisateur.findUnique({ where: { email }, include: inclure })
+      : ((
+          await db.profilEtudiant.findUnique({
+            where: { matricule: email },
+            include: { utilisateur: { include: inclure } },
+          })
+        )?.utilisateur ?? null);
     const valide = await verify(
       utilisateur?.motDePasseHash ?? EMPREINTE_FACTICE,
       saisie.data.motDePasse,

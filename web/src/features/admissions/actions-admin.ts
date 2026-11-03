@@ -211,7 +211,7 @@ export async function deciderCandidature(
     apres: { statut: vers, motif },
   });
   const message = MESSAGES[vers]?.(c.numero);
-  if (message)
+  if (message && c.candidat.email)
     await envoyerEmail({
       a: c.candidat.email,
       sujet: `${LIBELLES_STATUT[vers]} — dossier n° ${c.numero}, ISPT-Bukavu`,

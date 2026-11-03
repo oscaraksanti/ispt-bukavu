@@ -104,3 +104,12 @@ describe("connexion à la base", () => {
     expect(adapterChaine(undefined)).toBe(BASE_ABSENTE);
   });
 });
+
+import { normaliserIdentifiant } from "@/features/auth/regles";
+
+describe("identifiant de connexion", () => {
+  it("accepte une adresse email ou un matricule", () => {
+    expect(normaliserIdentifiant(" Oscar@Example.org ")).toBe("oscar@example.org");
+    expect(normaliserIdentifiant(" isp 2025 0042 ")).toBe("ISP20250042");
+  });
+});

@@ -37,3 +37,15 @@ export function destinationSure(suite: string | null | undefined, defaut = "/adm
     return defaut;
   return suite;
 }
+
+/** Matricule tel qu'enregistré : majuscules, sans espaces. */
+export function normaliserMatricule(matricule: string) {
+  return matricule.replace(/\s+/g, "").toUpperCase();
+}
+
+/** Identifiant de connexion : adresse email ou matricule d'étudiant. */
+export function normaliserIdentifiant(identifiant: string) {
+  return identifiant.includes("@")
+    ? normaliserEmail(identifiant)
+    : normaliserMatricule(identifiant);
+}
