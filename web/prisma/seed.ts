@@ -47,6 +47,11 @@ async function permissionsEtRoles() {
           permissions: { create: r.permissions.map((permissionCode) => ({ permissionCode })) },
         },
       });
+    } else if (r.code === "enseignant") {
+      // Correctif : un enseignant ne publie que pour ses cours, sans droit général sur la valve.
+      await db.rolePermission.deleteMany({
+        where: { roleId: existant.id, permissionCode: "valve.publier" },
+      });
     } else if (r.code === "super_admin") {
       // L'administrateur technique conserve toujours toutes les permissions.
       for (const permissionCode of r.permissions) {

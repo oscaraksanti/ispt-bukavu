@@ -1,6 +1,10 @@
 "use client";
 
 import {
+  Megaphone,
+  BookOpen,
+  CalendarCog,
+  Presentation,
   CalendarDays,
   CalendarRange,
   FolderOpen,
@@ -31,6 +35,10 @@ import { cn } from "@/lib/cn";
 import type { GroupeNavigation } from "./navigation";
 
 const ICONES: Record<string, LucideIcon> = {
+  Megaphone,
+  BookOpen,
+  CalendarCog,
+  Presentation,
   CalendarDays,
   CalendarRange,
   FolderOpen,

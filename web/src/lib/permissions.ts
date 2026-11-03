@@ -140,7 +140,8 @@ export const ROLES_PAR_DEFAUT: {
     code: "enseignant",
     libelle: "Enseignant",
     description: "Cours, supports, notes et communiqués de ses cours.",
-    permissions: ["valve.publier"],
+    // Les droits d'un enseignant découlent des cours qui lui sont confiés.
+    permissions: [],
   },
   { code: "etudiant", libelle: "Étudiant", description: "Espace étudiant.", permissions: [] },
   { code: "candidat", libelle: "Candidat", description: "Espace candidat.", permissions: [] },

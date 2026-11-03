@@ -62,6 +62,35 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
     ],
   },
   {
+    titre: "Académique",
+    entrees: [
+      {
+        libelle: "Années et promotions",
+        href: "/admin/academique",
+        icone: "CalendarCog",
+        permission: "academique.structure",
+      },
+      {
+        libelle: "Programme des cours",
+        href: "/admin/academique/programme",
+        icone: "BookOpen",
+        permission: "academique.structure",
+      },
+      {
+        libelle: "Étudiants",
+        href: "/admin/etudiants",
+        icone: "Users",
+        permission: "etudiants.gerer",
+      },
+      {
+        libelle: "Enseignants",
+        href: "/admin/enseignants",
+        icone: "Presentation",
+        permission: "academique.structure",
+      },
+    ],
+  },
+  {
     titre: "Admissions",
     entrees: [
       {
@@ -81,6 +110,12 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
   {
     titre: "Communication",
     entrees: [
+      {
+        libelle: "Valve",
+        href: "/admin/valve",
+        icone: "Megaphone",
+        permission: "valve.publier",
+      },
       {
         libelle: "Actualités",
         href: "/admin/actualites",

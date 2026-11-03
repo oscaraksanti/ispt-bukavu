@@ -5,7 +5,15 @@ const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ispt-bukavu.vercel.app
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [filieres, { actualites }] = await Promise.all([lireFilieres(), lireActualites(1)]);
-  const pages = ["", "/institut", "/formations", "/admissions", "/actualites", "/contact"];
+  const pages = [
+    "",
+    "/institut",
+    "/formations",
+    "/admissions",
+    "/actualites",
+    "/valve",
+    "/contact",
+  ];
   return [
     ...pages.map((p) => ({
       url: `${BASE}${p}`,
