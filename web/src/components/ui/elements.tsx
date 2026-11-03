@@ -160,7 +160,7 @@ export function Chiffre({
         {libelle}
       </p>
       {detail && (
-        <p className={cn("mt-1 text-sm", clair ? "text-white/60" : "text-pierre-500")}>{detail}</p>
+        <p className={cn("mt-1 text-sm", clair ? "text-white/70" : "text-pierre-500")}>{detail}</p>
       )}
     </div>
   );
@@ -224,7 +224,7 @@ export function EtatVide({
 }) {
   return (
     <div className="flex flex-col items-center border border-dashed border-pierre-300 px-6 py-12 text-center">
-      {icone && <div className="text-pierre-400 [&_svg]:size-8">{icone}</div>}
+      {icone && <div className="text-pierre-500 [&_svg]:size-8">{icone}</div>}
       <p className="mt-4 font-medium text-pierre-900">{titre}</p>
       {description && <p className="mt-1 max-w-sm text-sm text-pierre-500">{description}</p>}
       {action && <div className="mt-6">{action}</div>}
@@ -246,7 +246,7 @@ export function FilAriane({
       <ol
         className={cn(
           "flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs tracking-wide uppercase",
-          clair ? "text-white/60" : "text-pierre-500",
+          clair ? "text-white/70" : "text-pierre-500",
         )}
       >
         {elements.map((el, i) => (

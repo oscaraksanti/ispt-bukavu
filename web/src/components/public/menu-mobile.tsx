@@ -6,7 +6,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { styleBouton } from "@/components/ui/bouton";
 import { cn } from "@/lib/cn";
-import { liensUtilitaires, navigationPrincipale } from "./navigation";
+import {
+  espacesDisponibles,
+  lienCandidature,
+  liensUtilitaires,
+  navigationPrincipale,
+} from "./navigation";
 
 export function MenuMobile() {
   const [ouvert, setOuvert] = useState(false);
@@ -52,12 +57,12 @@ export function MenuMobile() {
                   className="flex items-baseline justify-between py-4 font-serif text-[1.75rem] text-encre"
                 >
                   {l.libelle}
-                  <span className="font-mono text-xs text-pierre-400">0{i + 1}</span>
+                  <span className="font-mono text-xs text-pierre-500">0{i + 1}</span>
                 </Link>
               </li>
             ))}
           </ul>
-          <ul className="mt-6 grid grid-cols-2 gap-3 text-sm text-pierre-700">
+          <ul className="mt-6 grid grid-cols-2 gap-3 text-sm text-pierre-700 empty:hidden">
             {liensUtilitaires.map((l) => (
               <li key={l.href}>
                 <Link href={l.href} className="hover:text-encre">
@@ -67,15 +72,17 @@ export function MenuMobile() {
             ))}
           </ul>
           <div className="mt-auto grid gap-3 pt-10">
-            <Link href="/admissions/candidater" className={cn(styleBouton({ taille: "lg" }))}>
+            <Link href={lienCandidature} className={cn(styleBouton({ taille: "lg" }))}>
               Candidater
             </Link>
-            <Link
-              href="/connexion"
-              className={cn(styleBouton({ variante: "contour", taille: "lg" }))}
-            >
-              Connexion
-            </Link>
+            {espacesDisponibles && (
+              <Link
+                href="/connexion"
+                className={cn(styleBouton({ variante: "contour", taille: "lg" }))}
+              >
+                Connexion
+              </Link>
+            )}
           </div>
         </nav>
       </div>

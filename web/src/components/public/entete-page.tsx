@@ -1,0 +1,85 @@
+import Image from "next/image";
+import type { ReactNode } from "react";
+import { FilAriane, FiletCote } from "@/components/ui/elements";
+
+/** En-tête des pages intérieures du site public. */
+export function EntetePage({
+  ariane,
+  surtitre,
+  titre,
+  intro,
+  photo,
+  enfants,
+}: {
+  ariane: { libelle: string; href?: string }[];
+  surtitre: string;
+  titre: ReactNode;
+  intro?: ReactNode;
+  photo?: { src: string; alt: string; legende?: string; position?: string };
+  enfants?: ReactNode;
+}) {
+  return (
+    <section className="trame border-b border-pierre-200">
+      <div className="conteneur grid gap-10 py-10 lg:grid-cols-12 lg:gap-8 lg:py-16">
+        <div className={photo ? "lg:col-span-7" : "lg:col-span-9"}>
+          <FilAriane elements={ariane} />
+          <p className="surtitre mt-10 flex items-center gap-3">
+            <FiletCote className="w-8" />
+            {surtitre}
+          </p>
+          <h1 className="mt-5 text-[2.5rem] leading-[1.05] sm:text-5xl lg:text-[3.75rem]">
+            {titre}
+          </h1>
+          {intro && (
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-pierre-700">{intro}</p>
+          )}
+          {enfants}
+        </div>
+        {photo && (
+          <figure className="relative aspect-[4/3] self-end overflow-hidden rounded-md lg:col-span-5">
+            <Image
+              src={photo.src}
+              alt={photo.alt}
+              fill
+              sizes="(min-width: 1024px) 480px, 100vw"
+              className="object-cover"
+              style={{ objectPosition: photo.position ?? "50% 50%" }}
+              loading="eager"
+              fetchPriority="high"
+            />
+            {photo.legende && (
+              <figcaption className="absolute bottom-0 left-0 bg-encre/85 px-2.5 py-1 font-mono text-[0.625rem] tracking-wide text-white uppercase">
+                {photo.legende}
+              </figcaption>
+            )}
+          </figure>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/** Bloc de contenu à deux colonnes : titre à gauche, contenu à droite. */
+export function BlocPage({
+  numero,
+  titre,
+  children,
+  fond = "papier",
+}: {
+  numero: string;
+  titre: string;
+  children: ReactNode;
+  fond?: "papier" | "blanc";
+}) {
+  return (
+    <section className={fond === "blanc" ? "border-y border-pierre-200 bg-white" : ""}>
+      <div className="conteneur grid gap-8 py-16 lg:grid-cols-12 lg:py-20">
+        <div className="lg:col-span-4">
+          <p className="surtitre">{numero}</p>
+          <h2 className="mt-3 text-3xl lg:text-[2.25rem]">{titre}</h2>
+        </div>
+        <div className="lg:col-span-7 lg:col-start-6">{children}</div>
+      </div>
+    </section>
+  );
+}

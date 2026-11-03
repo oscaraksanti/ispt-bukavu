@@ -1,6 +1,7 @@
 import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { Blason } from "@/components/marque/blason";
+import { majuscule } from "@/lib/cn";
 import { filieres, institut } from "@/contenu/institut";
 import { liensUtilitaires, navigationPrincipale } from "./navigation";
 
@@ -23,14 +24,14 @@ export async function PiedDePage() {
             <ul className="mt-4 space-y-2.5 text-sm">
               {navigationPrincipale.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="hover:text-white">
+                  <Link href={l.href} className="inline-block py-0.5 hover:text-white">
                     {l.libelle}
                   </Link>
                 </li>
               ))}
               {liensUtilitaires.map((l) => (
                 <li key={l.href}>
-                  <Link href={l.href} className="hover:text-white">
+                  <Link href={l.href} className="inline-block py-0.5 hover:text-white">
                     {l.libelle}
                   </Link>
                 </li>
@@ -42,7 +43,10 @@ export async function PiedDePage() {
             <ul className="mt-4 space-y-2.5 text-sm">
               {filieres.map((f) => (
                 <li key={f.slug}>
-                  <Link href={`/formations/${f.slug}`} className="hover:text-white">
+                  <Link
+                    href={`/formations/${f.slug}`}
+                    className="inline-block py-0.5 hover:text-white"
+                  >
                     {f.nomCourt}
                   </Link>
                 </li>
@@ -55,16 +59,22 @@ export async function PiedDePage() {
               <p>
                 {institut.adresse.rue}
                 <br />
-                {institut.adresse.quartier}, {institut.adresse.commune}
+                {majuscule(institut.adresse.quartier)}, {institut.adresse.commune}
                 <br />
                 {institut.adresse.ville}, {institut.adresse.province}
               </p>
               <p>
-                <a href={institut.contacts.telephone.lien} className="hover:text-white">
+                <a
+                  href={institut.contacts.telephone.lien}
+                  className="inline-block py-1 hover:text-white"
+                >
                   {institut.contacts.telephone.affichage}
                 </a>
                 <br />
-                <a href={`mailto:${institut.contacts.email}`} className="hover:text-white">
+                <a
+                  href={`mailto:${institut.contacts.email}`}
+                  className="inline-block py-1 hover:text-white"
+                >
                   {institut.contacts.email}
                 </a>
               </p>
@@ -73,11 +83,11 @@ export async function PiedDePage() {
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="conteneur flex flex-col gap-2 py-6 font-mono text-[0.6875rem] tracking-wide text-white/50 uppercase sm:flex-row sm:items-center sm:justify-between">
+        <div className="conteneur flex flex-col gap-2 py-6 font-mono text-[0.6875rem] tracking-wide text-white/65 uppercase sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {annee} {institut.sigle} · {institut.creation.acte}
           </p>
-          <p>{institut.coordonnees.libelle}</p>
+          <p>Photographies de la collation 2026 : Eben Shoot · {institut.coordonnees.libelle}</p>
         </div>
       </div>
     </footer>

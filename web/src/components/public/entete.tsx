@@ -4,7 +4,12 @@ import { LienBouton } from "@/components/ui/bouton";
 import { institut } from "@/contenu/institut";
 import { MenuMobile } from "./menu-mobile";
 import { LienNavigation } from "./lien-navigation";
-import { liensUtilitaires, navigationPrincipale } from "./navigation";
+import {
+  espacesDisponibles,
+  lienCandidature,
+  liensUtilitaires,
+  navigationPrincipale,
+} from "./navigation";
 
 export function Entete() {
   return (
@@ -29,7 +34,7 @@ export function Entete() {
         </div>
       </div>
       <div className="conteneur flex h-16 items-center justify-between gap-6 lg:h-20">
-        <Link href="/" aria-label="ISPT-Bukavu, accueil" className="shrink-0">
+        <Link href="/" className="shrink-0">
           <span className="hidden sm:block">
             <Signature />
           </span>
@@ -47,19 +52,17 @@ export function Entete() {
           </ul>
         </nav>
         <div className="flex items-center gap-2">
-          <LienBouton
-            href="/connexion"
-            variante="fantome"
-            taille="sm"
-            className="hidden h-10 sm:inline-flex"
-          >
-            Connexion
-          </LienBouton>
-          <LienBouton
-            href="/admissions/candidater"
-            taille="sm"
-            className="hidden h-10 sm:inline-flex"
-          >
+          {espacesDisponibles && (
+            <LienBouton
+              href="/connexion"
+              variante="fantome"
+              taille="sm"
+              className="hidden h-10 sm:inline-flex"
+            >
+              Connexion
+            </LienBouton>
+          )}
+          <LienBouton href={lienCandidature} taille="sm" className="hidden h-10 sm:inline-flex">
             Candidater
           </LienBouton>
           <MenuMobile />
