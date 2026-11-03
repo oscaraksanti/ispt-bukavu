@@ -5,32 +5,11 @@ import { useRouter } from "next/navigation";
 import { useId, useRef, useState } from "react";
 import { Liste } from "@/components/ui/champs";
 import { televerserImage } from "@/features/medias/actions";
-import { COTE_MAX_PIXELS, DOSSIERS_MEDIAS, TYPES_IMAGES_ACCEPTES } from "@/features/medias/regles";
+import { DOSSIERS_MEDIAS, TYPES_IMAGES_ACCEPTES } from "@/features/medias/regles";
 import { cn } from "@/lib/cn";
+import { reduireImage as reduire } from "@/lib/reduire-image";
 
 type Suivi = { nom: string; etat: "attente" | "envoi" | "ok" | "erreur"; message?: string };
-
-/**
- * Réduit l'image dans le navigateur avant l'envoi : quelques centaines de Ko
- * au lieu de plusieurs Mo, ce qui compte sur une connexion mobile.
- */
-async function reduire(fichier: File): Promise<Blob> {
-  try {
-    const bitmap = await createImageBitmap(fichier, { imageOrientation: "from-image" });
-    const echelle = Math.min(1, COTE_MAX_PIXELS / Math.max(bitmap.width, bitmap.height));
-    const largeur = Math.round(bitmap.width * echelle);
-    const hauteur = Math.round(bitmap.height * echelle);
-    const canvas = document.createElement("canvas");
-    canvas.width = largeur;
-    canvas.height = hauteur;
-    canvas.getContext("2d")!.drawImage(bitmap, 0, 0, largeur, hauteur);
-    bitmap.close();
-    const blob = await new Promise<Blob | null>((ok) => canvas.toBlob(ok, "image/jpeg", 0.88));
-    return blob && blob.size < fichier.size ? blob : fichier;
-  } catch {
-    return fichier;
-  }
-}
 
 export function Televerseur() {
   const id = useId();

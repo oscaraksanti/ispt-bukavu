@@ -62,6 +62,23 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
     ],
   },
   {
+    titre: "Admissions",
+    entrees: [
+      {
+        libelle: "Candidatures",
+        href: "/admin/admissions",
+        icone: "FolderOpen",
+        permission: "admissions.consulter",
+      },
+      {
+        libelle: "Campagnes",
+        href: "/admin/admissions/campagnes",
+        icone: "CalendarRange",
+        permission: "admissions.campagnes",
+      },
+    ],
+  },
+  {
     titre: "Communication",
     entrees: [
       {

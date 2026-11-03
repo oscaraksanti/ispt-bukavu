@@ -19,7 +19,7 @@ export default function PageConnexion({ searchParams }: PageProps<"/connexion">)
       <p className="surtitre">Espace sécurisé</p>
       <h1 className="mt-3 text-4xl">Connexion</h1>
       <p className="mt-3 text-pierre-600">
-        Personnel, enseignants et étudiants de l&apos;ISPT-Bukavu.
+        Personnel, enseignants, étudiants et candidats de l&apos;ISPT-Bukavu.
       </p>
       <div className="mt-8">
         <Suspense fallback={<FormulaireConnexion />}>

@@ -31,6 +31,7 @@ export const ETIQUETTES = {
   actualites: "actualites",
   agenda: "agenda",
   faq: "faq",
+  admissions: "admissions",
 } as const;
 
 function signalerPanne(origine: string, erreur: unknown) {
@@ -435,5 +436,59 @@ export async function lireFaq(rubrique = "admissions"): Promise<QuestionPublique
     signalerPanne("questions fréquentes", erreur);
     cacheLife("minutes");
     return [];
+  }
+}
+
+/* ---------- Campagne d'admission ---------- */
+
+export type CampagnePublique = {
+  id: string;
+  libelle: string;
+  annee: string;
+  ouverture: string;
+  cloture: string;
+  frais: string;
+  devise: string;
+  filieres: { id: string; nom: string }[];
+  pieces: { id: string; libelle: string; description: string | null; obligatoire: boolean }[];
+};
+
+/** Campagne publiée dont la période de dépôt est en cours, s'il y en a une. */
+export async function lireCampagneOuverte(): Promise<CampagnePublique | null> {
+  "use cache";
+  cacheTag(ETIQUETTES.admissions, ETIQUETTES.filieres);
+  try {
+    const maintenant = new Date();
+    const c = await db.campagneAdmission.findFirst({
+      where: { statut: "OUVERTE", ouverture: { lte: maintenant }, cloture: { gte: maintenant } },
+      orderBy: { cloture: "asc" },
+      include: {
+        annee: true,
+        filieres: { where: { ouverte: true }, orderBy: { ordre: "asc" } },
+        pieces: { orderBy: { ordre: "asc" } },
+      },
+    });
+    cacheLife("hours");
+    if (!c) return null;
+    return {
+      id: c.id,
+      libelle: c.libelle,
+      annee: c.annee.libelle,
+      ouverture: c.ouverture.toISOString(),
+      cloture: c.cloture.toISOString(),
+      frais: c.fraisInscription.toString(),
+      devise: c.devise,
+      filieres: c.filieres.map((f) => ({ id: f.id, nom: f.nom })),
+      pieces: c.pieces.map(({ id, libelle, description, obligatoire }) => ({
+        id,
+        libelle,
+        description,
+        obligatoire,
+      })),
+    };
+  } catch (erreur) {
+    signalerPanne("campagne d'admission", erreur);
+    cacheLife("minutes");
+    return null;
   }
 }

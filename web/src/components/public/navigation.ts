@@ -25,10 +25,8 @@ export const liensUtilitaires = utilitaires.filter((l) => l.disponible);
 /** Bouton « Connexion » : personnel (et bientôt enseignants, étudiants, candidats). */
 export const espacesDisponibles = true;
 
-/** Dépôt des candidatures en ligne : ouvert avec le module d'admissions. */
-export const candidatureEnLigne = false;
-
-/** Destination du bouton « Candidater » tant que le dépôt en ligne n'est pas ouvert. */
-export const lienCandidature = candidatureEnLigne
-  ? "/admissions/candidater"
-  : "/admissions#dossier";
+/**
+ * Destination du bouton « Candidater » : la page de candidature indique
+ * elle-même si une campagne est ouverte, et sinon comment se préparer.
+ */
+export const lienCandidature = "/candidater";

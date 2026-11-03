@@ -4,7 +4,14 @@ import type { Metadata } from "next";
 import { BlocPage, EntetePage } from "@/components/public/entete-page";
 import { LienBouton } from "@/components/ui/bouton";
 import { Encadre } from "@/components/ui/elements";
-import { lireFaq, lireFilieres, lireInstitut, lirePage } from "@/features/contenu/lecture";
+import { formatJour } from "@/features/actualites/dates";
+import {
+  lireCampagneOuverte,
+  lireFaq,
+  lireFilieres,
+  lireInstitut,
+  lirePage,
+} from "@/features/contenu/lecture";
 import { lecteur } from "@/features/contenu/lecteur";
 
 export const metadata: Metadata = {
@@ -20,6 +27,7 @@ export default async function PageAdmissions() {
     lireFilieres(),
     lireFaq("admissions"),
   ]);
+  const campagne = await lireCampagneOuverte();
   const entete = lecteur(page.entete);
   const pieces = lecteur(page.pieces);
   const depot = lecteur(page.depot);
@@ -65,10 +73,27 @@ export default async function PageAdmissions() {
       </div>
 
       <BlocPage numero="03" titre="Déposer son dossier">
-        {depot.texte("texteEncadre") && (
-          <Encadre titre={depot.texte("titreEncadre")} className="mb-8">
-            {depot.texte("texteEncadre")}
-          </Encadre>
+        {campagne ? (
+          <div className="mb-8 rounded-md border border-ispt-200 bg-ispt-50 p-6">
+            <p className="surtitre">{campagne.libelle}</p>
+            <p className="mt-3 font-serif text-2xl text-encre">
+              Le dépôt en ligne est ouvert jusqu&apos;au{" "}
+              {formatJour.format(new Date(campagne.cloture))}.
+            </p>
+            <p className="mt-2 text-pierre-700">
+              Créez votre compte, déposez vos pièces depuis un téléphone et suivez la décision en
+              ligne.
+            </p>
+            <LienBouton href="/candidater" className="mt-5">
+              Candidater en ligne
+            </LienBouton>
+          </div>
+        ) : (
+          depot.texte("texteEncadre") && (
+            <Encadre titre={depot.texte("titreEncadre")} className="mb-8">
+              {depot.texte("texteEncadre")}
+            </Encadre>
+          )
         )}
         <p className="leading-relaxed text-pierre-700">{depot.texte("texte")}</p>
         <div className="mt-6 flex flex-wrap gap-3">

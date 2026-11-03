@@ -18,7 +18,7 @@ export default async function TableauDeBord() {
   const u = (await utilisateurConnecte())!;
   const [comptes, medias, pages, journal] = await Promise.all([
     db.utilisateur.count(),
-    db.media.count(),
+    db.media.count({ where: { NOT: { cle: { startsWith: "prive/" } } } }),
     db.page.count(),
     u.permissions.has("journal.consulter")
       ? db.journalActivite.findMany({

@@ -21,12 +21,16 @@ export default async function Mediatheque({ searchParams }: PageProps<"/admin/me
 
   const [medias, parDossier] = await Promise.all([
     db.media.findMany({
-      where: { typeMime: { startsWith: "image/" }, ...(dossier ? { dossier } : {}) },
+      where: {
+        typeMime: { startsWith: "image/" },
+        NOT: { cle: { startsWith: "prive/" } },
+        ...(dossier ? { dossier } : {}),
+      },
       orderBy: [{ creeLe: "desc" }, { nomFichier: "asc" }],
     }),
     db.media.groupBy({
       by: ["dossier"],
-      where: { typeMime: { startsWith: "image/" } },
+      where: { typeMime: { startsWith: "image/" }, NOT: { cle: { startsWith: "prive/" } } },
       _count: true,
     }),
   ]);

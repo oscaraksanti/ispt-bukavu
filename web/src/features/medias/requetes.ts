@@ -13,7 +13,8 @@ export type MediaSelecteur = {
 /** Images proposées dans le sélecteur de l'administration. */
 export async function mediasPourSelecteur(): Promise<MediaSelecteur[]> {
   const medias = await db.media.findMany({
-    where: { typeMime: { startsWith: "image/" } },
+    // Les pièces des candidats (clés « prive/ ») ne sont jamais proposées.
+    where: { typeMime: { startsWith: "image/" }, NOT: { cle: { startsWith: "prive/" } } },
     orderBy: [{ creeLe: "desc" }, { nomFichier: "asc" }],
   });
   return medias.map((m) => ({

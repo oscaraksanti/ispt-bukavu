@@ -32,6 +32,15 @@ export const LIBELLES_ACTIONS: Record<string, string> = {
   message_traite: "Message classé",
   message_rouvert: "Message rouvert",
   message_supprime: "Message supprimé",
+  campagne_creee: "Campagne d'admission créée",
+  campagne_modifiee: "Campagne d'admission modifiée",
+  campagne_ouverte: "Campagne d'admission publiée",
+  campagne_fermee: "Campagne d'admission fermée",
+  candidature_creee: "Dossier de candidature ouvert",
+  candidature_soumise: "Dossier de candidature déposé",
+  candidature_decision: "Décision sur une candidature",
+  piece_acceptee: "Pièce vérifiée",
+  piece_rejetee: "Pièce refusée",
 };
 
 export function libelleAction(action: string) {
