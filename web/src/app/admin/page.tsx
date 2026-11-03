@@ -2,6 +2,7 @@ import { ArrowRight, FileText, Images, Users } from "lucide-react";
 import Link from "next/link";
 import { EnteteAdmin, Panneau } from "@/components/admin/entete-admin";
 import { utilisateurConnecte } from "@/features/auth/acces";
+import { libelleAction } from "@/features/journal/libelles";
 import { db } from "@/lib/db";
 
 /** Page authentifiée : rendue à chaque requête, sans coquille statique. */
@@ -12,19 +13,6 @@ const formatDate = new Intl.DateTimeFormat("fr-FR", {
   timeStyle: "short",
   timeZone: "Africa/Lubumbashi",
 });
-
-const LIBELLES_ACTIONS: Record<string, string> = {
-  connexion: "Connexion",
-  mot_de_passe_defini: "Mot de passe défini",
-  contenu_modifie: "Contenu modifié",
-  media_ajoute: "Média ajouté",
-  media_modifie: "Média modifié",
-  media_supprime: "Média supprimé",
-  reglages_modifies: "Réglages modifiés",
-  utilisateur_cree: "Compte créé",
-  utilisateur_modifie: "Compte modifié",
-  role_modifie: "Rôle modifié",
-};
 
 export default async function TableauDeBord() {
   const u = (await utilisateurConnecte())!;
@@ -93,7 +81,7 @@ export default async function TableauDeBord() {
               {journal.map((e) => (
                 <li key={e.id} className="flex items-baseline justify-between gap-4 py-2.5 text-sm">
                   <span className="text-pierre-800">
-                    {LIBELLES_ACTIONS[e.action] ?? e.action}
+                    {libelleAction(e.action)}
                     <span className="text-pierre-500">
                       {" "}
                       · {[e.auteur?.prenom, e.auteur?.nom].filter(Boolean).join(" ") || "Système"}

@@ -133,6 +133,14 @@ export async function definirMotDePasse(
   if (!enregistrement || enregistrement.utiliseLe || enregistrement.expireLe < new Date()) {
     return { erreur: "Ce lien n'est plus valable. Demandez-en un nouveau." };
   }
+  // Un compte suspendu ne peut pas être réactivé par un lien émis avant la suspension.
+  const titulaire = await db.utilisateur.findUnique({
+    where: { id: enregistrement.utilisateurId },
+    select: { statut: true },
+  });
+  if (!titulaire || titulaire.statut === "SUSPENDU") {
+    return { erreur: "Ce lien n'est plus valable. Demandez-en un nouveau." };
+  }
 
   await db.$transaction([
     db.utilisateur.update({
