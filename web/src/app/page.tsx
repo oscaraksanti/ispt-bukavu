@@ -17,9 +17,9 @@ export default function Home() {
           width={64}
           height={64}
           priority
-          className="rounded-lg bg-white ring-1 ring-ink/10"
+          className="ring-ink/10 rounded-lg bg-white ring-1"
         />
-        <p className="text-sm font-medium tracking-wide text-ispt-blue uppercase">
+        <p className="text-ispt-blue text-sm font-medium tracking-wide uppercase">
           Institut Supérieur Pédagogique et Technique de Bukavu
         </p>
       </div>
@@ -27,22 +27,22 @@ export default function Home() {
       <h1 className="mt-10 text-4xl leading-tight font-semibold tracking-tight text-balance sm:text-5xl">
         Une nouvelle plateforme numérique se prépare.
       </h1>
-      <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink/75">
+      <p className="text-ink/75 mt-6 max-w-xl text-lg leading-relaxed">
         Communiqués officiels, inscriptions, cours, résultats et services aux étudiants : bientôt
         réunis au même endroit, accessibles depuis un téléphone.
       </p>
 
-      <dl className="mt-14 grid gap-6 border-t border-ink/10 pt-8 sm:grid-cols-2">
+      <dl className="border-ink/10 mt-14 grid gap-6 border-t pt-8 sm:grid-cols-2">
         {contacts.map((item) => (
           <div key={item.label}>
-            <dt className="text-xs font-medium tracking-wide text-ink/55 uppercase">
+            <dt className="text-ink/55 text-xs font-medium tracking-wide uppercase">
               {item.label}
             </dt>
             <dd className="mt-1 text-base">
               {item.href ? (
                 <a
                   href={item.href}
-                  className="underline decoration-ink/25 underline-offset-4 hover:decoration-ispt-blue"
+                  className="decoration-ink/25 hover:decoration-ispt-blue underline underline-offset-4"
                 >
                   {item.value}
                 </a>

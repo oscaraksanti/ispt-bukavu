@@ -1,14 +1,213 @@
 @import "tailwindcss";
 
+/* ---------------------------------------------------------------------------
+   Système de design ISPT-Bukavu — voir docs/design/charte.md
+   --------------------------------------------------------------------------- */
+
 @theme {
-  --color-ink: #14172b;
-  --color-paper: #f7f6f2;
-  --color-ispt-blue: #1f2a6b;
-  --color-ispt-red: #c4262e;
-  --color-ispt-gold: #e8b923;
+  /* Typographie */
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* Couleurs de marque */
+  --color-ispt-50: #f2f4fb;
+  --color-ispt-100: #e3e7f5;
+  --color-ispt-200: #c6cdeb;
+  --color-ispt-300: #9aa6d9;
+  --color-ispt-400: #6575c0;
+  --color-ispt-500: #3d4ea8;
+  --color-ispt-600: #283890;
+  --color-ispt-700: #222f78;
+  --color-ispt-800: #1b2561;
+  --color-ispt-900: #141b4a;
+  --color-ispt-950: #0c1130;
+
+  --color-encre: #141b4a;
+  --color-chantier: #fef200;
+  --color-chantier-fonce: #e6d900;
+  --color-rouge: #e31d2f;
+  --color-devise: #612d89;
+
+  /* Neutres chauds */
+  --color-papier: #f7f6f2;
+  --color-pierre-50: #fbfaf7;
+  --color-pierre-100: #f1efe9;
+  --color-pierre-200: #e4e1d8;
+  --color-pierre-300: #cfcbbf;
+  --color-pierre-400: #a19d91;
+  --color-pierre-500: #75726a;
+  --color-pierre-600: #57554e;
+  --color-pierre-700: #3e3c37;
+  --color-pierre-800: #292824;
+  --color-pierre-900: #1c1b18;
+
+  /* Couleurs système (retours d'interface uniquement) */
+  --color-succes: #1f7a4d;
+  --color-succes-fond: #e8f4ed;
+  --color-attention: #b25e09;
+  --color-attention-fond: #fbf0e2;
+  --color-erreur: #b42318;
+  --color-erreur-fond: #fbeae8;
+
+  /* Angles */
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+
+  /* Mouvement */
+  --ease-doux: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --duration-rapide: 150ms;
+  --duration-normale: 300ms;
+
+  /* Largeur de contenu */
+  --container-site: 77.5rem;
+
+  --animate-apparition: apparition 600ms var(--ease-doux) both;
 }
 
-body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+@keyframes apparition {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-papier);
+    color: var(--color-pierre-900);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1.1;
+    color: var(--color-encre);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-chantier);
+    color: var(--color-encre);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ispt-600);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Conteneur principal */
+  .conteneur {
+    width: 100%;
+    max-width: var(--container-site);
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+  @media (min-width: 640px) {
+    .conteneur {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  /* Libellé technique au-dessus des titres */
+  .surtitre {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ispt-600);
+  }
+
+  /* Trame de plan technique, très discrète */
+  .trame {
+    background-image:
+      linear-gradient(to right, rgb(40 56 144 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(40 56 144 / 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .trame-claire {
+    background-image:
+      linear-gradient(to right, rgb(255 255 255 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(255 255 255 / 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Texte riche (contenus saisis dans l'administration) */
+  .prose-ispt {
+    max-width: 68ch;
+    color: var(--color-pierre-800);
+  }
+  .prose-ispt > * + * {
+    margin-top: 1.1em;
+  }
+  .prose-ispt h2 {
+    font-size: 1.75rem;
+    margin-top: 2em;
+  }
+  .prose-ispt h3 {
+    font-size: 1.35rem;
+    margin-top: 1.6em;
+  }
+  .prose-ispt a {
+    color: var(--color-ispt-600);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .prose-ispt ul {
+    list-style: none;
+    padding: 0;
+  }
+  .prose-ispt ul > li {
+    position: relative;
+    padding-left: 1.25rem;
+  }
+  .prose-ispt ul > li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.7em;
+    width: 0.5rem;
+    height: 2px;
+    background: var(--color-ispt-600);
+  }
+}
+
+@utility apparition-differee {
+  animation: var(--animate-apparition);
+  animation-timeline: view();
+  animation-range: entry 0% entry 40%;
 }
