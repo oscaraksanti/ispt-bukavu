@@ -6,7 +6,7 @@
 | **Section / option** | Électronique et Informatique — Génie Informatique |
 | **Directeur** | Prof. SINDANO WA KITWANGA Expédit |
 | **Encadreur** | à désigner |
-| **Année académique** | 2026-2027 |
+| **Année académique** | 2025-2026 |
 
 ## Intitulé proposé
 
@@ -50,7 +50,7 @@ Comment doter l'ISPT-Bukavu d'un outil numérique unique, fiable et adapté aux 
 ## Délimitation
 
 - **Spatiale** : ISPT-Bukavu, ville de Bukavu, province du Sud-Kivu.
-- **Temporelle** : année académique 2026-2027.
+- **Temporelle** : année académique 2025-2026.
 
 ## Livrables
 
