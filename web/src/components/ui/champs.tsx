@@ -3,7 +3,7 @@ import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 const baseChamp =
-  "w-full rounded-xs border border-pierre-300 bg-white px-3 text-[0.9375rem] text-pierre-900 transition-colors duration-rapide placeholder:text-pierre-400 hover:border-pierre-400 focus:border-ispt-600 focus:ring-2 focus:ring-ispt-600/15 focus:outline-none disabled:cursor-not-allowed disabled:bg-pierre-100 aria-invalid:border-erreur aria-invalid:focus:ring-erreur/15";
+  "w-full rounded-xs border border-pierre-300 bg-white px-3 text-[0.9375rem] text-pierre-900 transition-colors duration-150 placeholder:text-pierre-400 hover:border-pierre-400 focus:border-ispt-600 focus:ring-2 focus:ring-ispt-600/15 focus:outline-none disabled:cursor-not-allowed disabled:bg-pierre-100 aria-invalid:border-erreur aria-invalid:focus:ring-erreur/15";
 
 export function Libelle({
   className,

@@ -58,8 +58,6 @@
 
   /* Mouvement */
   --ease-doux: cubic-bezier(0.2, 0.7, 0.2, 1);
-  --duration-rapide: 150ms;
-  --duration-normale: 300ms;
 
   /* Largeur de contenu */
   --container-site: 77.5rem;

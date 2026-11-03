@@ -4,7 +4,7 @@ import type { ComponentProps } from "react";
 import { cn } from "@/lib/cn";
 
 export const styleBouton = cva(
-  "inline-flex items-center justify-center gap-2 rounded-xs font-medium whitespace-nowrap transition-colors duration-rapide ease-doux disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 rounded-xs font-medium whitespace-nowrap transition-colors duration-150 ease-doux disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variante: {

@@ -24,7 +24,7 @@ export function LienFleche({
       {children}
       <Icone
         aria-hidden
-        className="duration-rapide size-4 transition-transform ease-doux group-hover:translate-x-0.5"
+        className="size-4 transition-transform duration-150 ease-doux group-hover:translate-x-0.5"
       />
     </Link>
   );
