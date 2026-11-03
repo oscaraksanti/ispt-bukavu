@@ -252,7 +252,8 @@ export const PAGES: DefinitionPage[] = [
             {
               annee: "2011",
               titre: "Ouverture",
-              texte: "L'institut accueille ses premiers étudiants, avenue de l'Hippodrome à Bukavu.",
+              texte:
+                "L'institut accueille ses premiers étudiants, avenue de l'Hippodrome à Bukavu.",
             },
             {
               annee: "LMD",
@@ -349,7 +350,8 @@ export const PAGES: DefinitionPage[] = [
       {
         cle: "pieces",
         titre: "Pièces du dossier",
-        description: "Liste affichée sur le site tant qu'aucune campagne d'admission n'est ouverte.",
+        description:
+          "Liste affichée sur le site tant qu'aucune campagne d'admission n'est ouverte.",
         champs: [
           {
             type: "liste",
