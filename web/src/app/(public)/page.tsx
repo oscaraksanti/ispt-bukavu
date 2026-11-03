@@ -2,7 +2,7 @@ import { ArrowRight, Check, MapPin, Phone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { LienBouton } from "@/components/ui/bouton";
-import { Chiffre, EnteteSection, FiletCote, LienFleche } from "@/components/ui/elements";
+import { EnteteSection, FiletCote, LienFleche } from "@/components/ui/elements";
 import {
   admission,
   autorites,
@@ -11,6 +11,7 @@ import {
   institut,
   stages,
 } from "@/contenu/institut";
+import { lienCandidature } from "@/components/public/navigation";
 
 function Legende({ children }: { children: React.ReactNode }) {
   return (
@@ -33,7 +34,7 @@ function Accroche() {
           <h1 className="mt-6 text-[2.75rem] leading-[1.02] sm:text-6xl lg:text-[4.5rem]">
             Ingénieurs de terrain.
             <br />
-            <span className="relative italic">
+            <span className="relative">
               Enseignants
               <span
                 aria-hidden
@@ -135,41 +136,110 @@ function Accroche() {
 }
 
 function Institut() {
+  const fiche = [
+    ["Statut", "Établissement public"],
+    ["Création", `${institut.creation.date}`],
+    ["Acte", "Arrêté n°219/MINESU/CAB.MIN/MML/KOB/2010"],
+    ["Ouverture", String(institut.creation.operationnel)],
+    ["Études", `${institut.etudes.systeme} · ${institut.etudes.semestres} semestres`],
+    ["Diplôme", institut.etudes.diplome],
+    ["Siège", `${institut.adresse.rue}, Bukavu`],
+  ];
   return (
     <section className="conteneur py-20 lg:py-28">
-      <div className="grid gap-12 lg:grid-cols-12">
-        <div className="lg:col-span-5">
+      <div className="grid gap-14 lg:grid-cols-12">
+        <div className="min-w-0 self-start lg:sticky lg:top-36 lg:col-span-6">
           <EnteteSection
             numero="01"
             surtitre="L'institut"
             titre="Une double vocation, technique et pédagogique"
           />
-        </div>
-        <div className="lg:col-span-6 lg:col-start-7">
-          <p className="text-lg leading-relaxed text-pierre-700">{institut.mission}</p>
-          <p className="mt-5 leading-relaxed text-pierre-600">
-            {institut.statut}, l&apos;ISPT-Bukavu a été créé par l&apos;
-            {institut.creation.acte} du {institut.creation.date} et accueille ses étudiants depuis{" "}
-            {institut.creation.operationnel}.
-          </p>
+          <p className="mt-8 text-lg leading-relaxed text-pierre-700">{institut.mission}</p>
           <div className="mt-8">
             <LienFleche href="/institut">Présentation de l&apos;institut</LienFleche>
           </div>
         </div>
+        <div className="min-w-0 lg:col-span-5 lg:col-start-8">
+          <figure className="relative aspect-[4/3] overflow-hidden rounded-md">
+            <Image
+              src="/photos/campus-batiment-facade.jpg"
+              alt="Façade d'un bâtiment du campus, entouré de végétation, avenue de l'Hippodrome."
+              fill
+              sizes="(min-width: 1024px) 480px, 100vw"
+              className="object-cover object-[50%_30%]"
+            />
+            <Legende>Campus · Avenue de l&apos;Hippodrome</Legende>
+          </figure>
+          <p className="surtitre mt-8 border-t border-encre py-3 !font-mono text-pierre-500">
+            Fiche signalétique
+          </p>
+          <dl>
+            {fiche.map(([cle, valeur]) => (
+              <div
+                key={cle}
+                className="grid grid-cols-[7.5rem_1fr] gap-4 border-t border-pierre-200 py-2.5 text-[0.9375rem]"
+              >
+                <dt className="font-mono text-xs leading-6 tracking-wide text-pierre-500 uppercase">
+                  {cle}
+                </dt>
+                <dd className="min-w-0 [overflow-wrap:anywhere] text-pierre-900">{valeur}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
-      <div className="mt-16 grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-4">
-        <Chiffre
-          valeur={String(institut.creation.annee)}
-          libelle="Création"
-          detail="Arrêté ministériel n°219"
-        />
-        <Chiffre valeur={String(institut.creation.operationnel)} libelle="Premières activités" />
-        <Chiffre valeur="LMD" libelle="Système d'études" detail="Licence en quatre ans" />
-        <Chiffre
-          valeur="Public"
-          libelle="Statut"
-          detail="Enseignement supérieur et universitaire"
-        />
+    </section>
+  );
+}
+
+function EnImages() {
+  const photos = [
+    {
+      src: "/photos/collation-2026-laureats-salle.jpg",
+      alt: "Lauréats et membres du corps académique réunis en salle lors de la collation 2026.",
+      legende: "Collation 2026 · Photo Eben Shoot",
+      classe: "col-span-2 row-span-2",
+    },
+    {
+      src: "/photos/tp-topographie-1.jpg",
+      alt: "Étudiant en gilet réfléchissant manipulant un niveau topographique.",
+      legende: "Topographie",
+      classe: "",
+    },
+    {
+      src: "/photos/collation-2026-remise-casque-2.jpg",
+      alt: "Un professeur remet le casque à un lauréat.",
+      legende: "Remise du casque · Photo Eben Shoot",
+      classe: "",
+    },
+    {
+      src: "/photos/campus-jardin-etudiants.jpg",
+      alt: "Étudiants échangeant devant un bâtiment du campus.",
+      legende: "Campus",
+      classe: "",
+    },
+    {
+      src: "/photos/salle-cours-examen.jpg",
+      alt: "Étudiants composant en salle de cours.",
+      legende: "Évaluation",
+      classe: "",
+    },
+  ];
+  return (
+    <section aria-label="L'institut en images" className="bg-encre py-3">
+      <div className="grid auto-rows-[9rem] grid-cols-2 gap-3 px-3 sm:auto-rows-[13rem] md:grid-cols-4 lg:auto-rows-[15rem]">
+        {photos.map((p) => (
+          <figure key={p.src} className={`relative overflow-hidden ${p.classe}`}>
+            <Image
+              src={p.src}
+              alt={p.alt}
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="object-cover"
+            />
+            <Legende>{p.legende}</Legende>
+          </figure>
+        ))}
       </div>
     </section>
   );
@@ -311,7 +381,7 @@ function Admissions() {
             ))}
           </ul>
           <div className="mt-8 flex flex-wrap gap-3">
-            <LienBouton href="/admissions/candidater">Déposer ma candidature</LienBouton>
+            <LienBouton href={lienCandidature}>Déposer ma candidature</LienBouton>
             <LienBouton href="/admissions" variante="contour">
               En savoir plus
             </LienBouton>
@@ -341,7 +411,7 @@ function Anciens() {
               sizes="(min-width: 1024px) 480px, 100vw"
               className="object-cover"
             />
-            <Legende>Lauréats · Collation 2026</Legende>
+            <Legende>Lauréats 2026 · Photo Eben Shoot</Legende>
           </figure>
         </div>
         <div className="grid gap-12 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
@@ -431,6 +501,7 @@ export default function Accueil() {
       <Formations />
       <Stages />
       <Admissions />
+      <EnImages />
       <Anciens />
       <Autorites />
       <Contact />
