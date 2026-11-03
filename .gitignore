@@ -1,0 +1,27 @@
+# Système
+.DS_Store
+Thumbs.db
+
+# Dépendances et builds
+node_modules/
+.next/
+out/
+coverage/
+*.tsbuildinfo
+
+# Variables d'environnement et secrets
+.env
+.env.*
+!.env.example
+
+# Éditeurs
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+
+# Données personnelles d'enquête (jamais dans un dépôt public)
+docs/recherche/donnees-brutes/
+
+# Notes locales de travail
+.local/
