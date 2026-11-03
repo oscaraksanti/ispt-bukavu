@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { BlocPage, EntetePage } from "@/components/public/entete-page";
 import { LienBouton } from "@/components/ui/bouton";
 import { Encadre } from "@/components/ui/elements";
-import { admission, filieres, institut } from "@/contenu/institut";
+import { lireFilieres, lireInstitut, lirePage } from "@/features/contenu/lecture";
+import { lecteur } from "@/features/contenu/lecteur";
 
 export const metadata: Metadata = {
   title: "Admissions",
@@ -11,20 +12,25 @@ export const metadata: Metadata = {
     "Conditions, pièces du dossier et frais d'inscription pour entrer en première année à l'ISPT-Bukavu.",
 };
 
-export default function PageAdmissions() {
+export default async function PageAdmissions() {
+  const [page, institut, filieres] = await Promise.all([
+    lirePage("admissions"),
+    lireInstitut(),
+    lireFilieres(),
+  ]);
+  const entete = lecteur(page.entete);
+  const pieces = lecteur(page.pieces);
+  const depot = lecteur(page.depot);
   return (
     <>
       <EntetePage
         ariane={[{ libelle: "Accueil", href: "/" }, { libelle: "Admissions" }]}
         surtitre="Admissions"
-        titre="Entrer en première année"
-        intro="L'admission en première année de Licence est ouverte aux titulaires du diplôme d'État. Le dossier se compose de huit pièces, dont le paiement des frais d'inscription."
-        photo={{
-          src: "/photos/campus-entree-escalier.jpg",
-          alt: "Étudiants à l'entrée d'un bâtiment du campus.",
-          legende: "Entrée du campus",
-          position: "50% 60%",
-        }}
+        titre={entete.texte("titre")}
+        intro={entete.texte("intro")}
+        photo={entete.image("photo")}
+        legende={entete.texte("legende")}
+        position="50% 60%"
       />
 
       <BlocPage numero="01" titre="Filières ouvertes">
@@ -36,20 +42,19 @@ export default function PageAdmissions() {
           ))}
         </ul>
         <p className="mt-4 text-sm text-pierre-600">
-          {institut.etudes.duree}, {institut.etudes.semestres} semestres, diplôme de{" "}
-          {institut.etudes.diplome}.
+          {institut.dureeEtudes}, {institut.semestres} semestres, diplôme de {institut.diplome}.
         </p>
       </BlocPage>
 
       <div id="dossier" className="scroll-mt-28">
         <BlocPage numero="02" titre="Pièces du dossier" fond="blanc">
           <ol className="divide-y divide-pierre-200 border-y border-pierre-200">
-            {admission.pieces.map((p, i) => (
-              <li key={p} className="flex items-center gap-5 py-3.5">
+            {pieces.liste("liste").map((p, i) => (
+              <li key={i} className="flex items-center gap-5 py-3.5">
                 <span className="font-mono text-xs text-pierre-500">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <span className="flex-1 text-pierre-900">{p}</span>
+                <span className="flex-1 text-pierre-900">{p.texte("libelle")}</span>
                 <Check aria-hidden className="size-4 text-ispt-600" />
               </li>
             ))}
@@ -58,29 +63,33 @@ export default function PageAdmissions() {
       </div>
 
       <BlocPage numero="03" titre="Déposer son dossier">
-        <Encadre titre="Dépôt en ligne" className="mb-8">
-          Le dépôt du dossier en ligne ouvre prochainement sur cette plateforme. En attendant, les
-          dossiers sont reçus à l&apos;institut, {institut.adresse.rue}, Bukavu.
-        </Encadre>
-        <p className="leading-relaxed text-pierre-700">
-          Pour toute question sur votre admission, le secrétariat répond par téléphone, par WhatsApp
-          et par email.
-        </p>
+        {depot.texte("texteEncadre") && (
+          <Encadre titre={depot.texte("titreEncadre")} className="mb-8">
+            {depot.texte("texteEncadre")}
+          </Encadre>
+        )}
+        <p className="leading-relaxed text-pierre-700">{depot.texte("texte")}</p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <LienBouton href={institut.contacts.telephone.lien} variante="institutionnel">
-            <Phone aria-hidden /> {institut.contacts.telephone.affichage}
-          </LienBouton>
-          <LienBouton
-            href={institut.contacts.whatsapp.lien}
-            variante="contour"
-            target="_blank"
-            rel="noopener"
-          >
-            WhatsApp {institut.contacts.whatsapp.affichage}
-          </LienBouton>
-          <LienBouton href={`mailto:${institut.contacts.email}`} variante="contour">
-            <Mail aria-hidden /> {institut.contacts.email}
-          </LienBouton>
+          {institut.telephone && (
+            <LienBouton href={institut.telephoneLien} variante="institutionnel">
+              <Phone aria-hidden /> {institut.telephone}
+            </LienBouton>
+          )}
+          {institut.whatsapp && (
+            <LienBouton
+              href={institut.whatsappLien}
+              variante="contour"
+              target="_blank"
+              rel="noopener"
+            >
+              WhatsApp {institut.whatsapp}
+            </LienBouton>
+          )}
+          {institut.email && (
+            <LienBouton href={`mailto:${institut.email}`} variante="contour">
+              <Mail aria-hidden /> {institut.email}
+            </LienBouton>
+          )}
         </div>
       </BlocPage>
     </>

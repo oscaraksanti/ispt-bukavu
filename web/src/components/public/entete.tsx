@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Signature } from "@/components/marque/blason";
 import { LienBouton } from "@/components/ui/bouton";
-import { institut } from "@/contenu/institut";
+import { lireInstitut } from "@/features/contenu/lecture";
 import { MenuMobile } from "./menu-mobile";
 import { LienNavigation } from "./lien-navigation";
 import {
@@ -11,7 +11,8 @@ import {
   navigationPrincipale,
 } from "./navigation";
 
-export function Entete() {
+export async function Entete() {
+  const institut = await lireInstitut();
   return (
     <header className="entete-site sticky top-0 z-40 border-b border-pierre-200 bg-papier/95 backdrop-blur-sm">
       <div className="barre-utilitaire hidden border-b border-pierre-200 bg-encre text-white/75 lg:block">
@@ -25,11 +26,13 @@ export function Entete() {
                 </Link>
               </li>
             ))}
-            <li>
-              <a href={institut.contacts.telephone.lien} className="hover:text-white">
-                {institut.contacts.telephone.affichage}
-              </a>
-            </li>
+            {institut.telephone && (
+              <li>
+                <a href={institut.telephoneLien} className="hover:text-white">
+                  {institut.telephone}
+                </a>
+              </li>
+            )}
           </ul>
         </div>
       </div>

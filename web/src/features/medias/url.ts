@@ -1,11 +1,11 @@
 /**
  * Adresse publique d'un média.
  * Les photographies officielles livrées avec le site ont une clé « public/… » ;
- * les fichiers téléversés sont servis par la route /medias/….
+ * les fichiers téléversés (clé « medias/… ») sont servis par la route /medias/….
  */
 export function urlMedia(cle: string) {
   if (cle.startsWith("public/")) return `/${cle.slice("public/".length)}`;
-  return `/medias/${cle}`;
+  return `/medias/${cle.replace(/^medias\//, "")}`;
 }
 
 export type ImageResolue = {

@@ -3,62 +3,60 @@ import type { Metadata } from "next";
 import { Carte } from "@/components/public/carte";
 import { EntetePage } from "@/components/public/entete-page";
 import { majuscule } from "@/lib/cn";
-import { institut } from "@/contenu/institut";
+import { lireInstitut, lirePage } from "@/features/contenu/lecture";
+import { lecteur } from "@/features/contenu/lecteur";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: "Adresse, téléphone, WhatsApp et email de l'ISPT-Bukavu.",
 };
 
-const { latitude: lat, longitude: lon } = institut.coordonnees;
-const delta = 0.004;
-const carte = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - delta}%2C${lat - delta}%2C${lon + delta}%2C${lat + delta}&layer=mapnik&marker=${lat}%2C${lon}`;
-const itineraire = `https://www.openstreetmap.org/directions?to=${lat}%2C${lon}#map=17/${lat}/${lon}`;
+const DELTA = 0.004;
 
-export default function PageContact() {
+export default async function PageContact() {
+  const [page, institut] = await Promise.all([lirePage("contact"), lireInstitut()]);
+  const entete = lecteur(page.entete);
+  const { latitudeNombre: lat, longitudeNombre: lon } = institut;
+  const carte = `https://www.openstreetmap.org/export/embed.html?bbox=${lon - DELTA}%2C${lat - DELTA}%2C${lon + DELTA}%2C${lat + DELTA}&layer=mapnik&marker=${lat}%2C${lon}`;
+  const itineraire = `https://www.openstreetmap.org/directions?to=${lat}%2C${lon}#map=17/${lat}/${lon}`;
   const moyens = [
     {
       icone: Phone,
       libelle: "Téléphone",
-      valeur: institut.contacts.telephone.affichage,
-      href: institut.contacts.telephone.lien,
+      valeur: institut.telephone,
+      href: institut.telephoneLien,
     },
     {
       icone: MessageCircle,
       libelle: "WhatsApp",
-      valeur: institut.contacts.whatsapp.affichage,
-      href: institut.contacts.whatsapp.lien,
+      valeur: institut.whatsapp,
+      href: institut.whatsappLien,
     },
-    {
-      icone: Mail,
-      libelle: "Email",
-      valeur: institut.contacts.email,
-      href: `mailto:${institut.contacts.email}`,
-    },
-  ];
+    { icone: Mail, libelle: "Email", valeur: institut.email, href: `mailto:${institut.email}` },
+  ].filter((m) => m.valeur);
 
   return (
     <>
       <EntetePage
         ariane={[{ libelle: "Accueil", href: "/" }, { libelle: "Contact" }]}
         surtitre="Contact"
-        titre="Nous écrire, nous appeler, nous rendre visite"
+        titre={entete.texte("titre")}
       />
       <section className="conteneur grid gap-12 py-16 lg:grid-cols-12 lg:py-20">
         <div className="lg:col-span-5">
           <h2 className="text-3xl">Adresse</h2>
           <address className="mt-4 text-lg leading-relaxed text-pierre-800 not-italic">
-            {institut.adresse.rue}
+            {institut.rue}
             <br />
-            {majuscule(institut.adresse.quartier)}, {institut.adresse.commune}
+            {majuscule(institut.quartier)}, {institut.commune}
             <br />
-            {institut.adresse.ville}, {institut.adresse.province}
+            {institut.ville}, {institut.province}
             <br />
-            {institut.adresse.pays}
+            {institut.pays}
           </address>
-          <p className="mt-3 text-pierre-600">{institut.adresse.reperes}.</p>
-          <p className="mt-1 text-pierre-600">{institut.adresse.boitePostale}</p>
-          <p className="mt-4 font-mono text-sm text-ispt-600">{institut.coordonnees.libelle}</p>
+          {institut.reperes && <p className="mt-3 text-pierre-600">{institut.reperes}.</p>}
+          {institut.boitePostale && <p className="mt-1 text-pierre-600">{institut.boitePostale}</p>}
+          <p className="mt-4 font-mono text-sm text-ispt-600">{institut.coordonnees}</p>
 
           <ul className="mt-10 divide-y divide-pierre-200 border-y border-pierre-200">
             {moyens.map(({ icone: Icone, libelle, valeur, href }) => (
@@ -83,7 +81,7 @@ export default function PageContact() {
           </ul>
         </div>
         <div className="lg:col-span-7">
-          <Carte src={carte} libelle={institut.coordonnees.libelle} />
+          <Carte src={carte} libelle={institut.coordonnees} />
           <a
             href={itineraire}
             target="_blank"

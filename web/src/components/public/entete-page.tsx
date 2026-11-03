@@ -1,6 +1,7 @@
-import Image from "next/image";
 import type { ReactNode } from "react";
 import { FilAriane, FiletCote } from "@/components/ui/elements";
+import type { ImageResolue } from "@/features/medias/url";
+import { Legende, Photo } from "./photo";
 
 /** En-tête des pages intérieures du site public. */
 export function EntetePage({
@@ -9,13 +10,17 @@ export function EntetePage({
   titre,
   intro,
   photo,
+  legende,
+  position,
   enfants,
 }: {
   ariane: { libelle: string; href?: string }[];
   surtitre: string;
   titre: ReactNode;
   intro?: ReactNode;
-  photo?: { src: string; alt: string; legende?: string; position?: string };
+  photo?: ImageResolue | null;
+  legende?: string;
+  position?: string;
   enfants?: ReactNode;
 }) {
   return (
@@ -47,21 +52,13 @@ export function EntetePage({
         </div>
         {photo && (
           <figure className="entree-image relative aspect-[4/3] self-end overflow-hidden rounded-md lg:col-span-5">
-            <Image
-              src={photo.src}
-              alt={photo.alt}
-              fill
+            <Photo
+              image={photo}
               sizes="(min-width: 1024px) 480px, 100vw"
-              className="object-cover"
-              style={{ objectPosition: photo.position ?? "50% 50%" }}
-              loading="eager"
-              fetchPriority="high"
+              style={{ objectPosition: position ?? "50% 50%" }}
+              prioritaire
             />
-            {photo.legende && (
-              <figcaption className="absolute bottom-0 left-0 bg-encre/85 px-2.5 py-1 font-mono text-[0.625rem] tracking-wide text-white uppercase">
-                {photo.legende}
-              </figcaption>
-            )}
+            <Legende>{legende}</Legende>
           </figure>
         )}
       </div>

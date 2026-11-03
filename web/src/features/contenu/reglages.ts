@@ -1,5 +1,36 @@
 import type { DefinitionBloc } from "./definitions";
 
+const DEFAUT_INSTITUT = {
+  nom: "Institut Supérieur Pédagogique et Technique de Bukavu",
+  sigle: "ISPT-Bukavu",
+  devise: "Scientia splendet et conscientia",
+  statut: "Établissement public d'enseignement supérieur et universitaire",
+  mission:
+    "Former des ingénieurs en techniques appliquées, aptes à intégrer les entreprises pour contribuer au développement technologique et industriel, et capables d'enseigner dans les établissements techniques afin de renforcer la qualité de l'éducation professionnelle.",
+  acteCreation: "Arrêté ministériel n°219/MINESU/CAB.MIN/MML/KOB/2010",
+  dateCreation: "8 novembre 2010",
+  anneeCreation: "2010",
+  anneeOuverture: "2011",
+  rue: "Avenue de l'Hippodrome n°102",
+  quartier: "quartier Nyawera",
+  commune: "commune d'Ibanda",
+  ville: "Bukavu",
+  province: "Sud-Kivu",
+  pays: "République Démocratique du Congo",
+  reperes: "À proximité de la Place Mulamba",
+  boitePostale: "B.P. 1334 Bukavu",
+  latitude: "-2.5025",
+  longitude: "28.871667",
+  coordonnees: "02°30'09\" S · 28°52'18\" E",
+  telephone: "099 924 9630",
+  whatsapp: "085 371 5883",
+  email: "ispt.bk@gmail.com",
+  systemeEtudes: "LMD",
+  dureeEtudes: "4 ans",
+  semestres: "8",
+  diplome: "Licence",
+} satisfies Record<string, string>;
+
 /** Réglages généraux de l'institut, modifiables dans l'administration. */
 export const REGLAGES_INSTITUT: DefinitionBloc = {
   cle: "institut",
@@ -44,34 +75,27 @@ export const REGLAGES_INSTITUT: DefinitionBloc = {
     { type: "texte", cle: "semestres", libelle: "Nombre de semestres" },
     { type: "texte", cle: "diplome", libelle: "Diplôme délivré" },
   ],
-  defaut: {
-    nom: "Institut Supérieur Pédagogique et Technique de Bukavu",
-    sigle: "ISPT-Bukavu",
-    devise: "Scientia splendet et conscientia",
-    statut: "Établissement public d'enseignement supérieur et universitaire",
-    mission:
-      "Former des ingénieurs en techniques appliquées, aptes à intégrer les entreprises pour contribuer au développement technologique et industriel, et capables d'enseigner dans les établissements techniques afin de renforcer la qualité de l'éducation professionnelle.",
-    acteCreation: "Arrêté ministériel n°219/MINESU/CAB.MIN/MML/KOB/2010",
-    dateCreation: "8 novembre 2010",
-    anneeCreation: "2010",
-    anneeOuverture: "2011",
-    rue: "Avenue de l'Hippodrome n°102",
-    quartier: "quartier Nyawera",
-    commune: "commune d'Ibanda",
-    ville: "Bukavu",
-    province: "Sud-Kivu",
-    pays: "République Démocratique du Congo",
-    reperes: "À proximité de la Place Mulamba",
-    boitePostale: "B.P. 1334 Bukavu",
-    latitude: "-2.5025",
-    longitude: "28.871667",
-    coordonnees: "02°30'09\" S · 28°52'18\" E",
-    telephone: "099 924 9630",
-    whatsapp: "085 371 5883",
-    email: "ispt.bk@gmail.com",
-    systemeEtudes: "LMD",
-    dureeEtudes: "4 ans",
-    semestres: "8",
-    diplome: "Licence",
-  },
+  defaut: DEFAUT_INSTITUT,
 };
+
+export type ReglagesInstitut = Record<keyof typeof DEFAUT_INSTITUT, string>;
+
+/** Numéro au format international (+243…) à partir d'un numéro affiché localement. */
+export function numeroInternational(affichage: string, indicatif = "243") {
+  const chiffres = affichage.replace(/\D/g, "");
+  if (!chiffres) return "";
+  if (affichage.trim().startsWith("+")) return chiffres;
+  if (chiffres.startsWith("00")) return chiffres.slice(2);
+  if (chiffres.startsWith(indicatif) && chiffres.length > 10) return chiffres;
+  return indicatif + chiffres.replace(/^0/, "");
+}
+
+export function lienTelephone(affichage: string) {
+  const n = numeroInternational(affichage);
+  return n ? `tel:+${n}` : "";
+}
+
+export function lienWhatsapp(affichage: string) {
+  const n = numeroInternational(affichage);
+  return n ? `https://wa.me/${n}` : "";
+}

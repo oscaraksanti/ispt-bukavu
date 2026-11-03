@@ -1,9 +1,10 @@
 import type { MetadataRoute } from "next";
-import { filieres } from "@/contenu/institut";
+import { lireFilieres } from "@/features/contenu/lecture";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ispt-bukavu.vercel.app";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const filieres = await lireFilieres();
   const pages = ["", "/institut", "/formations", "/admissions", "/contact"];
   return [
     ...pages.map((p) => ({

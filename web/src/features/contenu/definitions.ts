@@ -152,11 +152,40 @@ export const PAGES: DefinitionPage[] = [
         champs: [
           { type: "texte", cle: "titre", libelle: "Titre" },
           { type: "texteLong", cle: "intro", libelle: "Introduction" },
+          {
+            type: "liste",
+            cle: "etapes",
+            libelle: "Étapes",
+            min: 1,
+            max: 6,
+            element: [
+              { type: "texte", cle: "titre", libelle: "Titre" },
+              { type: "texteLong", cle: "texte", libelle: "Texte" },
+            ],
+          },
         ],
         defaut: {
           titre: "Candidater sans se déplacer",
           intro:
             "Le dossier de candidature se constitue en ligne. Chaque étape est suivie et chaque décision notifiée.",
+          etapes: [
+            {
+              titre: "Créer un compte",
+              texte: "Une adresse email suffit. Le dossier se remplit depuis un téléphone.",
+            },
+            {
+              titre: "Constituer le dossier",
+              texte: "Pièces numérisées ou photographiées, à déposer en ligne.",
+            },
+            {
+              titre: "Régler les frais",
+              texte: "Frais d'inscription : 10 $. La référence du paiement est jointe au dossier.",
+            },
+            {
+              titre: "Suivre la décision",
+              texte: "L'état du dossier et les demandes de complément sont notifiés.",
+            },
+          ],
         },
       },
       {
@@ -286,6 +315,31 @@ export const PAGES: DefinitionPage[] = [
           titrePedagogique: "Enseignants techniques",
           textePedagogique:
             "Il prépare également des ingénieurs disposant des compétences pédagogiques nécessaires pour enseigner dans les établissements d'enseignement technique, notamment en électricité, mécanique, électronique, informatique et construction.",
+        },
+      },
+      {
+        cle: "stages",
+        titre: "Stages et partenaires",
+        description:
+          "Textes des deux stages, repris sur l'accueil. Les lieux de stage se gèrent dans « Partenaires ».",
+        champs: [
+          { type: "texte", cle: "titre", libelle: "Titre" },
+          { type: "texteLong", cle: "intro", libelle: "Introduction" },
+          { type: "texte", cle: "titreProfessionnel", libelle: "Stage professionnel — titre" },
+          { type: "texteLong", cle: "texteProfessionnel", libelle: "Stage professionnel — texte" },
+          { type: "texte", cle: "titrePedagogique", libelle: "Stage pédagogique — titre" },
+          { type: "texteLong", cle: "textePedagogique", libelle: "Stage pédagogique — texte" },
+        ],
+        defaut: {
+          titre: "Stages et partenaires",
+          intro:
+            "L'institut conclut des contrats de partenariat avec les entreprises, les usines et les ateliers pour le stage professionnel, et avec les établissements d'enseignement technique pour le stage pédagogique.",
+          titreProfessionnel: "Stage professionnel",
+          texteProfessionnel:
+            "Il s'effectue en entreprise et en institution. Chaque promotion en bénéficie obligatoirement.",
+          titrePedagogique: "Stage pédagogique",
+          textePedagogique:
+            "Il se déroule dans les humanités techniques, pour former à l'enseignement des disciplines techniques.",
         },
       },
       {

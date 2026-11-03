@@ -4,6 +4,9 @@
  * l'administration (les contenus existants ne sont jamais écrasés).
  */
 import "dotenv/config";
+import { stat } from "node:fs/promises";
+import path from "node:path";
+import sharp from "sharp";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { hash } from "@node-rs/argon2";
 import { PrismaClient } from "../src/generated/prisma/client";
@@ -11,6 +14,7 @@ import { PAGES } from "../src/features/contenu/definitions";
 import { REGLAGES_INSTITUT } from "../src/features/contenu/reglages";
 import { autorites, debouchesAnciens, filieres, stages } from "../src/contenu/institut";
 import { PERMISSIONS, ROLES_PAR_DEFAUT } from "../src/lib/permissions";
+import { PHOTOS_OFFICIELLES as PHOTOS } from "../src/features/medias/photos-officielles";
 
 const url =
   process.env.POSTGRES_URL_NON_POOLING ??
@@ -19,36 +23,6 @@ const url =
   process.env.DATABASE_URL;
 if (!url) throw new Error("DATABASE_URL manquante.");
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString: url }) });
-
-/** Textes alternatifs des photographies officielles. */
-const PHOTOS: Record<string, string> = {
-  "atelier-mecanique.jpg": "Étudiant au travail sur un tour dans l'atelier de mécanique.",
-  "campus-batiment-allee.jpg": "Étudiants marchant le long d'un bâtiment du campus.",
-  "campus-batiment-facade.jpg": "Façade d'un bâtiment du campus avec des étudiants au balcon, entourée de végétation.",
-  "campus-entree-escalier.jpg": "Étudiants à l'entrée d'un bâtiment du campus, devant un escalier.",
-  "campus-jardin-etudiants.jpg": "Étudiants échangeant dans le jardin, devant un bâtiment du campus.",
-  "campus-panneau-entree.jpg": "Panneau d'entrée de l'institut présentant les filières organisées.",
-  "collation-2026-corps-academique.jpg": "Membres du corps académique lors de la collation des grades 2026.",
-  "collation-2026-jury.jpg": "Membre du jury annotant un mémoire.",
-  "collation-2026-laureate-portrait.jpg": "Portrait d'une lauréate de la collation 2026, écharpe et bouquet de fleurs.",
-  "collation-2026-laureats-exterieur.jpg": "Cinq lauréats en costume, casque et gilet, lors de la collation des grades 2026.",
-  "collation-2026-laureats-portrait.jpg": "Deux lauréats souriants, casque sur la tête, lors de la collation 2026.",
-  "collation-2026-laureats-salle.jpg": "Lauréats et membres du corps académique réunis en salle lors de la collation 2026.",
-  "collation-2026-remise-casque-1.jpg": "Remise du casque à un lauréat lors de la collation des grades 2026.",
-  "collation-2026-remise-casque-2.jpg": "Un professeur pose le casque sur la tête d'un lauréat.",
-  "evenement-salle-public.jpg": "Présentation devant un public nombreux dans une salle de l'institut.",
-  "presentation-projet-salle.jpg": "Présentation d'un projet technique devant un jury.",
-  "promotion-photo-groupe.jpg": "Photo de groupe d'une promotion devant un bâtiment.",
-  "salle-cours-examen.jpg": "Étudiants composant en salle de cours.",
-  "salle-informatique-cours.jpg": "Étudiants travaillant sur ordinateur portable en salle de cours.",
-  "stage-centrale-electrique.jpg": "Étudiants en tenue de travail et casque devant les installations d'une centrale électrique.",
-  "stage-genie-civil-chantier.jpg": "Étudiants en casque et gilet de sécurité sur un chantier routier.",
-  "tp-electronique.jpg": "Étudiants soudant des composants électroniques, multimètre à portée de main.",
-  "tp-topographie-1.jpg": "Étudiant en gilet réfléchissant réglant un niveau topographique.",
-  "tp-topographie-2.jpg": "Travaux pratiques de topographie : un étudiant règle un niveau sur trépied en plein air.",
-  "tp-topographie-3.jpg": "Étudiant en casque visant à travers un niveau topographique.",
-  "tp-topographie-4.jpg": "Groupe d'étudiants autour d'un niveau topographique en plein air.",
-};
 
 async function permissionsEtRoles() {
   for (const [code, p] of Object.entries(PERMISSIONS)) {
@@ -94,8 +68,18 @@ async function referentiels() {
     await db.niveau.upsert({ where: { code: n.code }, update: {}, create: n });
   }
   const annees = [
-    { libelle: "2025-2026", debut: new Date("2025-10-01"), fin: new Date("2026-09-30"), courante: false },
-    { libelle: "2026-2027", debut: new Date("2026-10-01"), fin: new Date("2027-09-30"), courante: true },
+    {
+      libelle: "2025-2026",
+      debut: new Date("2025-10-01"),
+      fin: new Date("2026-09-30"),
+      courante: false,
+    },
+    {
+      libelle: "2026-2027",
+      debut: new Date("2026-10-01"),
+      fin: new Date("2027-09-30"),
+      courante: true,
+    },
   ];
   for (const a of annees) {
     await db.anneeAcademique.upsert({ where: { libelle: a.libelle }, update: {}, create: a });
@@ -107,14 +91,18 @@ async function medias() {
   const ids: Record<string, string> = {};
   for (const [fichier, alt] of Object.entries(PHOTOS)) {
     const cle = `public/photos/${fichier}`;
+    const chemin = path.join(process.cwd(), "public", "photos", fichier);
+    const meta = await sharp(chemin).metadata();
+    const taille = (await stat(chemin)).size;
+    const dimensions = { largeur: meta.width ?? null, hauteur: meta.height ?? null, taille };
     const m = await db.media.upsert({
       where: { cle },
-      update: {},
+      update: dimensions,
       create: {
         cle,
         nomFichier: fichier,
         typeMime: "image/jpeg",
-        taille: 0,
+        ...dimensions,
         texteAlternatif: alt,
         dossier: "photos-officielles",
       },
@@ -130,9 +118,7 @@ function resoudrePhotos(valeur: unknown, ids: Record<string, string>): unknown {
   }
   if (Array.isArray(valeur)) return valeur.map((v) => resoudrePhotos(v, ids));
   if (valeur && typeof valeur === "object") {
-    return Object.fromEntries(
-      Object.entries(valeur).map(([k, v]) => [k, resoudrePhotos(v, ids)]),
-    );
+    return Object.fromEntries(Object.entries(valeur).map(([k, v]) => [k, resoudrePhotos(v, ids)]));
   }
   return valeur;
 }
@@ -193,10 +179,16 @@ async function contenus(ids: Record<string, string>) {
 
   if ((await db.partenaire.count()) === 0) {
     const lignes = [
-      ...stages.professionnel.lieux.map((nom) => ({ nom, categorie: "STAGE_PROFESSIONNEL" as const })),
+      ...stages.professionnel.lieux.map((nom) => ({
+        nom,
+        categorie: "STAGE_PROFESSIONNEL" as const,
+      })),
       ...stages.pedagogique.lieux.map((nom) => ({ nom, categorie: "STAGE_PEDAGOGIQUE" as const })),
       ...debouchesAnciens.professionnels.map((nom) => ({ nom, categorie: "EMPLOYEUR" as const })),
-      ...debouchesAnciens.enseignement.map((nom) => ({ nom, categorie: "INSTITUTIONNEL" as const })),
+      ...debouchesAnciens.enseignement.map((nom) => ({
+        nom,
+        categorie: "INSTITUTIONNEL" as const,
+      })),
     ];
     await db.partenaire.createMany({ data: lignes.map((l, ordre) => ({ ...l, ordre })) });
   }

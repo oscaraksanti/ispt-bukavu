@@ -5,17 +5,18 @@ import { Suspense } from "react";
 import { BlocPage, EntetePage } from "@/components/public/entete-page";
 import { lienCandidature } from "@/components/public/navigation";
 import { LienBouton } from "@/components/ui/bouton";
-import { filieres, institut, stages } from "@/contenu/institut";
+import { lireFilieres, lireInstitut, lirePage } from "@/features/contenu/lecture";
+import { lecteur } from "@/features/contenu/lecteur";
 
-export function generateStaticParams() {
-  return filieres.map((f) => ({ slug: f.slug }));
+export async function generateStaticParams() {
+  return (await lireFilieres()).map((f) => ({ slug: f.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps<"/formations/[slug]">): Promise<Metadata> {
   const { slug } = await params;
-  const filiere = filieres.find((f) => f.slug === slug);
+  const filiere = (await lireFilieres()).find((f) => f.slug === slug);
   if (!filiere) return {};
   return { title: filiere.nom, description: filiere.presentation };
 }
@@ -35,6 +36,12 @@ async function ContenuFiliere({ params }: { params: PageProps<"/formations/[slug
 
 async function FicheFiliere({ slug }: { slug: string }) {
   "use cache";
+  const [filieres, institut, pageInstitut] = await Promise.all([
+    lireFilieres(),
+    lireInstitut(),
+    lirePage("institut"),
+  ]);
+  const stages = lecteur(pageInstitut.stages);
   const filiere = filieres.find((f) => f.slug === slug);
   if (!filiere) notFound();
   const autres = filieres.filter((f) => f.slug !== slug);
@@ -47,10 +54,11 @@ async function FicheFiliere({ slug }: { slug: string }) {
           { libelle: "Formations", href: "/formations" },
           { libelle: filiere.nomCourt },
         ]}
-        surtitre={`Licence · ${institut.etudes.semestres} semestres`}
+        surtitre={`${institut.diplome} · ${institut.semestres} semestres`}
         titre={filiere.nom}
         intro={filiere.presentation}
-        photo={{ ...filiere.photo, legende: filiere.nomCourt }}
+        photo={filiere.photo}
+        legende={filiere.nomCourt}
         enfants={
           <div className="mt-8 flex flex-wrap gap-3">
             <LienBouton href={lienCandidature}>Candidater</LienBouton>
@@ -98,7 +106,8 @@ async function FicheFiliere({ slug }: { slug: string }) {
             <h3 className="font-sans text-base font-semibold text-encre">Enseigner</h3>
             <p className="mt-2 leading-relaxed text-pierre-700">
               Comme toutes les filières de l&apos;institut, elle prépare aussi à l&apos;enseignement
-              dans les humanités techniques, grâce au {stages.pedagogique.titre.toLowerCase()}.
+              dans les humanités techniques, grâce au{" "}
+              {stages.texte("titrePedagogique").toLowerCase()}.
             </p>
           </div>
         </div>

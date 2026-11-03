@@ -2,13 +2,14 @@ import { cacheLife } from "next/cache";
 import Link from "next/link";
 import { Blason } from "@/components/marque/blason";
 import { majuscule } from "@/lib/cn";
-import { filieres, institut } from "@/contenu/institut";
+import { lireFilieres, lireInstitut } from "@/features/contenu/lecture";
 import { liensUtilitaires, navigationPrincipale } from "./navigation";
 
 export async function PiedDePage() {
   "use cache";
   cacheLife("days");
   const annee = new Date().getFullYear();
+  const [institut, filieres] = await Promise.all([lireInstitut(), lireFilieres()]);
   return (
     <footer className="trame-claire mt-auto bg-encre text-white/70">
       <div className="conteneur grid gap-12 py-16 lg:grid-cols-12">
@@ -57,25 +58,19 @@ export async function PiedDePage() {
             <h2 className="surtitre !font-mono text-chantier">Nous trouver</h2>
             <address className="mt-4 space-y-2.5 text-sm not-italic">
               <p>
-                {institut.adresse.rue}
+                {institut.rue}
                 <br />
-                {majuscule(institut.adresse.quartier)}, {institut.adresse.commune}
+                {majuscule(institut.quartier)}, {institut.commune}
                 <br />
-                {institut.adresse.ville}, {institut.adresse.province}
+                {institut.ville}, {institut.province}
               </p>
               <p>
-                <a
-                  href={institut.contacts.telephone.lien}
-                  className="inline-block py-1 hover:text-white"
-                >
-                  {institut.contacts.telephone.affichage}
+                <a href={institut.telephoneLien} className="inline-block py-1 hover:text-white">
+                  {institut.telephone}
                 </a>
                 <br />
-                <a
-                  href={`mailto:${institut.contacts.email}`}
-                  className="inline-block py-1 hover:text-white"
-                >
-                  {institut.contacts.email}
+                <a href={`mailto:${institut.email}`} className="inline-block py-1 hover:text-white">
+                  {institut.email}
                 </a>
               </p>
             </address>
@@ -85,9 +80,9 @@ export async function PiedDePage() {
       <div className="border-t border-white/10">
         <div className="conteneur flex flex-col gap-2 py-6 font-mono text-[0.6875rem] tracking-wide text-white/65 uppercase sm:flex-row sm:items-center sm:justify-between">
           <p>
-            © {annee} {institut.sigle} · {institut.creation.acte}
+            © {annee} {institut.sigle} · {institut.acteCreation}
           </p>
-          <p>{institut.coordonnees.libelle}</p>
+          <p>{institut.coordonnees}</p>
         </div>
       </div>
     </footer>
