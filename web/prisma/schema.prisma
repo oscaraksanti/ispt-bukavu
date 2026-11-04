@@ -36,22 +36,22 @@ model Utilisateur {
   creeLe                DateTime     @default(now())
   majLe                 DateTime     @updatedAt
 
-  roles               UtilisateurRole[]
-  sessions            Session[]
-  jetons              JetonReinitialisation[]
-  profilEtudiant      ProfilEtudiant?
-  profilEnseignant    ProfilEnseignant?
-  candidatures        Candidature[]          @relation("CandidaturesDuCandidat")
-  communiques         Communique[]           @relation("CommuniquesAuteur")
-  communiquesValides  Communique[]           @relation("CommuniquesValidateur")
-  lectures            Lecture[]
-  notifications       Notification[]
-  journal             JournalActivite[]
-  medias              Media[]
-  actualites          Actualite[]
-  paiementsEnregistres Paiement[]            @relation("PaiementsEnregistrePar")
-  stagesEncadres      Stage[]                @relation("StagesEncadreur")
-  decisions           Candidature[]          @relation("CandidaturesDecideur")
+  roles                UtilisateurRole[]
+  sessions             Session[]
+  jetons               JetonReinitialisation[]
+  profilEtudiant       ProfilEtudiant?
+  profilEnseignant     ProfilEnseignant?
+  candidatures         Candidature[]           @relation("CandidaturesDuCandidat")
+  communiques          Communique[]            @relation("CommuniquesAuteur")
+  communiquesValides   Communique[]            @relation("CommuniquesValidateur")
+  lectures             Lecture[]
+  notifications        Notification[]
+  journal              JournalActivite[]
+  medias               Media[]
+  actualites           Actualite[]
+  paiementsEnregistres Paiement[]              @relation("PaiementsEnregistrePar")
+  stagesEncadres       Stage[]                 @relation("StagesEncadreur")
+  decisions            Candidature[]           @relation("CandidaturesDecideur")
 }
 
 model Role {
@@ -168,9 +168,9 @@ enum StatutPublication {
 }
 
 model Reglage {
-  cle   String   @id
+  cle    String   @id
   valeur Json
-  majLe DateTime @updatedAt
+  majLe  DateTime @updatedAt
 }
 
 model Media {
@@ -189,15 +189,17 @@ model Media {
   creeParId       String?
   creePar         Utilisateur? @relation(fields: [creeParId], references: [id], onDelete: SetNull)
 
-  albums            AlbumMedia[]
-  actualites        Actualite[]
-  partenaires       Partenaire[]
-  autorites         Autorite[]
-  filieres          Filiere[]
-  piecesJointes     PieceJointe[]
-  piecesDeposees    PieceDeposee[]
-  supports          Support[]
-  rapportsDeStage   Stage[]
+  albums          AlbumMedia[]
+  actualites      Actualite[]
+  partenaires     Partenaire[]
+  autorites       Autorite[]
+  filieres        Filiere[]
+  piecesJointes   PieceJointe[]
+  piecesDeposees  PieceDeposee[]
+  supports        Support[]
+  rapportsDeStage Stage[]
+  enoncesDevoirs  Devoir[]       @relation("EnonceDevoir")
+  remises         Remise[]       @relation("FichierRemise")
 }
 
 model Page {
@@ -337,12 +339,12 @@ model AnneeAcademique {
   /// Seuil de réussite sur 20, paramétrable par année.
   seuilReussite Decimal  @default(10) @db.Decimal(4, 2)
 
-  promotions  Promotion[]
-  campagnes   CampagneAdmission[]
-  baremes     BaremeFrais[]
-  paiements   Paiement[]
+  promotions   Promotion[]
+  campagnes    CampagneAdmission[]
+  baremes      BaremeFrais[]
+  paiements    Paiement[]
   exonerations Exoneration[]
-  stages      Stage[]
+  stages       Stage[]
 }
 
 model Filiere {
@@ -402,13 +404,13 @@ enum Sexe {
 }
 
 model ProfilEtudiant {
-  id             String      @id @default(cuid())
-  utilisateurId  String      @unique
-  utilisateur    Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
-  matricule      String      @unique
-  sexe           Sexe?
-  dateNaissance  DateTime?
-  lieuNaissance  String?
+  id            String      @id @default(cuid())
+  utilisateurId String      @unique
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  matricule     String      @unique
+  sexe          Sexe?
+  dateNaissance DateTime?
+  lieuNaissance String?
 
   inscriptions Inscription[]
   notes        Note[]
@@ -418,6 +420,8 @@ model ProfilEtudiant {
   documents    DocumentOfficiel[]
   stages       Stage[]
   candidature  Candidature?
+  presences    Presence[]
+  remises      Remise[]
 }
 
 enum StatutInscription {
@@ -488,6 +492,7 @@ model CoursOffert {
   enseignants CoursEnseignant[]
   seances     Seance[]
   supports    Support[]
+  devoirs     Devoir[]
   evaluations Evaluation[]
   communiques Communique[]
 
@@ -519,6 +524,7 @@ model Seance {
   salle         String?
   statut        StatutSeance @default(PREVUE)
   remarque      String?
+  presences     Presence[]
 
   @@index([debut])
 }
@@ -797,22 +803,22 @@ enum ModePaiement {
 }
 
 model Paiement {
-  id               String          @id @default(cuid())
-  etudiantId       String
-  etudiant         ProfilEtudiant  @relation(fields: [etudiantId], references: [id])
-  anneeId          String
-  annee            AnneeAcademique @relation(fields: [anneeId], references: [id])
-  montant          Decimal         @db.Decimal(10, 2)
-  devise           Devise          @default(USD)
-  mode             ModePaiement
-  reference        String
-  payeLe           DateTime
-  numeroRecu       String          @unique
-  enregistreParId  String
-  enregistrePar    Utilisateur     @relation("PaiementsEnregistrePar", fields: [enregistreParId], references: [id])
-  annuleLe         DateTime?
-  motifAnnulation  String?
-  creeLe           DateTime        @default(now())
+  id              String          @id @default(cuid())
+  etudiantId      String
+  etudiant        ProfilEtudiant  @relation(fields: [etudiantId], references: [id])
+  anneeId         String
+  annee           AnneeAcademique @relation(fields: [anneeId], references: [id])
+  montant         Decimal         @db.Decimal(10, 2)
+  devise          Devise          @default(USD)
+  mode            ModePaiement
+  reference       String
+  payeLe          DateTime
+  numeroRecu      String          @unique
+  enregistreParId String
+  enregistrePar   Utilisateur     @relation("PaiementsEnregistrePar", fields: [enregistreParId], references: [id])
+  annuleLe        DateTime?
+  motifAnnulation String?
+  creeLe          DateTime        @default(now())
 }
 
 model Exoneration {
@@ -856,20 +862,20 @@ model DemandeDocument {
 }
 
 model DocumentOfficiel {
-  id               String           @id @default(cuid())
+  id              String           @id @default(cuid())
   /// Code de vérification public, aléatoire et non devinable.
-  code             String           @unique
-  type             TypeDocument
-  etudiantId       String
-  etudiant         ProfilEtudiant   @relation(fields: [etudiantId], references: [id])
-  demandeId        String?          @unique
-  demande          DemandeDocument? @relation(fields: [demandeId], references: [id])
+  code            String           @unique
+  type            TypeDocument
+  etudiantId      String
+  etudiant        ProfilEtudiant   @relation(fields: [etudiantId], references: [id])
+  demandeId       String?          @unique
+  demande         DemandeDocument? @relation(fields: [demandeId], references: [id])
   /// Copie figée des informations imprimées sur le document.
-  donnees          Json
-  emisLe           DateTime         @default(now())
-  emisParId        String?
-  revoqueLe        DateTime?
-  motifRevocation  String?
+  donnees         Json
+  emisLe          DateTime         @default(now())
+  emisParId       String?
+  revoqueLe       DateTime?
+  motifRevocation String?
 }
 
 // ============================================================================
@@ -918,4 +924,67 @@ model Stage {
   rapport        Media?          @relation(fields: [rapportMediaId], references: [id])
   note           Decimal?        @db.Decimal(4, 2)
   appreciation   String?
+}
+
+/**
+ * ---------- Présences et devoirs ----------
+ */
+
+enum StatutPresence {
+  PRESENT
+  RETARD
+  ABSENT
+  EXCUSE
+}
+
+/// Appel d'une séance de l'horaire, saisi par l'enseignant du cours.
+model Presence {
+  id          String         @id @default(cuid())
+  seanceId    String
+  seance      Seance         @relation(fields: [seanceId], references: [id], onDelete: Cascade)
+  etudiantId  String
+  etudiant    ProfilEtudiant @relation(fields: [etudiantId], references: [id], onDelete: Cascade)
+  statut      StatutPresence
+  saisieParId String?
+  majLe       DateTime       @updatedAt
+
+  @@unique([seanceId, etudiantId])
+  @@index([etudiantId])
+}
+
+/// Travail à rendre (évaluation formative, distincte des notes officielles).
+model Devoir {
+  id            String      @id @default(cuid())
+  coursOffertId String
+  coursOffert   CoursOffert @relation(fields: [coursOffertId], references: [id], onDelete: Cascade)
+  titre         String
+  consignes     String
+  echeance      DateTime
+  accepteRetard Boolean     @default(false)
+  enonceId      String?
+  enonce        Media?      @relation("EnonceDevoir", fields: [enonceId], references: [id], onDelete: SetNull)
+  creeParId     String
+  creeLe        DateTime    @default(now())
+  remises       Remise[]
+
+  @@index([coursOffertId])
+}
+
+/// Copie déposée par un étudiant, puis corrigée par l'enseignant.
+model Remise {
+  id           String         @id @default(cuid())
+  devoirId     String
+  devoir       Devoir         @relation(fields: [devoirId], references: [id], onDelete: Cascade)
+  etudiantId   String
+  etudiant     ProfilEtudiant @relation(fields: [etudiantId], references: [id], onDelete: Cascade)
+  fichierId    String
+  fichier      Media          @relation("FichierRemise", fields: [fichierId], references: [id])
+  commentaire  String?
+  deposeLe     DateTime
+  enRetard     Boolean        @default(false)
+  note         Decimal?       @db.Decimal(4, 2)
+  appreciation String?
+  corrigeLe    DateTime?
+
+  @@unique([devoirId, etudiantId])
 }

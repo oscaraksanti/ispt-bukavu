@@ -1,6 +1,7 @@
 import {
   BookOpenCheck,
   Briefcase,
+  ClipboardList,
   FileBadge,
   FileText,
   Megaphone,
@@ -23,6 +24,7 @@ const ICONES: Record<IconeNotification, LucideIcon> = {
   frais: Wallet,
   document: FileBadge,
   stage: Briefcase,
+  devoir: ClipboardList,
 };
 
 const heure = new Intl.DateTimeFormat("fr-FR", {

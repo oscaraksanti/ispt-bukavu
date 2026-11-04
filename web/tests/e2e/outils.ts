@@ -17,7 +17,8 @@ type Donnees = {
     | "documentA"
     | "codeDocumentA"
     | "promotion"
-    | "etudiantB",
+    | "etudiantB"
+    | "seance",
     string
   >;
 };

@@ -9,6 +9,7 @@ export const TYPES_NOTIFICATION = {
   PAIEMENT: { libelle: "Frais", icone: "frais" },
   DOCUMENT: { libelle: "Documents", icone: "document" },
   STAGE: { libelle: "Stages", icone: "stage" },
+  DEVOIR: { libelle: "Devoirs", icone: "devoir" },
 } as const;
 
 export type TypeNotification = keyof typeof TYPES_NOTIFICATION;

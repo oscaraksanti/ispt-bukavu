@@ -1,6 +1,12 @@
 /** Libellés lisibles des actions tracées dans le journal d'activité. */
 export const LIBELLES_ACTIONS: Record<string, string> = {
   connexion: "Connexion",
+  appel_saisi: "Appel d'une séance saisi",
+  devoir_cree: "Devoir créé",
+  devoir_supprime: "Devoir supprimé",
+  copie_deposee: "Copie de devoir déposée",
+  copie_remplacee: "Copie de devoir remplacée",
+  copie_corrigee: "Copie de devoir corrigée",
   mot_de_passe_defini: "Mot de passe défini",
   contenu_modifie: "Section de page modifiée",
   reglages_modifies: "Identité de l'institut modifiée",

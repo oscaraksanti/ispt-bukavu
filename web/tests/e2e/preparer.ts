@@ -109,6 +109,20 @@ async function main() {
     create: { coursOffertId: offert.id, enseignantId: prof.id },
   });
 
+  // Séance d'hier, pour pouvoir faire l'appel.
+  const hier = new Date(Date.now() - 86_400_000);
+  hier.setUTCHours(6, 0, 0, 0);
+  const seance =
+    (await db.seance.findFirst({ where: { coursOffertId: offert.id } })) ??
+    (await db.seance.create({
+      data: {
+        coursOffertId: offert.id,
+        debut: hier,
+        fin: new Date(hier.getTime() + 4 * 3600_000),
+        salle: "Salle E2E",
+      },
+    }));
+
   const evaluation = async (intitule: string, statut: "PUBLIEE" | "BROUILLON", notes: number[]) => {
     const ev =
       (await db.evaluation.findFirst({ where: { coursOffertId: offert.id, intitule } })) ??
@@ -189,6 +203,7 @@ async function main() {
       codeDocumentA: docA.code,
       promotion: promotion.id,
       etudiantB: b.id,
+      seance: seance.id,
     },
   };
   await writeFile(path.join(__dirname, ".donnees.json"), JSON.stringify(donnees, null, 2));

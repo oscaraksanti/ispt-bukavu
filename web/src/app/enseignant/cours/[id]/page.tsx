@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BoutonAction } from "@/components/admin/bouton-action";
 import { Panneau } from "@/components/admin/entete-admin";
+import { EnteteCours } from "@/components/cours/entete-cours";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
 import { Champ, Liste, Saisie } from "@/components/ui/champs";
 import { Etiquette, EtatVide } from "@/components/ui/elements";
@@ -53,19 +54,13 @@ export default async function CoursEnseignant({ params }: PageProps<"/enseignant
 
   return (
     <div className="space-y-8">
-      <header>
-        <Link href="/enseignant" className="text-sm text-ispt-600 underline hover:no-underline">
-          ← Mes cours
-        </Link>
-        <p className="mt-4 font-mono text-xs text-ispt-600">
-          {co.cours.ue.code} · S{co.cours.ue.semestre} · {co.cours.credits} crédit(s) ·{" "}
-          {co.cours.volumeHoraire} h
-        </p>
-        <h1 className="mt-2 text-[2.25rem] leading-tight">{co.cours.intitule}</h1>
-        <p className="mt-2 text-pierre-700">
-          {libellePromotion(co.promotion)} · {etudiants.length} étudiant(s)
-        </p>
-      </header>
+      <EnteteCours
+        coursOffertId={co.id}
+        code={`${co.cours.ue.code} · S${co.cours.ue.semestre} · ${co.cours.credits} crédit(s) · ${co.cours.volumeHoraire} h`}
+        intitule={co.cours.intitule}
+        promotion={`${libellePromotion(co.promotion)} · ${etudiants.length} étudiant(s)`}
+        actif="cours"
+      />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Panneau titre="Évaluations" description={`Poids total : ${poids} % sur 100 %.`}>

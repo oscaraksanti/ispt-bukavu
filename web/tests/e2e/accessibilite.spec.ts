@@ -44,6 +44,7 @@ test("espace étudiant", async ({ page }) => {
     "/etudiant/notes",
     "/etudiant/frais",
     "/etudiant/notifications",
+    `/etudiant/cours/${D.ids.coursOffert}`,
   ]) {
     await page.goto(chemin);
     await analyser(page);
@@ -52,7 +53,13 @@ test("espace étudiant", async ({ page }) => {
 
 test("espace enseignant", async ({ page }) => {
   await seConnecter(page, D.comptes.prof);
-  for (const chemin of ["/enseignant", `/enseignant/cours/${D.ids.coursOffert}`]) {
+  for (const chemin of [
+    "/enseignant",
+    `/enseignant/cours/${D.ids.coursOffert}`,
+    `/enseignant/cours/${D.ids.coursOffert}/devoirs`,
+    `/enseignant/cours/${D.ids.coursOffert}/presences`,
+    `/enseignant/cours/${D.ids.coursOffert}/presences/${D.ids.seance}`,
+  ]) {
     await page.goto(chemin);
     await analyser(page);
   }

@@ -2,9 +2,22 @@ import { ExternalLink, FileText, Link2 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { EtatVide } from "@/components/ui/elements";
+import { Etiquette, EtatVide } from "@/components/ui/elements";
+import { formatHeure, formatJour } from "@/features/actualites/dates";
+import { etatRemise, LIBELLES_ETAT, type EtatRemise } from "@/features/devoirs/regles";
+import { devoirsDeLEtudiant } from "@/features/devoirs/requetes";
 import { exigerEtudiant } from "@/features/espaces/acces";
+import { LIBELLES_PRESENCE, bilanPresences } from "@/features/presences/regles";
+import { presencesEtudiant } from "@/features/presences/requetes";
 import { db } from "@/lib/db";
+
+const TON: Record<EtatRemise, "neutre" | "attention" | "ispt" | "succes" | "erreur"> = {
+  a_rendre: "attention",
+  rendu: "ispt",
+  rendu_en_retard: "attention",
+  corrige: "succes",
+  non_rendu: "erreur",
+};
 
 /** Page authentifiée : rendue à chaque requête, sans coquille statique. */
 export const instant = false;
@@ -23,6 +36,12 @@ export default async function CoursDetailEtudiant({ params }: PageProps<"/etudia
     },
   });
   if (!co) notFound();
+  const [devoirs, presences] = await Promise.all([
+    devoirsDeLEtudiant(co.id, profil.id),
+    presencesEtudiant(co.id, profil.id),
+  ]);
+  const bilan = bilanPresences(presences.map((p) => p.statut));
+  const maintenant = new Date();
   const parChapitre = Map.groupBy(co.supports, (s) => s.chapitre ?? "Documents");
   return (
     <div className="mx-auto max-w-3xl">
@@ -77,6 +96,77 @@ export default async function CoursDetailEtudiant({ params }: PageProps<"/etudia
               </ul>
             </div>
           ))
+        )}
+      </section>
+
+      <section className="mt-10" aria-labelledby="titre-devoirs">
+        <h2 id="titre-devoirs" className="text-2xl">
+          Devoirs
+        </h2>
+        {devoirs.length === 0 ? (
+          <div className="mt-4">
+            <EtatVide titre="Aucun devoir pour le moment" />
+          </div>
+        ) : (
+          <ul className="mt-4 divide-y divide-pierre-200 overflow-hidden rounded-md border border-pierre-200 bg-white">
+            {devoirs.map((d) => {
+              const etat = etatRemise(d, d.remises[0] ?? null, maintenant);
+              return (
+                <li key={d.id}>
+                  <Link
+                    href={`/etudiant/cours/${co.id}/devoirs/${d.id}`}
+                    className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-3 hover:bg-pierre-50"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-medium text-encre">{d.titre}</span>
+                      <span className="text-sm text-pierre-600">
+                        Pour le {formatJour.format(d.echeance)} à {formatHeure.format(d.echeance)}
+                      </span>
+                    </span>
+                    <Etiquette ton={TON[etat]}>{LIBELLES_ETAT[etat]}</Etiquette>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+
+      <section className="mt-10" aria-labelledby="titre-assiduite">
+        <h2 id="titre-assiduite" className="text-2xl">
+          Assiduité
+        </h2>
+        {presences.length === 0 ? (
+          <p className="mt-3 text-pierre-600">Aucun appel enregistré pour ce cours.</p>
+        ) : (
+          <>
+            <p className="mt-3 text-pierre-700">
+              {bilan.taux != null && (
+                <>
+                  <span className="font-mono text-2xl text-encre">{bilan.taux} %</span> de présence
+                  ·{" "}
+                </>
+              )}
+              {bilan.absents} absence(s){bilan.excuses ? `, ${bilan.excuses} excusée(s)` : ""}
+              {bilan.retards ? `, ${bilan.retards} retard(s)` : ""} sur {bilan.seances} séance(s).
+            </p>
+            <ul className="mt-4 divide-y divide-pierre-200 overflow-hidden rounded-md border border-pierre-200 bg-white text-sm">
+              {presences.slice(0, 10).map((p) => (
+                <li key={p.id} className="flex items-center justify-between gap-4 px-4 py-2.5">
+                  <span className="first-letter:uppercase">
+                    {formatJour.format(p.seance.debut)}
+                  </span>
+                  <span
+                    className={
+                      p.statut === "ABSENT" ? "font-medium text-erreur" : "text-pierre-700"
+                    }
+                  >
+                    {LIBELLES_PRESENCE[p.statut]}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
       </section>
     </div>

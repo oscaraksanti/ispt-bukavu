@@ -19,6 +19,8 @@ export default function robots(): MetadataRoute.Robots {
         "/activer",
         "/hors-ligne",
         "/documents",
+        "/devoirs",
+        "/stages",
         "/api",
         "/systeme-de-design",
       ],
