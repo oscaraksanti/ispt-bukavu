@@ -309,6 +309,53 @@ export async function peupler(db: PrismaClient) {
       },
     });
 
+  // Galerie, offre et ancien fictifs, pour montrer le module d'insertion.
+  if (!(await db.album.findUnique({ where: { slug: "demo-travaux-pratiques" } }))) {
+    const photos = await db.media.findMany({
+      where: { dossier: "photos-officielles" },
+      orderBy: { nomFichier: "asc" },
+      take: 8,
+    });
+    if (photos.length)
+      await db.album.create({
+        data: {
+          slug: "demo-travaux-pratiques",
+          titre: "Démo · L'institut en images",
+          description: "Album de démonstration composé des photos livrées avec le site.",
+          publie: true,
+          medias: { create: photos.map((m, ordre) => ({ mediaId: m.id, ordre })) },
+        },
+      });
+  }
+  if (!(await db.offreInsertion.findFirst({ where: { titre: { startsWith: "Démo ·" } } })))
+    await db.offreInsertion.create({
+      data: {
+        titre: "Démo · Stage de maintenance industrielle",
+        type: "STAGE",
+        organisation: "Entreprise fictive de démonstration",
+        lieu: "Bukavu",
+        description:
+          "Offre fictive affichée en démonstration : deux mois d'immersion dans un atelier de maintenance, encadrés par un technicien.",
+        emailCandidature: "stages@example.org",
+        statut: "PUBLIEE",
+        publieeLe: new Date(),
+        filieres: { connect: filieres.map((f) => ({ id: f.id })) },
+      },
+    });
+  if (!(await db.ancien.findFirst({ where: { email: "demo.ancien@example.org" } })))
+    await db.ancien.create({
+      data: {
+        prenom: "Démo",
+        nom: "ANCIEN",
+        email: "demo.ancien@example.org",
+        filiereId: filieres[0]?.id,
+        anneeSortie: 2020,
+        poste: "Fiche fictive de démonstration",
+        statut: "PUBLIE",
+        consentementLe: new Date(),
+      },
+    });
+
   // Campagne d'admission ouverte et un candidat avec un dossier en cours.
   let campagne = await db.campagneAdmission.findFirst({
     where: { anneeId: annee.id, statut: "OUVERTE" },

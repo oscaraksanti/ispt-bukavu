@@ -83,6 +83,11 @@ export const GUIDES: Guide[] = [
         ],
       },
       {
+        titre: "Stages et emplois",
+        texte:
+          "Les offres de stage, d'emploi, de bourse ou de formation relayées par l'institut sont publiées sur la page « Stages et emplois » du site. Celles qui concernent votre filière vous sont signalées par une notification.",
+      },
+      {
         titre: "Sur téléphone et sans connexion",
         texte:
           "La plateforme s'installe sur l'écran d'accueil du téléphone depuis le navigateur (« Ajouter à l'écran d'accueil »). Les pages déjà consultées restent lisibles en cas de coupure ; un bandeau indique alors que vous êtes hors ligne.",
@@ -252,6 +257,14 @@ export const GUIDES: Guide[] = [
           "« Valve » : publiez un communiqué ciblé (institut, filière, promotion, cours) et suivez les accusés de lecture.",
           "« Pages », « Filières », « Autorités », « Partenaires », « FAQ » : textes et photos du site public.",
           "« Actualités » et « Agenda » : annonces et calendrier académique. « Médiathèque » : photos.",
+        ],
+      },
+      {
+        titre: "Galerie, anciens et offres",
+        etapes: [
+          "« Galerie » : créez un album, cochez ses photos dans la médiathèque, ordonnez-les, puis publiez. La première photo sert de couverture.",
+          "« Anciens » : les diplômés demandent leur inscription depuis le site. Vérifiez chaque demande dans les registres, puis publiez ou refusez avec un motif. Chacun reçoit un lien pour se retirer seul.",
+          "« Offres d'insertion » : saisissez stages, emplois, bourses ou formations avec un moyen de postuler. À la publication, les étudiants des filières visées sont prévenus ; l'offre disparaît après sa date limite.",
         ],
       },
       {
