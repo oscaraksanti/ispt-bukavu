@@ -1,11 +1,18 @@
-import { Download } from "lucide-react";
+import { Download, QrCode } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EnteteAdmin } from "@/components/admin/entete-admin";
 import { Liste, Saisie } from "@/components/ui/champs";
 import { Etiquette, EtatVide } from "@/components/ui/elements";
 import { formatJour } from "@/features/actualites/dates";
-import { LIBELLES_STATUT, type Statut, TON_STATUT } from "@/features/admissions/regles";
+import {
+  etatPaiement,
+  fraisExiges,
+  LIBELLES_STATUT,
+  type Statut,
+  statistiquesCampagne,
+  TON_STATUT,
+} from "@/features/admissions/regles";
 import { exigerPermission } from "@/features/auth/acces";
 import { cn } from "@/lib/cn";
 import { db } from "@/lib/db";
@@ -77,7 +84,7 @@ export default async function Candidatures({ searchParams }: PageProps<"/admin/a
         }
       : {}),
   };
-  const [dossiers, parStatut] = await Promise.all([
+  const [dossiers, parStatut, tous] = await Promise.all([
     db.candidature.findMany({
       where,
       orderBy: [{ soumiseLe: "asc" }, { creeLe: "asc" }],
@@ -85,7 +92,30 @@ export default async function Candidatures({ searchParams }: PageProps<"/admin/a
       take: 300,
     }),
     db.candidature.groupBy({ by: ["statut"], where: { campagneId: campagne.id }, _count: true }),
+    db.candidature.findMany({
+      where: { campagneId: campagne.id },
+      select: {
+        statut: true,
+        soumiseLe: true,
+        decideLe: true,
+        referencePaiement: true,
+        paiementVerifieLe: true,
+        paiementMotifRefus: true,
+        filiere: { select: { nomCourt: true } },
+      },
+    }),
   ]);
+  const avecFrais = fraisExiges(campagne);
+  const stats = statistiquesCampagne(
+    tous.map((d) => ({
+      statut: d.statut as Statut,
+      filiere: d.filiere?.nomCourt ?? null,
+      soumiseLe: d.soumiseLe,
+      decideLe: d.decideLe,
+      etatPaiement: etatPaiement(d, avecFrais),
+    })),
+  );
+  const maxFiliere = Math.max(1, ...stats.parFiliere.map((f) => f.deposes));
   const compte = (s: Statut) => parStatut.find((g) => g.statut === s)?._count ?? 0;
   const lien = (params: Record<string, string | null>) => {
     const u = new URLSearchParams();
@@ -107,12 +137,20 @@ export default async function Candidatures({ searchParams }: PageProps<"/admin/a
         titre="Candidatures"
         description={`${campagne.libelle} · dépôt du ${formatJour.format(campagne.ouverture)} au ${formatJour.format(campagne.cloture)}`}
         actions={
-          <a
-            href={`/admin/admissions/export?campagne=${campagne.id}`}
-            className="inline-flex h-11 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-5 text-[0.9375rem] font-medium text-encre hover:border-encre"
-          >
-            <Download aria-hidden className="size-4" /> Exporter (CSV)
-          </a>
+          <div className="flex flex-wrap gap-2">
+            <a
+              href={`/affiche/${campagne.id}`}
+              className="inline-flex h-11 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-5 text-[0.9375rem] font-medium text-encre hover:border-encre"
+            >
+              <QrCode aria-hidden className="size-4" /> Affiche
+            </a>
+            <a
+              href={`/admin/admissions/export?campagne=${campagne.id}`}
+              className="inline-flex h-11 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-5 text-[0.9375rem] font-medium text-encre hover:border-encre"
+            >
+              <Download aria-hidden className="size-4" /> Exporter (CSV)
+            </a>
+          </div>
         }
       />
 
@@ -137,6 +175,54 @@ export default async function Candidatures({ searchParams }: PageProps<"/admin/a
           </Link>
         ))}
       </nav>
+
+      <section aria-labelledby="suivi" className="mt-6 grid gap-4 lg:grid-cols-5">
+        <h2 id="suivi" className="sr-only">
+          Suivi de la campagne
+        </h2>
+        <dl className="grid grid-cols-2 gap-3 lg:col-span-3">
+          {[
+            ["Comptes ouverts", String(stats.comptesOuverts)],
+            ["Dossiers déposés", String(stats.deposes)],
+            [
+              "Délai médian de décision",
+              stats.delaiMedianJours === null ? "—" : `${stats.delaiMedianJours} j`,
+            ],
+            ["Taux d'admission", stats.tauxAdmission === null ? "—" : `${stats.tauxAdmission} %`],
+            ...(avecFrais ? [["Frais à vérifier (caisse)", String(stats.paiementsAVerifier)]] : []),
+          ].map(([libelle, valeur]) => (
+            <div key={libelle} className="rounded-md border border-pierre-200 bg-white p-4">
+              <dt className="text-xs text-pierre-600">{libelle}</dt>
+              <dd className="mt-1 font-serif text-2xl text-encre">{valeur}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="rounded-md border border-pierre-200 bg-white p-4 lg:col-span-2">
+          <p className="text-xs text-pierre-600">Dossiers déposés par filière (dont admis)</p>
+          {stats.parFiliere.length === 0 ? (
+            <p className="mt-3 text-sm text-pierre-600">Aucun dossier déposé.</p>
+          ) : (
+            <ul className="mt-3 space-y-2.5">
+              {stats.parFiliere.map((f) => (
+                <li key={f.nom} className="text-sm">
+                  <div className="flex justify-between gap-3">
+                    <span className="text-pierre-800">{f.nom}</span>
+                    <span className="font-mono text-xs text-pierre-700">
+                      {f.deposes} · {f.admis} admis
+                    </span>
+                  </div>
+                  <div aria-hidden className="mt-1 h-1.5 rounded-full bg-pierre-100">
+                    <div
+                      className="h-full rounded-full bg-ispt-600"
+                      style={{ width: `${(100 * f.deposes) / maxFiliere}%` }}
+                    />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
 
       <form className="mt-6 flex flex-col gap-3 sm:flex-row" role="search">
         <input type="hidden" name="campagne" value={campagne.id} />
