@@ -1,12 +1,30 @@
 {
   "_lisezmoi": "Base des références du mémoire (APA 7, adaptation française). Chaque entrée a été vérifiée (catalogue, éditeur, DOI ou page consultée). Citer dans le texte : [@cle], [@cle, p. 12], [@a; @b], forme narrative [+@cle]. La bibliographie ne reprend que les références citées. Champs : cle, categorie, auteur (forme abrégée pour la citation), annee, reference (*italique* en Markdown), url, consulte (date de consultation, ressources en ligne seulement), verification.",
   "categories": [
-    ["ouvrage", "Ouvrages"],
-    ["article", "Articles scientifiques"],
-    ["texte-officiel", "Textes officiels"],
-    ["rapport", "Rapports et documents institutionnels"],
-    ["norme", "Normes et spécifications techniques"],
-    ["en-ligne", "Ressources en ligne"]
+    [
+      "ouvrage",
+      "Ouvrages"
+    ],
+    [
+      "article",
+      "Articles scientifiques"
+    ],
+    [
+      "texte-officiel",
+      "Textes officiels"
+    ],
+    [
+      "rapport",
+      "Rapports et documents institutionnels"
+    ],
+    [
+      "norme",
+      "Normes et spécifications techniques"
+    ],
+    [
+      "en-ligne",
+      "Ressources en ligne"
+    ]
   ],
   "references": [
     {
@@ -893,6 +911,144 @@
       "url": "https://the-star.co.ke/news/2026-04-24-why-you-should-keep-your-kuccps-payment-reference-number",
       "consulte": "3 novembre 2026",
       "verification": "Article consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "sandhu1996",
+      "categorie": "article",
+      "auteur": "Sandhu et al.",
+      "annee": "1996",
+      "reference": "Sandhu, R. S., Coyne, E. J., Feinstein, H. L., & Youman, C. E. (1996). Role-based access control models. *Computer*, *29*(2), 38–47.",
+      "url": "https://doi.org/10.1109/2.485845",
+      "verification": "DOI et notices bibliographiques concordantes (researchr, BibSonomy)."
+    },
+    {
+      "cle": "ferraiolo2001",
+      "categorie": "article",
+      "auteur": "Ferraiolo et al.",
+      "annee": "2001",
+      "reference": "Ferraiolo, D. F., Sandhu, R., Gavrila, S., Kuhn, D. R., & Chandramouli, R. (2001). Proposed NIST standard for role-based access control. *ACM Transactions on Information and System Security*, *4*(3), 224–274.",
+      "url": "https://doi.org/10.1145/501978.501980",
+      "verification": "dblp et notices concordantes."
+    },
+    {
+      "cle": "unikin",
+      "categorie": "en-ligne",
+      "auteur": "Université de Kinshasa",
+      "annee": "2026",
+      "reference": "Université de Kinshasa. (2026). *Inscriptions UNIKIN 2026-2027*.",
+      "url": "https://www.unikin.ac.cd/inscriptions",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "unikin-optsolution",
+      "categorie": "en-ligne",
+      "auteur": "Université de Kinshasa et OptSolution",
+      "annee": "2026",
+      "reference": "Université de Kinshasa et OptSolution. (2026). *Inscription en ligne 2026-2027*.",
+      "url": "https://unikin.optsolution.net/demande-d-inscription-en-ligne-2026-2027",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "ucb-akhademie",
+      "categorie": "en-ligne",
+      "auteur": "Université Catholique de Bukavu",
+      "annee": "s. d.",
+      "reference": "Université Catholique de Bukavu. (s. d.). *Akhademie Student* [Portail étudiant].",
+      "url": "https://student.ucbukavu.ac.cd/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "uob2026",
+      "categorie": "en-ligne",
+      "auteur": "Université Officielle de Bukavu",
+      "annee": "2026",
+      "reference": "Université Officielle de Bukavu. (2026, 25 juillet). *UOB : ouverture des inscriptions pour l'année académique 2026-2027*.",
+      "url": "https://uob.ac.cd/publication/uob-ouverture-des-inscriptions-pour-lannee-academique-2026-2027-1",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "ispbukavu-moodle",
+      "categorie": "en-ligne",
+      "auteur": "Institut Supérieur Pédagogique de Bukavu",
+      "annee": "s. d.",
+      "reference": "Institut Supérieur Pédagogique de Bukavu. (s. d.). *Université Virtuelle de l'ISP-Bukavu* [Plateforme Moodle].",
+      "url": "https://moodleispbkv.ispbukavu.ac.cd/isptice/login/index.php",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "isptkin",
+      "categorie": "en-ligne",
+      "auteur": "Institut Supérieur Pédagogique Technique de Kinshasa",
+      "annee": "s. d.",
+      "reference": "Institut Supérieur Pédagogique Technique de Kinshasa. (s. d.). *Admission*.",
+      "url": "https://www.isptkin.ac.cd/inscription/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "unilu",
+      "categorie": "en-ligne",
+      "auteur": "Université de Lubumbashi",
+      "annee": "2026",
+      "reference": "Université de Lubumbashi. (2026). *Archives des inscription et enrôlement*.",
+      "url": "https://www.unilu.ac.cd/category/inscription-et-enrolement/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "ulpgl2026",
+      "categorie": "en-ligne",
+      "auteur": "Université Libre des Pays des Grands Lacs",
+      "annee": "2026",
+      "reference": "Université Libre des Pays des Grands Lacs. (2026). *Guide d'inscription 2026-2027*.",
+      "url": "https://www.ulpgl.net/guide-inscription",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "upc2026",
+      "categorie": "en-ligne",
+      "auteur": "Université Protestante au Congo",
+      "annee": "2026",
+      "reference": "Université Protestante au Congo. (2026). *Admission : inscriptions 2026-2027*.",
+      "url": "https://www.upc.ac.cd/admission",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "minesursi-carte",
+      "categorie": "en-ligne",
+      "auteur": "Ministère de l'Enseignement supérieur, universitaire, recherche scientifique et innovations",
+      "annee": "s. d.",
+      "reference": "Ministère de l'Enseignement supérieur, universitaire, recherche scientifique et innovations. (s. d.). *ESURSI Connect : carte nationale des étudiants*.",
+      "url": "https://carte.minesursi.gouv.cd/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "optsolution",
+      "categorie": "en-ligne",
+      "auteur": "OptSolution",
+      "annee": "s. d.",
+      "reference": "OptSolution. (s. d.). *Digitalisez vos services académiques grâce à OptSolution*.",
+      "url": "https://optsolution.net/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
+    },
+    {
+      "cle": "ispbukavu-etudiant",
+      "categorie": "en-ligne",
+      "auteur": "Institut Supérieur Pédagogique de Bukavu",
+      "annee": "s. d.",
+      "reference": "Institut Supérieur Pédagogique de Bukavu. (s. d.). *Connexion compte étudiant*.",
+      "url": "https://ispbukavu.ac.cd/ispespaceetudiant/ispetudiantlogin.php",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée lors de l'étude comparative (docs/recherche/benchmark-rdc.md)."
     }
   ]
 }
