@@ -2,6 +2,7 @@ import "server-only";
 import type { UtilisateurConnecte } from "@/features/auth/acces";
 import { db } from "@/lib/db";
 import type { Prisma } from "@/generated/prisma/client";
+import { etudiantsInscrits } from "@/features/notifications/emettre";
 import type { Auteur, Contexte } from "./regles";
 
 /** Inscriptions de l'année courante d'un étudiant : filières, promotions, cours. */
@@ -81,6 +82,30 @@ export async function nombreDestinataires(c: {
     }
     default:
       return 0;
+  }
+}
+
+/** Comptes des étudiants visés par un communiqué (pour les notifier). */
+export async function comptesDestinataires(c: {
+  cible: string;
+  filiereId: string | null;
+  promotionId: string | null;
+  coursOffertId: string | null;
+}) {
+  switch (c.cible) {
+    case "PUBLIC":
+    case "INSTITUT":
+      return etudiantsInscrits();
+    case "FILIERE":
+      return c.filiereId ? etudiantsInscrits({ filiereId: c.filiereId }) : [];
+    case "PROMOTION":
+      return c.promotionId ? etudiantsInscrits({ id: c.promotionId }) : [];
+    case "COURS": {
+      const co = await db.coursOffert.findUnique({ where: { id: c.coursOffertId ?? "" } });
+      return co ? etudiantsInscrits({ id: co.promotionId }) : [];
+    }
+    default:
+      return [];
   }
 }
 

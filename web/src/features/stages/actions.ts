@@ -8,6 +8,7 @@ import { lireNote } from "@/features/notes/regles";
 import { db } from "@/lib/db";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
+import { compteEtudiant, notifier } from "@/features/notifications/emettre";
 import { jetonAleatoire } from "@/lib/securite";
 import { stockage } from "@/lib/stockage";
 import { statutSelonDates, typeDepuisCategorie } from "./regles";
@@ -110,6 +111,20 @@ export async function affecterStage(_e: EtatFormulaire, fd: FormData): Promise<E
     entiteId: s.id,
     apres: { matricule, lieuId },
   });
+  const lieu = await db.lieuStage.findUnique({ where: { id: lieuId }, select: { nom: true } });
+  await notifier([profil.utilisateurId], {
+    type: "STAGE",
+    titre: "Stage attribué",
+    message: `Vous êtes affecté(e) en stage${lieu ? ` à ${lieu.nom}` : ""}.`,
+    lien: "/etudiant/stages",
+  });
+  if (encadreurId)
+    await notifier([encadreurId], {
+      type: "STAGE",
+      titre: "Nouveau stagiaire à encadrer",
+      message: `L'étudiant ${matricule} vous est confié${lieu ? ` (${lieu.nom})` : ""}.`,
+      lien: "/enseignant/stages",
+    });
   refresh();
   return succes(`Stage enregistré pour ${matricule}.`);
 }
@@ -152,6 +167,12 @@ export async function evaluerStage(
     entite: "Stage",
     entiteId: id,
     apres: { note },
+  });
+  await notifier(await compteEtudiant(s.etudiantId), {
+    type: "STAGE",
+    titre: "Stage évalué",
+    message: "L'évaluation de votre stage est disponible.",
+    lien: "/etudiant/stages",
   });
   refresh();
   return succes("Évaluation enregistrée.");
@@ -197,6 +218,13 @@ export async function deposerRapport(
       .catch(() => undefined);
   }
   await journaliser({ auteurId: u.id, action: "rapport_depose", entite: "Stage", entiteId: id });
+  if (s.encadreurId)
+    await notifier([s.encadreurId], {
+      type: "STAGE",
+      titre: "Rapport de stage déposé",
+      message: `${s.etudiant.matricule} a déposé son rapport de stage.`,
+      lien: "/enseignant/stages",
+    });
   refresh();
   return succes("Rapport déposé.");
 }

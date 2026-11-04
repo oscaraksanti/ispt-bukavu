@@ -187,6 +187,8 @@ async function main() {
       recuA: recuA.id,
       documentA: docA.id,
       codeDocumentA: docA.code,
+      promotion: promotion.id,
+      etudiantB: b.id,
     },
   };
   await writeFile(path.join(__dirname, ".donnees.json"), JSON.stringify(donnees, null, 2));

@@ -10,9 +10,11 @@ import { exigerConnexion } from "@/features/auth/acces";
 import { db } from "@/lib/db";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
+import { ROLES_PERSONNEL } from "@/lib/permissions";
 import { jetonAleatoire } from "@/lib/securite";
 import { stockage } from "@/lib/stockage";
-import { auteurValve, contexteEtudiant } from "./donnees";
+import { notifier, personnelAvecPermission } from "@/features/notifications/emettre";
+import { auteurValve, comptesDestinataires, contexteEtudiant } from "./donnees";
 import {
   type Cible,
   ciblesAutorisees,
@@ -51,6 +53,38 @@ async function communiqueGerable(id: string) {
     (c.cible !== "PUBLIC" && c.cible !== "INSTITUT" && u.permissions.has("valve.publier"));
   if (!gerable) return { erreur: echec("Vous ne pouvez pas modifier ce communiqué.") };
   return { u, auteur, c };
+}
+
+type CommuniqueNotifiable = {
+  id: string;
+  titre: string;
+  cible: string;
+  filiereId: string | null;
+  promotionId: string | null;
+  coursOffertId: string | null;
+};
+
+/** Prévient les étudiants concernés qu'un communiqué vient d'être publié. */
+async function annoncerPublication(c: CommuniqueNotifiable) {
+  await notifier(await comptesDestinataires(c), {
+    type: "COMMUNIQUE",
+    titre: "Nouveau communiqué à la valve",
+    message: c.titre,
+    lien: `/etudiant/valve/${c.id}`,
+  });
+}
+
+/** Prévient les autorités qu'un communiqué attend leur validation. */
+async function demanderValidation(c: CommuniqueNotifiable, auteurId: string) {
+  await notifier(
+    (await personnelAvecPermission("valve.valider")).filter((id) => id !== auteurId),
+    {
+      type: "COMMUNIQUE_A_VALIDER",
+      titre: "Communiqué à valider",
+      message: c.titre,
+      lien: `/admin/valve/${c.id}`,
+    },
+  );
 }
 
 export async function enregistrerCommunique(
@@ -101,7 +135,7 @@ export async function enregistrerCommunique(
   if (id) {
     const { erreur, c } = await communiqueGerable(id);
     if (erreur) return erreur;
-    await db.communique.update({
+    const maj = await db.communique.update({
       where: { id },
       data: {
         ...donnees,
@@ -109,6 +143,10 @@ export async function enregistrerCommunique(
         ...(c.publieLe && statut === "PUBLIE" ? { publieLe: c.publieLe } : {}),
       },
     });
+    // On ne prévient qu'au passage à l'état publié ou « à valider », pas à chaque retouche.
+    if (statut === "PUBLIE" && c.statut !== "PUBLIE") await annoncerPublication(maj);
+    if (statut === "EN_VALIDATION" && c.statut !== "EN_VALIDATION")
+      await demanderValidation(maj, u.id);
     await journaliser({
       auteurId: u.id,
       action: "communique_modifie",
@@ -126,6 +164,8 @@ export async function enregistrerCommunique(
     );
   }
   const cree = await db.communique.create({ data: { ...donnees, auteurId: u.id } });
+  if (statut === "PUBLIE") await annoncerPublication(cree);
+  if (statut === "EN_VALIDATION") await demanderValidation(cree, u.id);
   await journaliser({
     auteurId: u.id,
     action: statut === "PUBLIE" ? "communique_publie" : "communique_cree",
@@ -146,10 +186,22 @@ export async function validerCommunique(id: string): Promise<EtatFormulaire> {
   if (!c) return echec("Ce communiqué n'existe plus.");
   if (c.statut !== "EN_VALIDATION")
     return echec("Seul un communiqué transmis pour validation peut être validé.");
-  await db.communique.update({
+  const publie = await db.communique.update({
     where: { id },
     data: { statut: "PUBLIE", publieLe: new Date(), validateurId: u.id },
   });
+  await annoncerPublication(publie);
+  if (publie.auteurId !== u.id) {
+    const auteurPersonnel = await db.utilisateurRole.findFirst({
+      where: { utilisateurId: publie.auteurId, role: { code: { in: ROLES_PERSONNEL } } },
+    });
+    await notifier([publie.auteurId], {
+      type: "COMMUNIQUE",
+      titre: "Votre communiqué est publié",
+      message: publie.titre,
+      lien: `${auteurPersonnel ? "/admin/valve" : "/enseignant/valve"}/${publie.id}`,
+    });
+  }
   await journaliser({
     auteurId: u.id,
     action: "communique_valide",

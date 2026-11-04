@@ -10,6 +10,7 @@ import { db } from "@/lib/db";
 import { envoyerEmail, urlSite } from "@/lib/email";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
+import { notifier } from "@/features/notifications/emettre";
 import { decisionPermise, LIBELLES_STATUT, lirePieces, motifRequis, type Statut } from "./regles";
 
 /* ---------- Campagnes ---------- */
@@ -161,6 +162,19 @@ export async function statuerPiece(
     entite: "PieceDeposee",
     entiteId: depotId,
   });
+  if (statut === "REJETEE") {
+    const c = await db.candidature.findUnique({
+      where: { id: depot.candidatureId },
+      select: { candidatId: true, numero: true },
+    });
+    if (c)
+      await notifier([c.candidatId], {
+        type: "CANDIDATURE",
+        titre: "Une pièce de votre dossier est à remplacer",
+        message: commentaire,
+        lien: "/candidat",
+      });
+  }
   refresh();
   return succes(statut === "REJETEE" ? "Pièce refusée." : "Pièce vérifiée.");
 }
@@ -211,6 +225,13 @@ export async function deciderCandidature(
     apres: { statut: vers, motif },
   });
   const message = MESSAGES[vers]?.(c.numero);
+  if (message)
+    await notifier([c.candidatId], {
+      type: "CANDIDATURE",
+      titre: `${LIBELLES_STATUT[vers]} — dossier n° ${c.numero}`,
+      message: motif ? `${message} Message du secrétariat : ${motif}` : message,
+      lien: "/candidat",
+    });
   if (message && c.candidat.email)
     await envoyerEmail({
       a: c.candidat.email,
@@ -219,6 +240,6 @@ export async function deciderCandidature(
     }).catch(() => undefined);
   refresh();
   return succes(
-    `Décision enregistrée : ${LIBELLES_STATUT[vers]}. Le candidat est prévenu par email.`,
+    `Décision enregistrée : ${LIBELLES_STATUT[vers]}. Le candidat en est informé dans son espace${c.candidat.email ? " et par email" : ""}.`,
   );
 }

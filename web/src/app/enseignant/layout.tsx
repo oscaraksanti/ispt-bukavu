@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CadreEspace } from "@/components/espace/cadre-espace";
 import { Squelette } from "@/components/ui/elements";
+import { compterNonLues } from "@/features/notifications/requetes";
 import { exigerEnseignant } from "@/features/espaces/acces";
 
 export const instant = false;
@@ -23,6 +24,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
         { libelle: "Valve", href: "/enseignant/valve" },
         { libelle: "Stages", href: "/enseignant/stages" },
       ]}
+      notifications={{ href: "/enseignant/notifications", nombre: await compterNonLues(u.id) }}
       autresEspaces={u.estPersonnel ? [{ libelle: "Administration", href: "/admin" }] : undefined}
     >
       {children}

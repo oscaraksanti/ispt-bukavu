@@ -12,6 +12,7 @@ import { db } from "@/lib/db";
 import { envoyerEmail, urlSite } from "@/lib/email";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
+import { notifier, personnelAvecPermission } from "@/features/notifications/emettre";
 import { jetonAleatoire } from "@/lib/securite";
 import { stockage } from "@/lib/stockage";
 import { dossierDuCandidat, exigerCandidat } from "./acces";
@@ -355,6 +356,12 @@ export async function soumettreDossier(): Promise<EtatFormulaire> {
     entite: "Candidature",
     entiteId: dossier.id,
   });
+  await notifier(await personnelAvecPermission("admissions.decider"), {
+    type: "CANDIDATURE_DEPOSEE",
+    titre: complement ? "Dossier complété par un candidat" : "Nouveau dossier de candidature",
+    message: `Dossier n° ${dossier.numero}${dossier.nom ? ` — ${[dossier.prenom, dossier.nom].filter(Boolean).join(" ")}` : ""}, à examiner.`,
+    lien: `/admin/admissions/${dossier.id}`,
+  });
   if (u.email)
     await envoyerEmail({
       a: u.email,
@@ -363,5 +370,5 @@ export async function soumettreDossier(): Promise<EtatFormulaire> {
     }).catch(() => undefined);
   updateTag(ETIQUETTES.admissions);
   refresh();
-  return succes("Votre dossier est déposé. Vous serez informé(e) par email de la suite.");
+  return succes("Votre dossier est déposé. Vous serez informé(e) de la suite dans votre espace.");
 }

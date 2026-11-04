@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Signature } from "@/components/marque/blason";
 import { seDeconnecter } from "@/features/auth/actions";
+import { Cloche } from "@/components/notifications/cloche";
 import { BandeauHorsLigne } from "@/components/pwa/bandeau-hors-ligne";
 import { NavigationEspace } from "./navigation-espace";
 
@@ -12,12 +13,14 @@ export function CadreEspace({
   sousTitre,
   liens,
   autresEspaces,
+  notifications,
   children,
 }: {
   nom: string;
   sousTitre: string;
   liens: { libelle: string; href: string }[];
   autresEspaces?: { libelle: string; href: string }[];
+  notifications: { href: string; nombre: number };
   children: ReactNode;
 }) {
   return (
@@ -42,6 +45,7 @@ export function CadreEspace({
               <p className="text-sm font-medium text-encre">{nom}</p>
               <p className="text-xs text-pierre-500">{sousTitre}</p>
             </div>
+            <Cloche href={notifications.href} nombre={notifications.nombre} />
             <form action={seDeconnecter}>
               <button
                 type="submit"

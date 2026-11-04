@@ -3,11 +3,13 @@
 import { refresh } from "next/cache";
 import { z } from "zod";
 import { versDateBukavu } from "@/features/actualites/dates";
+import { aujourdhuiBukavu } from "@/features/horaires/regles";
 import { exigerPermission } from "@/features/auth/acces";
 import { db } from "@/lib/db";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
-import { estEnRegle, lireMontant, numeroRecu } from "./regles";
+import { compteEtudiant, notifier } from "@/features/notifications/emettre";
+import { estEnRegle, formatMontant, lireMontant, numeroRecu } from "./regles";
 import { situationEtudiant } from "./requetes";
 
 const texte = (fd: FormData, cle: string) => String(fd.get(cle) ?? "").trim();
@@ -105,8 +107,12 @@ export async function enregistrerPaiement(
   if (montant === null) return echec("Montant invalide.");
   if (!d.success || !mode.success) return echec("Devise ou mode de paiement invalide.");
   if (!reference) return echec("Indiquez la référence (bordereau, transaction, reçu de banque).");
-  const payeLe = date ? versDateBukavu(`${date}T12:00`) : new Date();
-  if (!payeLe || payeLe > new Date()) return echec("Date de paiement invalide.");
+  // Un paiement du jour est daté de maintenant (midi serait dans le futur le matin).
+  const aujourdhui = aujourdhuiBukavu();
+  if (date && (!/^\d{4}-\d{2}-\d{2}$/.test(date) || date > aujourdhui))
+    return echec("Date de paiement invalide.");
+  const payeLe = !date || date === aujourdhui ? new Date() : versDateBukavu(`${date}T12:00`);
+  if (!payeLe) return echec("Date de paiement invalide.");
   const annee = await db.anneeAcademique.findFirst({ where: { courante: true } });
   if (!annee) return echec("Définissez d'abord l'année courante.");
   if (await db.paiement.findFirst({ where: { reference, mode: mode.data, annuleLe: null } }))
@@ -141,6 +147,12 @@ export async function enregistrerPaiement(
     entiteId: paiement.id,
     apres: { montant, devise: d.data, reference, numeroRecu: paiement.numeroRecu },
   });
+  await notifier(await compteEtudiant(etudiantId), {
+    type: "PAIEMENT",
+    titre: "Paiement enregistré",
+    message: `Votre paiement de ${formatMontant(montant, d.data)} est enregistré (reçu n° ${paiement.numeroRecu}).`,
+    lien: "/etudiant/frais",
+  });
   refresh();
   return succes(`Paiement enregistré. Reçu n° ${paiement.numeroRecu}.`);
 }
@@ -164,6 +176,12 @@ export async function annulerPaiement(
     entite: "Paiement",
     entiteId: id,
     apres: { motif },
+  });
+  await notifier(await compteEtudiant(p.etudiantId), {
+    type: "PAIEMENT",
+    titre: "Paiement annulé",
+    message: `Le reçu n° ${p.numeroRecu} a été annulé par la caisse : ${motif}`,
+    lien: "/etudiant/frais",
   });
   refresh();
   return succes("Paiement annulé : il reste visible dans l'historique.");
@@ -192,6 +210,12 @@ export async function ajouterExoneration(
     entite: "Exoneration",
     entiteId: e.id,
     apres: { montant, motif },
+  });
+  await notifier(await compteEtudiant(etudiantId), {
+    type: "PAIEMENT",
+    titre: "Exonération accordée",
+    message: `Une exonération de ${formatMontant(montant, d.data)} est appliquée à vos frais : ${motif}`,
+    lien: "/etudiant/frais",
   });
   refresh();
   return succes("Exonération enregistrée.");

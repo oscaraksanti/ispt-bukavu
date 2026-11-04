@@ -38,7 +38,13 @@ for (const chemin of [
 
 test("espace étudiant", async ({ page }) => {
   await seConnecter(page, D.comptes.etudiantA);
-  for (const chemin of ["/etudiant", "/etudiant/horaire", "/etudiant/notes", "/etudiant/frais"]) {
+  for (const chemin of [
+    "/etudiant",
+    "/etudiant/horaire",
+    "/etudiant/notes",
+    "/etudiant/frais",
+    "/etudiant/notifications",
+  ]) {
     await page.goto(chemin);
     await analyser(page);
   }
@@ -54,7 +60,13 @@ test("espace enseignant", async ({ page }) => {
 
 test("administration", async ({ page }) => {
   await seConnecter(page, D.comptes.admin);
-  for (const chemin of ["/admin", "/admin/pilotage", "/admin/utilisateurs", "/admin/notes"]) {
+  for (const chemin of [
+    "/admin",
+    "/admin/pilotage",
+    "/admin/utilisateurs",
+    "/admin/notes",
+    "/admin/notifications",
+  ]) {
     await page.goto(chemin);
     await analyser(page);
   }

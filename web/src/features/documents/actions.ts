@@ -6,6 +6,7 @@ import { exigerConnexion, exigerPermission } from "@/features/auth/acces";
 import { db } from "@/lib/db";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
+import { compteEtudiant, notifier } from "@/features/notifications/emettre";
 import { codeVerification } from "@/lib/securite";
 import { LIBELLES_DOCUMENT, type TypeDocument } from "./regles";
 import { figerDonnees } from "./requetes";
@@ -77,6 +78,13 @@ async function emettre(
         entiteId: doc.id,
         apres: { type, code: doc.code },
       });
+      await notifier(await compteEtudiant(etudiantId), {
+        type: "DOCUMENT",
+        titre: `${LIBELLES_DOCUMENT[type]} disponible`,
+        message:
+          "Votre document officiel est prêt : vous pouvez l'imprimer ou le présenter ; son QR code permet de vérifier son authenticité.",
+        lien: "/etudiant/documents",
+      });
       return { doc };
     } catch (e) {
       if ((e as { code?: string }).code !== "P2002") throw e;
@@ -97,9 +105,18 @@ export async function emettreDemande(demandeId: string): Promise<EtatFormulaire>
 
 export async function refuserDemande(demandeId: string): Promise<EtatFormulaire> {
   const auteur = await exigerPermission("documents.emettre");
+  const d = await db.demandeDocument.findUnique({ where: { id: demandeId } });
+  if (!d || d.statut !== "EN_ATTENTE") return echec("Demande déjà traitée.");
   await db.demandeDocument.update({
     where: { id: demandeId },
     data: { statut: "REFUSEE", traiteLe: new Date() },
+  });
+  await notifier(await compteEtudiant(d.etudiantId), {
+    type: "DOCUMENT",
+    titre: `Demande non retenue : ${LIBELLES_DOCUMENT[d.type].toLowerCase()}`,
+    message:
+      "Le secrétariat académique n'a pas pu donner suite à votre demande. Renseignez-vous auprès de lui.",
+    lien: "/etudiant/documents",
   });
   await journaliser({
     auteurId: auteur.id,

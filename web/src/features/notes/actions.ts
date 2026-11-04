@@ -7,6 +7,7 @@ import { exigerConnexion, exigerPermission } from "@/features/auth/acces";
 import { db } from "@/lib/db";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
+import { notifier } from "@/features/notifications/emettre";
 import { etudiantsDuCours, peutGererCours } from "./acces";
 import {
   LIBELLES_EVALUATION,
@@ -180,15 +181,15 @@ export async function changerStatutEvaluation(
   await db.evaluation.update({ where: { id }, data: { statut: vers } });
   if (vers === "PUBLIEE") {
     const etudiants = await etudiantsDuCours(e.coursOffertId);
-    await db.notification.createMany({
-      data: etudiants.map((et) => ({
-        utilisateurId: et.utilisateurId,
+    await notifier(
+      etudiants.map((et) => et.utilisateurId),
+      {
         type: "NOTE_PUBLIEE",
         titre: "Nouvelle note publiée",
         message: `${e.coursOffert.cours.intitule} : ${e.intitule}`,
         lien: "/etudiant/notes",
-      })),
-    });
+      },
+    );
   }
   await journaliser({
     auteurId: auteur.id,

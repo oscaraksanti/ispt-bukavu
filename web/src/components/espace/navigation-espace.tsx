@@ -6,10 +6,13 @@ import { cn } from "@/lib/cn";
 
 export function NavigationEspace({ liens }: { liens: { libelle: string; href: string }[] }) {
   const chemin = usePathname();
+  // Les notifications s'ouvrent depuis la cloche : aucun onglet n'est alors actif.
+  const horsOnglets = chemin.endsWith("/notifications");
   const actif = (href: string) =>
-    chemin === href ||
-    (chemin.startsWith(`${href}/`) &&
-      !liens.some((l) => l.href.length > href.length && chemin.startsWith(l.href)));
+    !horsOnglets &&
+    (chemin === href ||
+      (chemin.startsWith(`${href}/`) &&
+        !liens.some((l) => l.href.length > href.length && chemin.startsWith(l.href))));
   return (
     <nav aria-label="Espace" className="conteneur -mb-px flex gap-6 overflow-x-auto">
       {liens.map((l) => (

@@ -15,7 +15,9 @@ type Donnees = {
     | "evaluationBrouillon"
     | "recuA"
     | "documentA"
-    | "codeDocumentA",
+    | "codeDocumentA"
+    | "promotion"
+    | "etudiantB",
     string
   >;
 };

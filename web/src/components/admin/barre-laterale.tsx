@@ -37,6 +37,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Signature } from "@/components/marque/blason";
 import { seDeconnecter } from "@/features/auth/actions";
+import { Cloche } from "@/components/notifications/cloche";
 import { cn } from "@/lib/cn";
 import type { GroupeNavigation } from "./navigation";
 
@@ -142,18 +143,23 @@ export function BarreLaterale({
   groupes,
   nom,
   email,
+  notifications,
 }: {
   groupes: GroupeNavigation[];
   nom: string;
   email: string;
+  notifications: number;
 }) {
   const [ouvert, setOuvert] = useState(false);
   return (
     <>
       <aside className="trame-claire fixed inset-y-0 left-0 hidden w-64 flex-col bg-encre px-4 py-6 lg:flex">
-        <Link href="/admin" className="px-2">
-          <Signature clair compacte />
-        </Link>
+        <div className="flex items-center justify-between gap-2 pl-2">
+          <Link href="/admin">
+            <Signature clair compacte />
+          </Link>
+          <Cloche href="/admin/notifications" nombre={notifications} clair />
+        </div>
         <div className="mt-10 flex-1 overflow-y-auto">
           <Liens groupes={groupes} />
         </div>
@@ -164,14 +170,17 @@ export function BarreLaterale({
         <Link href="/admin">
           <Signature clair compacte />
         </Link>
-        <button
-          type="button"
-          onClick={() => setOuvert(true)}
-          className="inline-flex size-10 items-center justify-center text-white"
-          aria-label="Ouvrir le menu"
-        >
-          <Menu aria-hidden className="size-5" />
-        </button>
+        <div className="flex items-center">
+          <Cloche href="/admin/notifications" nombre={notifications} clair />
+          <button
+            type="button"
+            onClick={() => setOuvert(true)}
+            className="inline-flex size-10 items-center justify-center text-white"
+            aria-label="Ouvrir le menu"
+          >
+            <Menu aria-hidden className="size-5" />
+          </button>
+        </div>
       </header>
       {ouvert && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">

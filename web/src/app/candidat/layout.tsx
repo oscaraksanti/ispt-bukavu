@@ -3,9 +3,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Signature } from "@/components/marque/blason";
+import { Cloche } from "@/components/notifications/cloche";
 import { Squelette } from "@/components/ui/elements";
 import { exigerCandidat } from "@/features/admissions/acces";
 import { seDeconnecter } from "@/features/auth/actions";
+import { compterNonLues } from "@/features/notifications/requetes";
 
 export const instant = false;
 
@@ -16,6 +18,7 @@ export const metadata: Metadata = {
 
 async function Cadre({ children }: { children: React.ReactNode }) {
   const u = await exigerCandidat();
+  const nonLues = await compterNonLues(u.id);
   return (
     <>
       <header className="border-b border-pierre-200 bg-white">
@@ -23,14 +26,16 @@ async function Cadre({ children }: { children: React.ReactNode }) {
           <Link href="/" aria-label="Retour au site de l'ISPT-Bukavu">
             <Signature compacte />
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <p className="hidden text-sm text-pierre-700 sm:block">{u.nomComplet}</p>
+            <Cloche href="/candidat/notifications" nombre={nonLues} />
             <form action={seDeconnecter}>
               <button
                 type="submit"
                 className="inline-flex h-9 items-center gap-2 rounded-xs px-3 text-sm text-pierre-700 hover:bg-pierre-100"
               >
-                <LogOut aria-hidden className="size-4" /> Se déconnecter
+                <LogOut aria-hidden className="size-4" />
+                <span className="sr-only sm:not-sr-only">Se déconnecter</span>
               </button>
             </form>
           </div>
