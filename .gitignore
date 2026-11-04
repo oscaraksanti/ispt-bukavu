@@ -25,3 +25,6 @@ docs/recherche/donnees-brutes/
 
 # Notes locales de travail
 .local/
+
+# Mémoire : documents générés
+docs/tfc/sortie/

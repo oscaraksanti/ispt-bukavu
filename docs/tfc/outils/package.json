@@ -1,0 +1,8 @@
+{
+  "name": "construction-memoire",
+  "private": true,
+  "type": "module",
+  "description": "Construction du mémoire au format Word à partir des sources Markdown.",
+  "scripts": { "construire": "node construire.mjs" },
+  "dependencies": { "docx": "9.7.1" }
+}
