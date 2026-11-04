@@ -28,3 +28,11 @@ npm run construire   # produit docs/tfc/sortie/TFC-Aksanti-Cirhuza-Oscar.docx
 - `![Figure 3.1 : légende](chemin/image.png)` : figure numérotée, reprise dans la liste des figures.
 - `::saut` : saut de page ; `::a-rediger texte` : repère d'une section encore à écrire.
 - L'apostrophe droite et les espaces avant `: ; ? !` sont corrigés automatiquement (typographie française).
+
+## Citations et bibliographie (APA 7)
+
+- Toutes les sources vivent dans `references.json`, une entrée par référence vérifiée (clé, catégorie, forme abrégée pour la citation, année, référence complète, URL, date de consultation, mode de vérification).
+- Dans le texte : `[@roques2018]` → (Roques, 2018) ; `[@codd1970, p. 377]` → (Codd, 1970, p. 377) ; `[@hevner2004; @peffers2007]` → (Hevner et al., 2004 ; Peffers et al., 2007) ; forme narrative `[+@sommerville2016]` → Sommerville (2016).
+- `::bibliographie` produit la bibliographie des **seules références citées**, classées par catégorie puis par auteur et date, avec retrait suspendu et interligne simple.
+- Une clé inconnue arrête la construction : aucune source non vérifiée ne peut entrer dans le mémoire. Pour ajouter une source, la vérifier (catalogue, éditeur, DOI ou page consultée) puis l'ajouter à `references.json`.
+- `TFC_BIBLIO=toutes` affiche toute la base, pour la relecture.

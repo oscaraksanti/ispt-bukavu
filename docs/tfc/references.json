@@ -1,0 +1,866 @@
+{
+  "_lisezmoi": "Base des références du mémoire (APA 7, adaptation française). Chaque entrée a été vérifiée (catalogue, éditeur, DOI ou page consultée). Citer dans le texte : [@cle], [@cle, p. 12], [@a; @b], forme narrative [+@cle]. La bibliographie ne reprend que les références citées. Champs : cle, categorie, auteur (forme abrégée pour la citation), annee, reference (*italique* en Markdown), url, consulte (date de consultation, ressources en ligne seulement), verification.",
+  "categories": [
+    ["ouvrage", "Ouvrages"],
+    ["article", "Articles scientifiques"],
+    ["texte-officiel", "Textes officiels"],
+    ["rapport", "Rapports et documents institutionnels"],
+    ["norme", "Normes et spécifications techniques"],
+    ["en-ligne", "Ressources en ligne"]
+  ],
+  "references": [
+    {
+      "cle": "sommerville2016",
+      "categorie": "ouvrage",
+      "auteur": "Sommerville",
+      "annee": "2016",
+      "reference": "Sommerville, I. (2016). *Software engineering* (10e éd.). Pearson.",
+      "verification": "Catalogue Pearson : 10e édition, © 2016."
+    },
+    {
+      "cle": "pressman2020",
+      "categorie": "ouvrage",
+      "auteur": "Pressman et Maxim",
+      "annee": "2020",
+      "reference": "Pressman, R. S., & Maxim, B. R. (2020). *Software engineering: A practitioner's approach* (9e éd.). McGraw-Hill Education.",
+      "verification": "WorldCat (OCLC 1103985809) : 9e édition, McGraw-Hill Education, c2020."
+    },
+    {
+      "cle": "roques2018",
+      "categorie": "ouvrage",
+      "auteur": "Roques",
+      "annee": "2018",
+      "reference": "Roques, P. (2018). *UML 2.5 par la pratique* (8e éd.). Eyrolles.",
+      "verification": "Librairie Eyrolles : 8e édition parue le 5 avril 2018, 408 p."
+    },
+    {
+      "cle": "jacobson1999",
+      "categorie": "ouvrage",
+      "auteur": "Jacobson et al.",
+      "annee": "1999",
+      "reference": "Jacobson, I., Booch, G., & Rumbaugh, J. (1999). *The unified software development process*. Addison-Wesley.",
+      "verification": "Catalogues universitaires et WIPO : Addison-Wesley, février 1999."
+    },
+    {
+      "cle": "larman2005",
+      "categorie": "ouvrage",
+      "auteur": "Larman",
+      "annee": "2005",
+      "reference": "Larman, C. (2005). *Applying UML and patterns: An introduction to object-oriented analysis and design and iterative development* (3e éd.). Prentice Hall PTR.",
+      "verification": "Catalogues universitaires : Upper Saddle River, Prentice Hall PTR, c2005."
+    },
+    {
+      "cle": "laudon2022",
+      "categorie": "ouvrage",
+      "auteur": "Laudon et Laudon",
+      "annee": "2022",
+      "reference": "Laudon, K. C., & Laudon, J. P. (2022). *Management information systems: Managing the digital firm* (17e éd.). Pearson.",
+      "verification": "Catalogue Pearson (États-Unis) : 17e édition, © 2022."
+    },
+    {
+      "cle": "reix2016",
+      "categorie": "ouvrage",
+      "auteur": "Reix et al.",
+      "annee": "2016",
+      "reference": "Reix, R., Fallery, B., Kalika, M., & Rowe, F. (2016). *Systèmes d'information et management* (7e éd.). Vuibert.",
+      "verification": "Catalogues de bibliothèques : Vuibert, 2016, 7e édition, collection Gestion."
+    },
+    {
+      "cle": "vancampenhoudt2017",
+      "categorie": "ouvrage",
+      "auteur": "Van Campenhoudt et al.",
+      "annee": "2017",
+      "reference": "Van Campenhoudt, L., Marquet, J., & Quivy, R. (2017). *Manuel de recherche en sciences sociales* (5e éd.). Dunod.",
+      "verification": "Catalogue UCLouvain et page de copyright : Dunod, 2017, 5e édition."
+    },
+    {
+      "cle": "elmasri2016",
+      "categorie": "ouvrage",
+      "auteur": "Elmasri et Navathe",
+      "annee": "2016",
+      "reference": "Elmasri, R., & Navathe, S. B. (2016). *Fundamentals of database systems* (7e éd.). Pearson.",
+      "verification": "Notice de bibliothèque : Hoboken, Pearson, © 2016, 7e édition."
+    },
+    {
+      "cle": "myers2011",
+      "categorie": "ouvrage",
+      "auteur": "Myers et al.",
+      "annee": "2011",
+      "reference": "Myers, G. J., Badgett, T., & Sandler, C. (2011). *The art of software testing* (3e éd.). John Wiley & Sons.",
+      "verification": "Page de titre et notice Library of Congress : Wiley, 2011, 3e édition."
+    },
+    {
+      "cle": "krug2014",
+      "categorie": "ouvrage",
+      "auteur": "Krug",
+      "annee": "2014",
+      "reference": "Krug, S. (2014). *Don't make me think, revisited: A common sense approach to web usability* (3e éd.). New Riders.",
+      "verification": "Catalogues de bibliothèques : New Riders, [2014], 3e édition."
+    },
+    {
+      "cle": "fowler2002",
+      "categorie": "ouvrage",
+      "auteur": "Fowler",
+      "annee": "2002",
+      "reference": "Fowler, M. (2002). *Patterns of enterprise application architecture*. Addison-Wesley.",
+      "verification": "Notices commerciales concordantes (LCCN 2002027743) : Addison-Wesley, 2002."
+    },
+    {
+      "cle": "fielding2000",
+      "categorie": "ouvrage",
+      "auteur": "Fielding",
+      "annee": "2000",
+      "reference": "Fielding, R. T. (2000). *Architectural styles and the design of network-based software architectures* [Thèse de doctorat, University of California, Irvine].",
+      "url": "https://ics.uci.edu/~fielding/pubs/dissertation/top.htm",
+      "verification": "Texte intégral sur la page de l'auteur (UC Irvine) ; ProQuest n° 9980887."
+    },
+    {
+      "cle": "codd1970",
+      "categorie": "article",
+      "auteur": "Codd",
+      "annee": "1970",
+      "reference": "Codd, E. F. (1970). A relational model of data for large shared data banks. *Communications of the ACM*, *13*(6), 377–387.",
+      "url": "https://doi.org/10.1145/362384.362685",
+      "verification": "DOI et notices bibliographiques concordantes."
+    },
+    {
+      "cle": "hevner2004",
+      "categorie": "article",
+      "auteur": "Hevner et al.",
+      "annee": "2004",
+      "reference": "Hevner, A. R., March, S. T., Park, J., & Ram, S. (2004). Design science in information systems research. *MIS Quarterly*, *28*(1), 75–105.",
+      "verification": "Portail de recherche de l'Université d'Arizona : vol. 28, n° 1, p. 75-105, mars 2004."
+    },
+    {
+      "cle": "peffers2007",
+      "categorie": "article",
+      "auteur": "Peffers et al.",
+      "annee": "2007",
+      "reference": "Peffers, K., Tuunanen, T., Rothenberger, M. A., & Chatterjee, S. (2007). A design science research methodology for information systems research. *Journal of Management Information Systems*, *24*(3), 45–77.",
+      "url": "https://doi.org/10.2753/MIS0742-1222240302",
+      "verification": "Page de l'article (jmis-web.org) et Taylor & Francis."
+    },
+    {
+      "cle": "loi14-004",
+      "categorie": "texte-officiel",
+      "auteur": "Loi-cadre n° 14/004",
+      "annee": "2014",
+      "reference": "Loi-cadre n° 14/004 du 11 février 2014 de l'enseignement national. (2014). Reproduction publiée par RTEI/Leganet.",
+      "url": "https://rtei.okfn.org/documents/de_lenseignement_national.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "decret22-39",
+      "categorie": "texte-officiel",
+      "auteur": "Décret n° 22/39",
+      "annee": "2022",
+      "reference": "Décret n° 22/39 du 8 décembre 2022 portant organisation et fonctionnement du système Licence-Maitrise-Doctorat « LMD » en République démocratique du Congo. (2022). Reproduction publiée par droitcongolais.info.",
+      "url": "https://www.droitcongolais.info/files/520.12.22-decret-du-8-decembre-2022_Systeme-LMD.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "instruction025-2023",
+      "categorie": "texte-officiel",
+      "auteur": "Ministère de l'Enseignement supérieur et universitaire",
+      "annee": "2023",
+      "reference": "Ministère de l'Enseignement supérieur et universitaire. (2023). *Instruction académique n° 025/MINESU/CAB.MIN/MNB/BLB/2023 du 13/11/2023 portant directives pour l'année académique 2023-2024*.",
+      "url": "https://uor.ac/wp-content/uploads/2023/11/025-Version-Finale.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "code-numerique2023",
+      "categorie": "texte-officiel",
+      "auteur": "Ordonnance-loi n° 23/010",
+      "annee": "2023",
+      "reference": "Ordonnance-loi n° 23/010 du 13 mars 2023 portant Code du numérique. (2023). Version publiée par Droit-Numérique.cd.",
+      "url": "https://droitnumerique.cd/wp-content/uploads/2024/08/Code-du-numerique-I-RD-Congo.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "pnsn-esu2021",
+      "categorie": "rapport",
+      "auteur": "Ministère de l'Enseignement supérieur et universitaire",
+      "annee": "2021",
+      "reference": "Ministère de l'Enseignement supérieur et universitaire. (2021). *Plan national sous-sectoriel du numérique PNSN-ESU, horizon 2025*. IIEP-UNESCO Planipolis.",
+      "url": "https://planipolis.iiep.unesco.org/sites/default/files/ressources/congo_dr_Plan%20Sous%20Sectoriel%20Numerique-ESU.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "minesursi-lmd",
+      "categorie": "en-ligne",
+      "auteur": "Ministère de l'Enseignement supérieur, universitaire, recherche scientifique et innovations",
+      "annee": "s. d.",
+      "reference": "Ministère de l'Enseignement supérieur, universitaire, recherche scientifique et innovations. (s. d.). *Réforme Licence-Master-Doctorat (LMD)* [Page web].",
+      "url": "https://minesursi.gouv.cd/?lmd=",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "ua2022",
+      "categorie": "rapport",
+      "auteur": "African Union",
+      "annee": "2022",
+      "reference": "African Union. (2022). *Digital education strategy: Abridged version*.",
+      "url": "https://au.int/sites/default/files/documents/42415-doc-2._DES_Abridged-EN_-_2022_09_14.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "banquemondiale2020",
+      "categorie": "rapport",
+      "auteur": "Banque mondiale",
+      "annee": "2020",
+      "reference": "Banque mondiale. (2020). *République démocratique du Congo : évaluation de l'économie numérique* (Initiative Digital Economy for Africa).",
+      "url": "https://thedocs.worldbank.org/en/doc/61714f214ed04bcd6e9623ad0e215897-0400012021/related/DRC-DE4A-FR-Final.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "unesco2023",
+      "categorie": "rapport",
+      "auteur": "UNESCO",
+      "annee": "2023a",
+      "reference": "UNESCO. (2023a). *Global education monitoring report 2023: Technology in education: A tool on whose terms?*",
+      "url": "https://doi.org/10.54676/UZQV8501",
+      "verification": "DOI vérifié (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "unesco2023resume",
+      "categorie": "en-ligne",
+      "auteur": "UNESCO",
+      "annee": "2023b",
+      "reference": "UNESCO. (2023b). *Technology in education: GEM Report 2023* [Résumé en ligne].",
+      "url": "https://gem-report-2023.unesco.org/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "kandolo2024",
+      "categorie": "rapport",
+      "auteur": "Kandolo",
+      "annee": "2024",
+      "reference": "Kandolo, B. (2024). *Régulation du numérique en RDC : l'ARPTIC investie autorité unique pour la régulation du numérique, la certification électronique et la protection des données* (Dossier n° 4). Droit-Numérique.cd.",
+      "url": "https://droitnumerique.cd/wp-content/uploads/2024/10/Regulation-du-numerique-en-RDC-lARPTIC-Brozeck-Kandolo-4.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "pacmap2026",
+      "categorie": "en-ligne",
+      "auteur": "PACMap",
+      "annee": "2026",
+      "reference": "PACMap. (2026, 31 mars). *Ordonnance-loi n° 23/010 du 13 mars 2023 portant Code du numérique (CD)*.",
+      "url": "https://pacmap.dev/regulation/cd-digital-code-2023",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "acp2022",
+      "categorie": "en-ligne",
+      "auteur": "Agence congolaise de presse",
+      "annee": "2022",
+      "reference": "Agence congolaise de presse. (2022, 24 décembre). *Le gouvernement dote le système LMD d'un cadre juridique*.",
+      "url": "https://acp.cd/nation/le-gouvernement-dote-le-systeme-lmd-dun-cadre-juridique/",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "actualite2023a",
+      "categorie": "en-ligne",
+      "auteur": "Actualite.cd",
+      "annee": "2023a",
+      "reference": "Actualite.cd. (2023a, 20 octobre). *Enseignement supérieur : la numérisation des diplômes parmi les réformes du secteur*.",
+      "url": "https://actualite.cd/2023/10/20/enseignement-superieur-la-numerisation-des-diplomes-parmi-les-reformes-du-secteur",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "actualite2023b",
+      "categorie": "en-ligne",
+      "auteur": "Actualite.cd",
+      "annee": "2023b",
+      "reference": "Actualite.cd. (2023b, 23 octobre). *Le gouvernement adopte le projet de décret sur les appellations des grades académiques du système LMD*.",
+      "url": "https://actualite.cd/2023/10/23/le-gouvernement-adopte-le-projet-de-decret-sur-les-appellations-des-grades-academiques",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "dba2025",
+      "categorie": "en-ligne",
+      "auteur": "Digital Business Africa",
+      "annee": "2025",
+      "reference": "Digital Business Africa. (2025, 21 juillet). *RD Congo : la plateforme E-Diplôme lancée pour lutter contre la fraude et les lenteurs administratives*.",
+      "url": "https://www.digitalbusiness.africa/rd-congo-la-plateforme-e-diplome-lancee-pour-lutter-contre-la-fraude-et-les-lenteurs-administratives/",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "dba2024",
+      "categorie": "en-ligne",
+      "auteur": "Digital Business Africa",
+      "annee": "2024",
+      "reference": "Digital Business Africa. (2024). *RD Congo : la plateforme numérique « OptSolution » lancée pour vérifier instantanément les faux diplômes*.",
+      "url": "https://www.digitalbusiness.africa/rd-congo-la-plateforme-numerique-optsolution-lancee-pour-verifier-instantanement-les-faux-diplomes",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "osiris2025",
+      "categorie": "en-ligne",
+      "auteur": "Osiris",
+      "annee": "2025",
+      "reference": "Osiris. (2025, 10 octobre). *RDC : lancement officiel des travaux de rédaction du plan national du numérique 2026-2030 et de la stratégie nationale de l'intelligence artificielle*.",
+      "url": "https://osiris.sn/rdc-lancement-officiel-des-travaux-de-redaction-du-plan-national-du-numerique.html",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "lutete2026",
+      "categorie": "en-ligne",
+      "auteur": "Lutete",
+      "annee": "2026",
+      "reference": "Lutete, C. (2026, 2 novembre). *Sénat : examen mercredi des amendements sur la proposition de loi modifiant Code numérique*. Agence congolaise de presse.",
+      "url": "https://acp.cd/nation/senat-examen-mercredi-des-amendements-sur-la-proposition-de-loi-modifiant-code-numerique/",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/cadre-reglementaire.md)."
+    },
+    {
+      "cle": "bulonza2025",
+      "categorie": "en-ligne",
+      "auteur": "Bulonza",
+      "annee": "2025",
+      "reference": "Bulonza, E. (2025, 21 juillet). RDC : « e-Diplôme », une plateforme numérique dédiée à la vérification des diplômes. *Cio Mag*.",
+      "url": "https://cio-mag.com/rdc-e-diplome-une-plateforme-numerique-pour-la-verification-des-diplomes/",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "njoya2025",
+      "categorie": "en-ligne",
+      "auteur": "Njoya",
+      "annee": "2025",
+      "reference": "Njoya, S. (2025, 21 juillet). La RDC lance une solution numérique d'émission et de vérification des diplômes. *OSIRIS* (reprise de *We Are Tech Africa*).",
+      "url": "https://osiris.sn/la-rdc-lance-une-solution-numerique-d-emission-et-de-verification-des-diplomes.html",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "kemp2025",
+      "categorie": "en-ligne",
+      "auteur": "Kemp",
+      "annee": "2025",
+      "reference": "Kemp, S. (2025, 8 novembre). *Digital 2026: The Democratic Republic of the Congo*. DataReportal.",
+      "url": "https://datareportal.com/reports/digital-2026-democratic-republic-of-the-congo",
+      "consulte": "3 novembre 2026",
+      "verification": "Rapport consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "a4ai2021",
+      "categorie": "rapport",
+      "auteur": "Alliance for Affordable Internet",
+      "annee": "2021",
+      "reference": "Alliance for Affordable Internet. (2021). *Setting a vision for affordable access: A4AI's new global price benchmarks (Journey from 1 to 5)*.",
+      "url": "https://adi.a4ai.org/affordable-internet-journey-from-1-to-5/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "gsma2025",
+      "categorie": "rapport",
+      "auteur": "GSMA",
+      "annee": "2025",
+      "reference": "GSMA. (2025, 9 septembre). *GSMA calls for renewed focus on closing the Usage Gap as more than 3 billion people remain offline despite available mobile internet services* [Communiqué de presse].",
+      "url": "https://www.gsma.com/newsroom/press-release/gsma-calls-for-renewed-focus-on-closing-the-usage-gap-as-more-than-3-billion-people-remain-offline-despite-available-mobile-internet-services/",
+      "consulte": "3 novembre 2026",
+      "verification": "Communiqué consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "httparchive2025",
+      "categorie": "rapport",
+      "auteur": "HTTP Archive",
+      "annee": "2025",
+      "reference": "HTTP Archive. (2025). Page weight. Dans *Web Almanac 2025*.",
+      "url": "https://almanac.httparchive.org/en/2025/page-weight",
+      "consulte": "3 novembre 2026",
+      "verification": "Chapitre consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "itu2023",
+      "categorie": "rapport",
+      "auteur": "International Telecommunication Union",
+      "annee": "2023",
+      "reference": "International Telecommunication Union. (2023). *Digital Development Dashboard: Dem. Rep. of the Congo*.",
+      "url": "https://www.itu.int/en/ITU-D/Statistics/Documents/DDD/ddd_COD.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "itu2025",
+      "categorie": "rapport",
+      "auteur": "International Telecommunication Union",
+      "annee": "2025",
+      "reference": "International Telecommunication Union. (2025). Affordability of ICT services. Dans *Facts and Figures 2025*.",
+      "url": "https://www.itu.int/itu-d/reports/statistics/2025/10/15/ff25-affordability-of-ict-services/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "parcoursup2019",
+      "categorie": "rapport",
+      "auteur": "Ministère de l'Enseignement supérieur, de la Recherche et de l'Innovation",
+      "annee": "2019",
+      "reference": "Ministère de l'Enseignement supérieur, de la Recherche et de l'Innovation. (2019). *Livret Parcoursup, janvier 2019*.",
+      "url": "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/content_migration/document/Livret_Parcoursup_-_Janvier_2019_1058633.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "parcoursup2025",
+      "categorie": "rapport",
+      "auteur": "MENESR",
+      "annee": "2025",
+      "reference": "Ministère de l'Éducation nationale, de l'Enseignement supérieur et de la Recherche [MENESR]. (2025). *Parcoursup : bilan de la procédure d'admission 2025*.",
+      "url": "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2025-10/bilan-de-la-proc-dure-d-admission-2025-38034.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "mesrsi-bf2025",
+      "categorie": "rapport",
+      "auteur": "Ministère de l'Enseignement supérieur, de la Recherche scientifique et de l'Innovation",
+      "annee": "2025",
+      "reference": "Ministère de l'Enseignement supérieur, de la Recherche scientifique et de l'Innovation. (2025). *Déclaration liminaire de la conférence de presse sur l'orientation des nouveaux bacheliers, session 2025*.",
+      "url": "https://www.mesrsi.gov.bf/fileadmin/user_upload/storage/fichiers/Declaration_liminaire__Orientation_2025__.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "campusfaso",
+      "categorie": "rapport",
+      "auteur": "Direction générale de l'enseignement supérieur",
+      "annee": "s. d.",
+      "reference": "Direction générale de l'enseignement supérieur. (s. d.). *Mémo sur le processus de paiement des frais d'inscription par OrangeMoney*. Ministère de l'Enseignement supérieur, de la Recherche scientifique et de l'Innovation, Burkina Faso.",
+      "url": "https://campusfaso.bf/memoOrangeMoney.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "ucad2020",
+      "categorie": "rapport",
+      "auteur": "Université Cheikh Anta Diop de Dakar",
+      "annee": "2020",
+      "reference": "Université Cheikh Anta Diop de Dakar, Direction informatique et des systèmes d'information. (2020). *Procédure d'inscription à l'UCAD, année universitaire 2020-2021*.",
+      "url": "https://pie.ucad.sn/docs/preinscription_guide_utilisateur_2020_2021_v1.pdf",
+      "consulte": "3 novembre 2026",
+      "verification": "Document consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "owasp2025",
+      "categorie": "norme",
+      "auteur": "OWASP Foundation",
+      "annee": "2025",
+      "reference": "OWASP Foundation. (2025). *OWASP Top 10:2025*.",
+      "url": "https://owasp.org/Top10/2025/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "w3c-vc2025",
+      "categorie": "norme",
+      "auteur": "W3C",
+      "annee": "2025",
+      "reference": "W3C. (2025). *Verifiable Credentials Data Model v2.0* (W3C Recommendation, 15 mai 2025).",
+      "url": "https://www.w3.org/TR/vc-data-model-2.0/",
+      "verification": "Recommandation consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "w3c-wcag22",
+      "categorie": "norme",
+      "auteur": "W3C",
+      "annee": "2024",
+      "reference": "W3C. (2024). *Web Content Accessibility Guidelines (WCAG) 2.2* (W3C Recommendation, 12 décembre 2024).",
+      "url": "https://www.w3.org/TR/2024/REC-WCAG22-20241212/",
+      "verification": "Historique des publications W3C : recommandation du 5 octobre 2023, version du 12 décembre 2024."
+    },
+    {
+      "cle": "w3c-wcag22-nouveautes",
+      "categorie": "en-ligne",
+      "auteur": "W3C Web Accessibility Initiative",
+      "annee": "2023",
+      "reference": "W3C Web Accessibility Initiative. (2023). *What's new in WCAG 2.2*.",
+      "url": "https://www.w3.org/WAI/standards-guidelines/wcag/new-in-22/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "rfc9106",
+      "categorie": "norme",
+      "auteur": "Biryukov et al.",
+      "annee": "2021",
+      "reference": "Biryukov, A., Dinu, D., Khovratovich, D., & Josefsson, S. (2021). *Argon2 memory-hard function for password hashing and proof-of-work applications* (RFC 9106). RFC Editor.",
+      "url": "https://doi.org/10.17487/RFC9106",
+      "verification": "IETF Datatracker : RFC informatif, septembre 2021, IRTF/CFRG."
+    },
+    {
+      "cle": "rfc5545",
+      "categorie": "norme",
+      "auteur": "Desruisseaux",
+      "annee": "2009",
+      "reference": "Desruisseaux, B. (Éd.). (2009). *Internet calendaring and scheduling core object specification (iCalendar)* (RFC 5545). RFC Editor.",
+      "url": "https://doi.org/10.17487/RFC5545",
+      "verification": "RFC Editor : Proposed Standard, septembre 2009, remplace la RFC 2445."
+    },
+    {
+      "cle": "iso25010",
+      "categorie": "norme",
+      "auteur": "ISO/IEC",
+      "annee": "2023",
+      "reference": "ISO/IEC. (2023). *Systems and software engineering — Systems and software Quality Requirements and Evaluation (SQuaRE) — Product quality model* (ISO/IEC 25010:2023). Organisation internationale de normalisation.",
+      "verification": "Catalogue ISO : édition 2, novembre 2023, remplace l'édition 2011."
+    },
+    {
+      "cle": "omg-uml251",
+      "categorie": "norme",
+      "auteur": "Object Management Group",
+      "annee": "2017",
+      "reference": "Object Management Group. (2017). *OMG Unified Modeling Language (OMG UML), version 2.5.1* (formal/17-12-05).",
+      "url": "https://www.omg.org/spec/UML/2.5.1/",
+      "verification": "Page OMG de la spécification : version formelle de décembre 2017."
+    },
+    {
+      "cle": "manifeste-agile",
+      "categorie": "en-ligne",
+      "auteur": "Beck et al.",
+      "annee": "2001",
+      "reference": "Beck, K., Beedle, M., van Bennekum, A., Cockburn, A., Cunningham, W., Fowler, M., Grenning, J., Highsmith, J., Hunt, A., Jeffries, R., Kern, J., Marick, B., Martin, R. C., Mellor, S., Schwaber, K., Sutherland, J., & Thomas, D. (2001). *Manifesto for agile software development*.",
+      "url": "https://agilemanifesto.org/",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée : « © 2001, the above authors »."
+    },
+    {
+      "cle": "nextjs-docs",
+      "categorie": "en-ligne",
+      "auteur": "Vercel",
+      "annee": "2026",
+      "reference": "Vercel. (2026). *Next.js documentation*.",
+      "url": "https://nextjs.org/docs",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée (mise à jour du 13 mai 2026)."
+    },
+    {
+      "cle": "vercel-docs",
+      "categorie": "en-ligne",
+      "auteur": "Vercel",
+      "annee": "s. d.",
+      "reference": "Vercel. (s. d.). *Vercel documentation*.",
+      "url": "https://vercel.com/docs",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée."
+    },
+    {
+      "cle": "react-docs",
+      "categorie": "en-ligne",
+      "auteur": "Meta Platforms",
+      "annee": "s. d.",
+      "reference": "Meta Platforms. (s. d.). *Quick start*. React.",
+      "url": "https://react.dev/learn",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée (documentation de React 19.3)."
+    },
+    {
+      "cle": "typescript-handbook",
+      "categorie": "en-ligne",
+      "auteur": "Microsoft",
+      "annee": "2026",
+      "reference": "Microsoft. (2026). *The TypeScript handbook*.",
+      "url": "https://www.typescriptlang.org/docs/handbook/intro.html",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée (mise à jour du 2 novembre 2026)."
+    },
+    {
+      "cle": "playwright-docs",
+      "categorie": "en-ligne",
+      "auteur": "Microsoft",
+      "annee": "s. d.",
+      "reference": "Microsoft. (s. d.). *Installation*. Playwright.",
+      "url": "https://playwright.dev/docs/intro",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée."
+    },
+    {
+      "cle": "postgresql17",
+      "categorie": "en-ligne",
+      "auteur": "PostgreSQL Global Development Group",
+      "annee": "2026",
+      "reference": "PostgreSQL Global Development Group. (2026). *PostgreSQL 17.11 documentation*.",
+      "url": "https://www.postgresql.org/docs/17/index.html",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée (© 1996-2026)."
+    },
+    {
+      "cle": "prisma-docs",
+      "categorie": "en-ligne",
+      "auteur": "Prisma",
+      "annee": "s. d.",
+      "reference": "Prisma. (s. d.). *Prisma ORM* [Documentation].",
+      "url": "https://www.prisma.io/docs/orm",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée. La version en ligne suit la dernière version publiée ; le projet utilise Prisma 7.10."
+    },
+    {
+      "cle": "supabase-rls",
+      "categorie": "en-ligne",
+      "auteur": "Supabase",
+      "annee": "2026",
+      "reference": "Supabase. (2026, 3 novembre). *Row Level Security*. Supabase Docs.",
+      "url": "https://supabase.com/docs/guides/database/postgres/row-level-security",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée (« Updated Nov 3, 2026 »)."
+    },
+    {
+      "cle": "mdn-pwa",
+      "categorie": "en-ligne",
+      "auteur": "MDN",
+      "annee": "s. d.",
+      "reference": "MDN. (s. d.). *Progressive web apps*. Mozilla.",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "mdn-service-worker",
+      "categorie": "en-ligne",
+      "auteur": "MDN",
+      "annee": "2026",
+      "reference": "MDN. (2026, 15 août). *Service Worker API*. Mozilla.",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée (dernière modification le 15 août 2026)."
+    },
+    {
+      "cle": "vitest-docs",
+      "categorie": "en-ligne",
+      "auteur": "Vitest",
+      "annee": "s. d.",
+      "reference": "Vitest. (s. d.). *Getting started*.",
+      "url": "https://vitest.dev/guide/",
+      "consulte": "4 novembre 2026",
+      "verification": "Page consultée."
+    },
+    {
+      "cle": "axe-core",
+      "categorie": "en-ligne",
+      "auteur": "Deque Systems",
+      "annee": "s. d.",
+      "reference": "Deque Systems. (s. d.). *axe-core: Accessibility engine for automated Web UI testing* [Dépôt de code]. GitHub.",
+      "url": "https://github.com/dequelabs/axe-core",
+      "consulte": "4 novembre 2026",
+      "verification": "Dépôt consulté."
+    },
+    {
+      "cle": "moodle-stats",
+      "categorie": "en-ligne",
+      "auteur": "Moodle",
+      "annee": "s. d.",
+      "reference": "Moodle. (s. d.). *Statistics*.",
+      "url": "https://stats.moodle.org/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "moodle-licence",
+      "categorie": "en-ligne",
+      "auteur": "Moodle",
+      "annee": "2026",
+      "reference": "Moodle. (2026). *License*. Moodle Developer Resources.",
+      "url": "https://moodledev.io/general/license",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "openedx",
+      "categorie": "en-ligne",
+      "auteur": "Open edX",
+      "annee": "s. d.",
+      "reference": "Open edX. (s. d.). *Open edX Platform* [Documentation].",
+      "url": "https://docs.openedx.org/projects/edx-platform/en/latest/references/docs/README.html",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "openeducat-a",
+      "categorie": "en-ligne",
+      "auteur": "OpenEduCat",
+      "annee": "s. d.-a",
+      "reference": "OpenEduCat. (s. d.-a). *Open source education ERP, free for schools & universities*.",
+      "url": "https://openeducat.org/open-source-education-erp/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "openeducat-b",
+      "categorie": "en-ligne",
+      "auteur": "OpenEduCat",
+      "annee": "s. d.-b",
+      "reference": "OpenEduCat. (s. d.-b). *What is Odoo ERP for education?*",
+      "url": "https://openeducat.org/glossary/what-is-odoo-erp-education/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "fedena",
+      "categorie": "en-ligne",
+      "auteur": "Project Fedena",
+      "annee": "s. d.",
+      "reference": "Project Fedena. (s. d.). *fedena: Fedena SIS* [Dépôt de code]. GitHub.",
+      "url": "https://github.com/projectfedena/fedena",
+      "consulte": "3 novembre 2026",
+      "verification": "Dépôt consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "canvas-lms",
+      "categorie": "en-ligne",
+      "auteur": "Instructure",
+      "annee": "s. d.",
+      "reference": "Instructure. (s. d.). *canvas-lms: The open LMS by Instructure, Inc.* [Dépôt de code]. GitHub.",
+      "url": "https://github.com/instructure/canvas-lms",
+      "consulte": "3 novembre 2026",
+      "verification": "Dépôt consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "makerere-muele-compte",
+      "categorie": "en-ligne",
+      "auteur": "DICTS Makerere University",
+      "annee": "s. d.",
+      "reference": "DICTS Makerere University. (s. d.). *How to create your MUELE account*.",
+      "url": "https://dicts.mak.ac.ug/articles/how-create-your-muele-account",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "makerere-muele",
+      "categorie": "en-ligne",
+      "auteur": "Makerere University",
+      "annee": "s. d.",
+      "reference": "Makerere University. (s. d.). *MUELE* [Page d'aide].",
+      "url": "https://answers.mak.ac.ug/node/82",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "mugabi-acmis",
+      "categorie": "en-ligne",
+      "auteur": "Mugabi",
+      "annee": "s. d.",
+      "reference": "Mugabi, S. (s. d.). *ACMIS system can be accessed from any location globally*. DICTS, Makerere University.",
+      "url": "https://dicts.mak.ac.ug/articles/acmis-system-can-be-accessed-any-location-globally",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "uct-peoplesoft",
+      "categorie": "en-ligne",
+      "auteur": "University of Cape Town ICTS",
+      "annee": "s. d.-a",
+      "reference": "University of Cape Town ICTS. (s. d.-a). *What is PeopleSoft?*",
+      "url": "https://icts.uct.ac.za/node/8183",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "uct-amathuba",
+      "categorie": "en-ligne",
+      "auteur": "University of Cape Town ICTS",
+      "annee": "s. d.-b",
+      "reference": "University of Cape Town ICTS. (s. d.-b). *Amathuba*.",
+      "url": "https://icts.uct.ac.za/amathuba",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "uct-news2023",
+      "categorie": "en-ligne",
+      "auteur": "University of Cape Town News",
+      "annee": "2023",
+      "reference": "University of Cape Town News. (2023, 1er février). *Preparing for first-year teaching on Amathuba*.",
+      "url": "https://news.uct.ac.za/article/-2023-02-01-preparing-for-first-year-teaching-on-amathuba",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "lome2025",
+      "categorie": "en-ligne",
+      "auteur": "Université de Lomé",
+      "annee": "2025",
+      "reference": "Université de Lomé. (2025, 17 septembre). *L'Université de Lomé accueille ses nouveaux bacheliers lors d'une séance d'information à l'amphi Prof. Seddoh*.",
+      "url": "https://univ-lome.tg/luniversite-de-lome-accueille-ses-nouveaux-bacheliers-lors-dune-seance-dinformation-a-lamphi-prof-seddoh/",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "cned2024",
+      "categorie": "en-ligne",
+      "auteur": "Cned",
+      "annee": "2024",
+      "reference": "Cned. (2024, 5 juin). *Découvrez diplome.gouv.fr*.",
+      "url": "https://www.cned.fr/l-actualite-de-la-formation/blog-formations-social/decouvrez-diplomegouvfr",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "kande2025",
+      "categorie": "en-ligne",
+      "auteur": "Kande",
+      "annee": "2025",
+      "reference": "Kande, A. (2025, 28 août). Orientation des nouveaux bacheliers : démarrage des opérations ce vendredi. *Le Soleil*.",
+      "url": "https://lesoleil.sn/actualites/education/orientation-des-nouveaux-bacheliers-demarrage-des-operations-ce-vendredi/",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "nderi2026",
+      "categorie": "en-ligne",
+      "auteur": "Nderi",
+      "annee": "2026",
+      "reference": "Nderi, S. (2026, 9 juillet). Over 290,000 students placed as KUCCPS releases 2026 higher education results. *HapaKenya*.",
+      "url": "https://hapakenya.com/2026/07/09/over-290000-students-placed-as-kuccps-releases-2026-higher-education-results/",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "togo2025",
+      "categorie": "en-ligne",
+      "auteur": "République togolaise",
+      "annee": "2025",
+      "reference": "République togolaise. (2025, 24 juillet). *Bien préparer la rentrée universitaire*.",
+      "url": "https://www.republicoftogo.com/toutes-les-rubriques/education/bien-preparer-la-rentree-universitaire",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "sencampus",
+      "categorie": "en-ligne",
+      "auteur": "SenCampus",
+      "annee": "s. d.",
+      "reference": "SenCampus. (s. d.). *Campusen : la plateforme qui décide de votre orientation*.",
+      "url": "https://www.sencampus.com/dossiers/apres-le-bac-au-senegal/campusen-orientation-bacheliers",
+      "consulte": "3 novembre 2026",
+      "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "wanjala2026",
+      "categorie": "en-ligne",
+      "auteur": "Wanjala",
+      "annee": "2026",
+      "reference": "Wanjala, E. (2026, 24 avril). Why you should keep your KUCCPS payment reference number. *The Star*.",
+      "url": "https://the-star.co.ke/news/2026-04-24-why-you-should-keep-your-kuccps-payment-reference-number",
+      "consulte": "3 novembre 2026",
+      "verification": "Article consulté (docs/recherche/etat-de-l-art.md)."
+    }
+  ]
+}

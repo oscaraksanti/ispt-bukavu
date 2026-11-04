@@ -17,6 +17,9 @@
  *   ::a-rediger texte          repère visible d'une section à écrire
  *   ::saut                     saut de page
  *   ::liste-figures  ::liste-tableaux  ::table-des-matieres
+ *   [@cle]  [@cle, p. 3]  [@a; @b]  [+@cle]   citations APA (../references.json)
+ *   ::bibliographie            références citées, classées par catégorie
+ *                              (TFC_BIBLIO=toutes : toute la base, pour relecture)
  */
 import {
   readFileSync,
@@ -80,9 +83,111 @@ function typographie(texte) {
     .replace(/« /g, "«\u00A0");
 }
 
+/* ---------- Références et citations (APA 7) ---------- */
+const BASE = JSON.parse(
+  readFileSync(path.join(RACINE, "references.json"), "utf8"),
+);
+const REFERENCES = new Map();
+for (const ref of BASE.references) {
+  if (REFERENCES.has(ref.cle))
+    throw new Error(`Référence en double : ${ref.cle}`);
+  if (!BASE.categories.some(([c]) => c === ref.categorie))
+    throw new Error(`Catégorie inconnue pour ${ref.cle} : ${ref.categorie}`);
+  REFERENCES.set(ref.cle, ref);
+}
+/** Clés citées, dans l'ordre de première apparition. */
+const citees = new Set();
+
+/**
+ * Remplace les citations par leur forme auteur-date :
+ *   [@cle]             → (Auteur, 2018)
+ *   [@cle, p. 14]      → (Auteur, 2018, p. 14)
+ *   [@a; @b]           → (A, 2018 ; B, 2020)
+ *   [+@cle]            → Auteur (2018)       (forme narrative)
+ * Une clé absente de references.json arrête la construction : aucune
+ * source non vérifiée ne peut entrer dans le mémoire.
+ */
+function citations(texte) {
+  return texte.replace(/\[(\+?)(@[^\]]+)\]/g, (_, narratif, contenu) => {
+    const parties = contenu.split(";").map((morceau) => {
+      const m = /^\s*@([\w.:-]+)\s*(?:,\s*(.+?))?\s*$/.exec(morceau);
+      if (!m) throw new Error(`Citation mal formée : [${contenu}]`);
+      const ref = REFERENCES.get(m[1]);
+      if (!ref) throw new Error(`Référence inconnue : @${m[1]}`);
+      citees.add(ref.cle);
+      return { ref, precision: m[2] };
+    });
+    if (narratif)
+      return parties
+        .map(
+          ({ ref, precision }) =>
+            `${ref.auteur} (${ref.annee}${precision ? `, ${precision}` : ""})`,
+        )
+        .join(", ");
+    return `(${parties
+      .map(
+        ({ ref, precision }) =>
+          `${ref.auteur}, ${ref.annee}${precision ? `, ${precision}` : ""}`,
+      )
+      .join(" ; ")})`;
+  });
+}
+
+/** Clé de tri APA : auteur puis année, « s. d. » avant les années. */
+const cleDeTri = (ref) =>
+  ref.reference
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/\(s\. d\./, "(0000")
+    .replace(/[^a-z0-9 (]/gi, "")
+    .toLowerCase();
+
+/** Bibliographie : références citées (ou toutes avec TFC_BIBLIO=toutes). */
+function bibliographie() {
+  const toutes = process.env.TFC_BIBLIO === "toutes";
+  const retenues = [...REFERENCES.values()].filter(
+    (r) => toutes || citees.has(r.cle),
+  );
+  if (retenues.length === 0)
+    return [
+      new Paragraph({
+        style: "Corps",
+        children: [
+          new TextRun({
+            text: "[Aucune référence citée pour l’instant.]",
+            italics: true,
+            color: "8A8A8A",
+          }),
+        ],
+      }),
+    ];
+  const sortie = [];
+  for (const [categorie, intitule] of BASE.categories) {
+    const liste = retenues
+      .filter((r) => r.categorie === categorie)
+      .sort((a, b) => cleDeTri(a).localeCompare(cleDeTri(b), "fr"));
+    if (!liste.length) continue;
+    sortie.push(
+      new Paragraph({
+        heading: HeadingLevel.HEADING_2,
+        children: [new TextRun({ text: typographie(intitule) })],
+      }),
+    );
+    for (const ref of liste) {
+      let texte = ref.reference;
+      if (ref.url)
+        texte += ref.consulte
+          ? ` Consulté le ${ref.consulte}, à l’adresse ${ref.url}`
+          : ` ${ref.url}`;
+      sortie.push(new Paragraph({ style: "Reference", children: enLigne(texte) }));
+    }
+  }
+  return sortie;
+}
+
 /* ---------- Texte en ligne : **gras**, *italique* ---------- */
 function enLigne(brut, base = {}) {
-  const texte = typographie(brut);
+  const texte = typographie(citations(brut));
   const runs = [];
   const motif = /(\*\*[^*]+\*\*|\*[^*]+\*)/g;
   let dernier = 0;
@@ -295,6 +400,7 @@ function convertir(source, { premierePage }) {
             headingStyleRange: "1-3",
           }),
         );
+      else if (directive === "bibliographie") sortie.push(...bibliographie());
       else if (directive === "liste-figures")
         sortie.push(
           new TableOfContents("Liste des figures", {
@@ -477,6 +583,17 @@ const doc = new Document({
         paragraph: {
           alignment: AlignmentType.CENTER,
           spacing: { line: 240, before: 60, after: 240 },
+        },
+      },
+      {
+        id: "Reference",
+        name: "Référence bibliographique",
+        basedOn: "Normal",
+        run: { font: POLICE, size: 24 },
+        paragraph: {
+          alignment: AlignmentType.LEFT,
+          indent: { left: 1.27 * CM, hanging: 1.27 * CM },
+          spacing: { line: 240, before: 0, after: 160 },
         },
       },
       {

@@ -25,7 +25,7 @@ En l'absence de norme imposée par la section, ce travail suit les usages couran
 ## Citations et bibliographie
 
 - Style **APA 7e édition** (auteur-date) dans le texte : (Roques, 2018) ; (Banque mondiale, 2021, p. 14).
-- Bibliographie classée par catégorie : ouvrages ; articles scientifiques ; rapports et documents institutionnels ; textes officiels ; ressources en ligne (avec date de consultation).
+- Bibliographie classée par catégorie : ouvrages ; articles scientifiques ; textes officiels ; rapports et documents institutionnels ; normes et spécifications techniques ; ressources en ligne (avec date de consultation). Seules les références effectivement citées y figurent.
 - Chaque référence est vérifiée et accessible. Aucune source citée sans avoir été consultée.
 
 ## Données
