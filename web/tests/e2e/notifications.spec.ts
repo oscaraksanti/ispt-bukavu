@@ -23,6 +23,15 @@ async function compteur(page: Page) {
 
 test("un communiqué publié pour une promotion prévient ses étudiants", async ({ browser }) => {
   const titre = `Communiqué E2E ${Date.now()}`;
+  // Point de départ connu : aucune notification non lue.
+  const etudiant = await nouvellePage(browser, D.comptes.etudiantA);
+  await etudiant.goto("/etudiant/notifications");
+  await etudiant.waitForLoadState("networkidle");
+  const toutLu = etudiant.getByRole("button", { name: "Tout marquer comme lu" });
+  if (await toutLu.count()) {
+    await toutLu.click();
+    await expect(etudiant.getByText("Vous êtes à jour.")).toBeVisible();
+  }
   const admin = await nouvellePage(browser, D.comptes.admin);
   await admin.goto("/admin/valve/nouveau");
   await admin.waitForLoadState("networkidle");
@@ -33,9 +42,9 @@ test("un communiqué publié pour une promotion prévient ses étudiants", async
   await admin.getByRole("button", { name: "Publier" }).click();
   await admin.waitForURL(/\/admin\/valve\/[^/]+\?enregistre=1/);
 
-  const etudiant = await nouvellePage(browser, D.comptes.etudiantA);
+  await etudiant.goto("/etudiant");
   const avant = await compteur(etudiant);
-  expect(avant).toBeGreaterThan(0);
+  expect(avant).toBe(1);
   await etudiant.getByRole("link", { name: /^Notifications/ }).click();
   await expect(etudiant).toHaveURL(/\/etudiant\/notifications$/);
   const ligne = etudiant.getByRole("button", { name: new RegExp(titre) });

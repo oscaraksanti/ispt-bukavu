@@ -18,7 +18,7 @@ export function Cloche({
       href={href}
       aria-label={
         nombre > 0
-          ? `Notifications : ${nombre} non lue${nombre > 1 ? "s" : ""}`
+          ? `Notifications : ${libelleCompteur(nombre)} non lue${nombre > 1 ? "s" : ""}`
           : "Notifications : aucune nouvelle"
       }
       className={cn(
