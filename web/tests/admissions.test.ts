@@ -142,9 +142,9 @@ describe("frais de dossier", () => {
     expect(etatPaiement({ referencePaiement: "BK-12", paiementMotifRefus: "Inconnu" }, true)).toBe(
       "REFUSE",
     );
-    expect(
-      etatPaiement({ referencePaiement: "BK-12", paiementVerifieLe: new Date() }, true),
-    ).toBe("VERIFIE");
+    expect(etatPaiement({ referencePaiement: "BK-12", paiementVerifieLe: new Date() }, true)).toBe(
+      "VERIFIE",
+    );
   });
 
   it("ne laisse corriger qu'une référence refusée, sur un dossier encore en cours", () => {
@@ -160,11 +160,41 @@ describe("suivi d'une campagne", () => {
   const jour = (n: number) => new Date(Date.UTC(2026, 10, n));
   it("compte les dossiers, les filières, le délai médian et le taux d'admission", () => {
     const s = statistiquesCampagne([
-      { statut: "BROUILLON", filiere: null, soumiseLe: null, decideLe: null, etatPaiement: "A_SAISIR" },
-      { statut: "SOUMISE", filiere: "GI", soumiseLe: jour(1), decideLe: null, etatPaiement: "A_VERIFIER" },
-      { statut: "ADMISE", filiere: "GI", soumiseLe: jour(1), decideLe: jour(3), etatPaiement: "VERIFIE" },
-      { statut: "INSCRITE", filiere: "EM", soumiseLe: jour(2), decideLe: jour(6), etatPaiement: "VERIFIE" },
-      { statut: "REFUSEE", filiere: "GI", soumiseLe: jour(2), decideLe: jour(8), etatPaiement: "VERIFIE" },
+      {
+        statut: "BROUILLON",
+        filiere: null,
+        soumiseLe: null,
+        decideLe: null,
+        etatPaiement: "A_SAISIR",
+      },
+      {
+        statut: "SOUMISE",
+        filiere: "GI",
+        soumiseLe: jour(1),
+        decideLe: null,
+        etatPaiement: "A_VERIFIER",
+      },
+      {
+        statut: "ADMISE",
+        filiere: "GI",
+        soumiseLe: jour(1),
+        decideLe: jour(3),
+        etatPaiement: "VERIFIE",
+      },
+      {
+        statut: "INSCRITE",
+        filiere: "EM",
+        soumiseLe: jour(2),
+        decideLe: jour(6),
+        etatPaiement: "VERIFIE",
+      },
+      {
+        statut: "REFUSEE",
+        filiere: "GI",
+        soumiseLe: jour(2),
+        decideLe: jour(8),
+        etatPaiement: "VERIFIE",
+      },
     ]);
     expect(s.comptesOuverts).toBe(5);
     expect(s.deposes).toBe(4);

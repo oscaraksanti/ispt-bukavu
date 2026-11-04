@@ -46,6 +46,7 @@ test("espace étudiant", async ({ page }) => {
   for (const chemin of [
     "/etudiant",
     "/etudiant/horaire",
+    "/etudiant/examens",
     "/etudiant/notes",
     "/etudiant/frais",
     "/etudiant/notifications",
@@ -61,6 +62,7 @@ test("espace enseignant", async ({ page }) => {
   await seConnecter(page, D.comptes.prof);
   for (const chemin of [
     "/enseignant",
+    "/enseignant/examens",
     `/enseignant/cours/${D.ids.coursOffert}`,
     `/enseignant/cours/${D.ids.coursOffert}/devoirs`,
     `/enseignant/cours/${D.ids.coursOffert}/presences`,
@@ -84,6 +86,7 @@ test("administration", async ({ page }) => {
     "/admin/deliberations",
     "/admin/deliberations/reglement",
     "/admin/admissions",
+    "/admin/examens",
     "/admin/finances",
     `/affiche/${D.ids.campagne}`,
   ]) {

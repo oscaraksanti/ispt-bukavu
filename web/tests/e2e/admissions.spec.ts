@@ -80,11 +80,14 @@ test("confirmation, dossier complet et dépôt", async ({ page }) => {
   await page.getByRole("button", { name: "Enregistrer" }).click();
   await expect(page.getByText("Informations enregistrées.")).toBeVisible();
 
-  await page.locator("input[type=file]").first().setInputFiles({
-    name: "identite.pdf",
-    mimeType: "application/pdf",
-    buffer: Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n"),
-  });
+  await page
+    .locator("input[type=file]")
+    .first()
+    .setInputFiles({
+      name: "identite.pdf",
+      mimeType: "application/pdf",
+      buffer: Buffer.from("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n"),
+    });
   await expect(page.getByText("Déposée", { exact: true })).toBeVisible();
   await page.reload();
   await page.waitForLoadState("networkidle");
@@ -142,9 +145,7 @@ test("l'admis entre dans son espace étudiant et garde son reçu", async ({ page
   await expect(page.getByText(`BK-${n}`)).toBeVisible();
 });
 
-test("un autre étudiant n'ouvre pas ce reçu ; un visiteur doit se connecter", async ({
-  page,
-}) => {
+test("un autre étudiant n'ouvre pas ce reçu ; un visiteur doit se connecter", async ({ page }) => {
   await page.goto(`/recu-dossier/${dossierId}`);
   await expect(page).toHaveURL(/\/connexion/);
   await seConnecter(page, D.comptes.etudiantA);
