@@ -476,6 +476,22 @@
       "verification": "Document remis par l'institut en novembre 2026, transcrit dans docs/sources/donnees-site-ispt.md."
     },
     {
+      "cle": "ispt-horaire2026",
+      "categorie": "rapport",
+      "auteur": "ISPT-Bukavu",
+      "annee": "2026",
+      "reference": "Institut Supérieur Pédagogique et Technique de Bukavu [ISPT-Bukavu]. (2026). *Horaire de la semaine du 02 au 07 novembre 2026, 3e semestre 2026-2027* [Document interne].",
+      "verification": "Document remis par l'institut (docs/sources/exemple-horaire-semaine.png), daté « Fait à Bukavu, le 31 octobre 2026 »."
+    },
+    {
+      "cle": "ispt-bulletins",
+      "categorie": "rapport",
+      "auteur": "ISPT-Bukavu",
+      "annee": "s. d.",
+      "reference": "Institut Supérieur Pédagogique et Technique de Bukavu [ISPT-Bukavu]. (s. d.). *Bulletins BAC1 Électromécanique, année académique 2023-2024* [Classeur de tableur interne, non publié].",
+      "verification": "Fichier remis par l'institut en novembre 2026 ; données personnelles, conservé hors du dépôt. Seules des observations agrégées et anonymes sont citées."
+    },
+    {
       "cle": "owasp2025",
       "categorie": "norme",
       "auteur": "OWASP Foundation",

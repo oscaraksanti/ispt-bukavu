@@ -1,0 +1,19 @@
+// Figure 1.3 — Circuit actuel de diffusion d'un communiqué officiel (observation de l'auteur).
+digraph circuit {
+  graph [rankdir=LR, nodesep=0.4, ranksep=0.45, fontname="IBM Plex Sans", bgcolor="white"];
+  node  [shape=box, style="rounded,filled", fillcolor="#F2F3F8", color="#1B2559", fontname="IBM Plex Sans", fontsize=11, margin="0.16,0.08"];
+  edge  [color="#1B2559", fontname="IBM Plex Sans", fontsize=9.5, fontcolor="#3A3F55"];
+
+  service [label="Service émetteur\n(direction, secrétariat,\nsection)"];
+  papier  [label="Communiqué\nimprimé"];
+  valve   [label="Valve physique\nde l'institut", fillcolor="#1B2559", fontcolor="white"];
+  presents[label="Étudiants et enseignants\nprésents sur place"];
+  groupes [label="Groupes de\nmessagerie", style="rounded,dashed,filled"];
+  distance[label="Étudiants\nà distance"];
+
+  service -> papier;
+  papier -> valve [label=" affichage "];
+  valve -> presents [label=" lecture "];
+  valve -> groupes [label=" relais informel ", style=dashed];
+  groupes -> distance [style=dashed];
+}

@@ -1,0 +1,24 @@
+// Figure 1.2 — Autorités et sections de l'ISPT-Bukavu (d'après le dépliant officiel).
+digraph autorites {
+  graph [rankdir=TB, nodesep=0.3, ranksep=0.5, fontname="IBM Plex Sans", bgcolor="white", newrank=true];
+  node  [shape=box, style="rounded,filled", fillcolor="#F2F3F8", color="#1B2559", fontname="IBM Plex Sans", fontsize=11, margin="0.18,0.08"];
+  edge  [color="#1B2559", arrowhead=none];
+
+  dg   [label=<<b>Directeur Général</b><br/>Prof. SINDANO WA KITWANGA Expédit>, fillcolor="#1B2559", fontcolor="white"];
+  sgac [label=<<b>Secrétaire Général Académique</b><br/>Prof. Albert LUKWISHI>];
+  sgad [label=<<b>Secrétaire Général Administratif</b><br/>CT MUSAFIRI MULALI WAZO>];
+  dg -> sgac; dg -> sgad;
+  { rank=same; sgac; sgad; }
+
+  subgraph cluster_sections {
+    label=<<b>Sections et options organisées</b>>; labeljust=l; fontsize=11; color="#9AA0B8"; style="rounded,dashed"; margin=12;
+    gc  [label=<<b>Génie Civil</b><br/>BTP>];
+    el  [label=<<b>Électricité</b><br/>Électromécanique<br/>Électrotechnique>];
+    ei  [label=<<b>Électronique et Informatique</b><br/>Électronique et Télécommunications<br/>Génie Informatique>];
+    me  [label=<<b>Mécanique</b><br/>Mécanique Générale<br/>Mécanique Automobile>];
+    gc -> el -> ei -> me [style=invis];
+    { rank=same; gc; el; ei; me; }
+  }
+  sgac -> el [style=invis];
+  sgad -> ei [style=invis];
+}
