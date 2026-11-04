@@ -84,7 +84,9 @@ const ENCRE = "1B2559";
 
 /* ---------- Typographie française ---------- */
 /** Apostrophe courbe, espaces insécables avant « : ; ? ! » et à l'intérieur des guillemets. */
+let typoFrancaise = true; // désactivée pour les parties en anglais ({.anglais})
 function typographie(texte) {
+  if (!typoFrancaise) return texte.replace(/'/g, "\u2019");
   return texte
     .replace(/'/g, "\u2019")
     .replace(/ ([:;?!»])/g, "\u00A0$1")
@@ -417,6 +419,7 @@ function convertir(source, { premierePage }) {
     }
     const titre = /^(#{1,3})\s+(.*?)\s*(\{([^}]*)\})?$/.exec(brut);
     if (titre) {
+      if (titre[1].length === 1) typoFrancaise = !(titre[4] ?? "").includes(".anglais");
       const niveau = titre[1].length;
       const texte = titre[2];
       sortie.push(
@@ -639,7 +642,7 @@ function tableau(legende, lignesTableau) {
     new TableCell({
       width: { size: largeurs[k], type: WidthType.DXA },
       verticalAlign: VerticalAlign.CENTER,
-      margins: { top: 50, bottom: 50, left: 90, right: 90 },
+      margins: { top: 35, bottom: 35, left: 90, right: 90 },
       shading: enTete
         ? { type: ShadingType.CLEAR, color: "auto", fill: "E8EAF2" }
         : undefined,
@@ -651,10 +654,10 @@ function tableau(legende, lignesTableau) {
       ],
     });
   return [
-    new Paragraph({
-      style: "LegendeTableau",
-      children: enLigne(legende),
-    }),
+    // Tableau sans légende (liste des sigles, par exemple) : rien dans la liste des tableaux.
+    ...(legende.trim()
+      ? [new Paragraph({ style: "LegendeTableau", children: enLigne(legende) })]
+      : []),
     new Table({
       width: { size: LARGEUR_TEXTE, type: WidthType.DXA },
       columnWidths: largeurs,
