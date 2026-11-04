@@ -99,7 +99,12 @@ export default async function SaisieNotes({
             action={enregistrerNotes.bind(null, e.id)}
             libelleEnvoi="Enregistrer les notes"
           >
-            <div className="overflow-x-auto">
+            <div
+              className="overflow-x-auto"
+              tabIndex={0}
+              role="region"
+              aria-label="Notes des étudiants"
+            >
               <table className="w-full min-w-[32rem] text-left text-sm">
                 <thead className="border-b border-pierre-200 font-mono text-xs tracking-wide text-pierre-600 uppercase">
                   <tr>

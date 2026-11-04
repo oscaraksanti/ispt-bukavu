@@ -40,7 +40,12 @@ export default async function Journal({ searchParams }: PageProps<"/admin/journa
         titre="Journal d'activité"
         description="Toute modification sensible est enregistrée avec son auteur et sa date. Le journal ne peut pas être modifié depuis l'administration."
       />
-      <div className="mt-8 overflow-x-auto rounded-md border border-pierre-200 bg-white">
+      <div
+        className="mt-8 overflow-x-auto rounded-md border border-pierre-200 bg-white"
+        tabIndex={0}
+        role="region"
+        aria-label="Journal d'activité"
+      >
         <table className="w-full min-w-[40rem] text-left text-sm">
           <thead className="border-b border-pierre-200 bg-pierre-50 font-mono text-xs tracking-wide text-pierre-600 uppercase">
             <tr>

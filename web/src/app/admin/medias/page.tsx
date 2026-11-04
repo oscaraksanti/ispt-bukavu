@@ -75,7 +75,7 @@ export default async function Mediatheque({ searchParams }: PageProps<"/admin/me
                   : "border-pierre-300 bg-white text-pierre-700 hover:border-encre",
               )}
             >
-              {f.libelle} <span className="font-mono text-xs opacity-70">{f.nombre}</span>
+              {f.libelle} <span className="font-mono text-xs">{f.nombre}</span>
             </Link>
           );
         })}

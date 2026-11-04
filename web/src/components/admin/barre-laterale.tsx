@@ -160,7 +160,7 @@ export function BarreLaterale({
         <Pied nom={nom} email={email} />
       </aside>
 
-      <div className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-white/10 bg-encre px-4 lg:hidden">
+      <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-white/10 bg-encre px-4 lg:hidden">
         <Link href="/admin">
           <Signature clair compacte />
         </Link>
@@ -172,7 +172,7 @@ export function BarreLaterale({
         >
           <Menu aria-hidden className="size-5" />
         </button>
-      </div>
+      </header>
       {ouvert && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
           <div className="absolute inset-0 bg-encre/60" onClick={() => setOuvert(false)} />

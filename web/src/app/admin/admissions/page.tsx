@@ -190,7 +190,12 @@ export default async function Candidatures({ searchParams }: PageProps<"/admin/a
           <EtatVide titre="Aucun dossier ne correspond" />
         </div>
       ) : (
-        <div className="mt-6 overflow-x-auto rounded-md border border-pierre-200 bg-white">
+        <div
+          className="mt-6 overflow-x-auto rounded-md border border-pierre-200 bg-white"
+          tabIndex={0}
+          role="region"
+          aria-label="Liste des candidatures"
+        >
           <table className="w-full min-w-[46rem] text-left text-sm">
             <thead className="border-b border-pierre-200 bg-pierre-50 font-mono text-xs tracking-wide text-pierre-600 uppercase">
               <tr>

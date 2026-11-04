@@ -32,9 +32,9 @@ async function Resultat({ params }: { params: PageProps<"/verifier/[code]">["par
       <div className="mt-8 rounded-md border border-pierre-200 bg-white p-6 sm:p-10">
         {r.etat === "valide" && (
           <>
-            <p className="flex items-center gap-3 text-2xl font-medium text-succes">
+            <h1 className="flex items-center gap-3 font-sans text-2xl font-medium text-succes">
               <CircleCheck aria-hidden className="size-8" /> Document authentique
-            </p>
+            </h1>
             <p className="mt-2 text-pierre-700">
               Ce document a bien été délivré par l&apos;institut et il est toujours valable.
             </p>
@@ -42,9 +42,9 @@ async function Resultat({ params }: { params: PageProps<"/verifier/[code]">["par
         )}
         {r.etat === "revoque" && (
           <>
-            <p className="flex items-center gap-3 text-2xl font-medium text-erreur">
+            <h1 className="flex items-center gap-3 font-sans text-2xl font-medium text-erreur">
               <CircleX aria-hidden className="size-8" /> Document révoqué
-            </p>
+            </h1>
             <p className="mt-2 text-pierre-700">
               Délivré par l&apos;institut, ce document a été annulé le{" "}
               {formatJour.format(new Date(r.revoqueLe!))}
@@ -54,9 +54,9 @@ async function Resultat({ params }: { params: PageProps<"/verifier/[code]">["par
         )}
         {r.etat === "inconnu" && (
           <>
-            <p className="flex items-center gap-3 text-2xl font-medium text-attention">
+            <h1 className="flex items-center gap-3 font-sans text-2xl font-medium text-attention">
               <CircleAlert aria-hidden className="size-8" /> Code inconnu
-            </p>
+            </h1>
             <p className="mt-2 text-pierre-700">
               Aucun document de l&apos;institut ne correspond au code{" "}
               {code ? <span className="font-mono">{code}</span> : "saisi"}. Vérifiez la saisie ; en

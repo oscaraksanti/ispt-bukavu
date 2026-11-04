@@ -56,7 +56,7 @@ export function SituationFinanciere({
       )}
       {s.baremes.length > 0 && (
         <section>
-          <h3 className="font-sans text-sm font-semibold text-encre">Frais de l&apos;année</h3>
+          <h2 className="font-sans text-sm font-semibold text-encre">Frais de l&apos;année</h2>
           <ul className="mt-2 divide-y divide-pierre-200 rounded-md border border-pierre-200 bg-white text-sm">
             {s.baremes.map((b) => (
               <li key={b.id} className="flex flex-wrap items-center gap-3 px-4 py-2.5">
@@ -73,7 +73,7 @@ export function SituationFinanciere({
         </section>
       )}
       <section>
-        <h3 className="font-sans text-sm font-semibold text-encre">Paiements</h3>
+        <h2 className="font-sans text-sm font-semibold text-encre">Paiements</h2>
         {s.paiements.length === 0 ? (
           <p className="mt-2 text-sm text-pierre-600">Aucun paiement enregistré.</p>
         ) : (
@@ -113,7 +113,7 @@ export function SituationFinanciere({
       </section>
       {s.exonerations.length > 0 && (
         <section>
-          <h3 className="font-sans text-sm font-semibold text-encre">Exonérations</h3>
+          <h2 className="font-sans text-sm font-semibold text-encre">Exonérations</h2>
           <ul className="mt-2 divide-y divide-pierre-200 rounded-md border border-pierre-200 bg-white text-sm">
             {s.exonerations.map((e) => (
               <li key={e.id} className="flex items-center gap-3 px-4 py-2.5">

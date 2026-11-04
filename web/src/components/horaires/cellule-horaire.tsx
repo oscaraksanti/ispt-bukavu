@@ -48,17 +48,26 @@ export function CelluleHoraire({
         type="button"
         onClick={() => setOuvert((o) => !o)}
         aria-expanded={ouvert}
-        aria-label={`${libelle} : ${intitule ?? "aucun cours"}`}
         className={cn(
           "flex h-full min-h-14 w-full flex-col items-center justify-center px-2 py-1.5 text-center text-[0.8125rem] leading-snug transition-colors hover:bg-ispt-50 print:min-h-0",
           !intitule && "text-pierre-400",
           statut === "ANNULEE" && "line-through",
         )}
       >
-        <span>{intitule ?? <span className="print:hidden">+</span>}</span>
+        <span>
+          {intitule ?? (
+            <>
+              <span aria-hidden className="print:hidden">
+                +
+              </span>
+              <span className="sr-only">Aucun cours</span>
+            </>
+          )}
+        </span>
         {salleActuelle && (
           <span className="mt-0.5 text-[0.6875rem] text-pierre-500">{salleActuelle}</span>
         )}
+        <span className="sr-only">, {libelle}</span>
       </button>
       {ouvert && (
         <div

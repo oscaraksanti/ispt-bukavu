@@ -122,7 +122,12 @@ export default async function Comptes({ searchParams }: PageProps<"/admin/utilis
             />
           </form>
         </div>
-        <div className="mt-4 overflow-x-auto rounded-md border border-pierre-200 bg-white">
+        <div
+          className="mt-4 overflow-x-auto rounded-md border border-pierre-200 bg-white"
+          tabIndex={0}
+          role="region"
+          aria-label="Liste des comptes"
+        >
           <table className="w-full min-w-[44rem] text-left text-sm">
             <thead className="border-b border-pierre-200 bg-pierre-50 font-mono text-xs tracking-wide text-pierre-600 uppercase">
               <tr>

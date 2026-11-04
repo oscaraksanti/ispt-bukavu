@@ -176,7 +176,12 @@ export default async function Horaires({ searchParams }: PageProps<"/admin/horai
               </p>
             </div>
           </div>
-          <div className="overflow-x-auto rounded-md border border-pierre-300 bg-white print:overflow-visible print:rounded-none print:border-black">
+          <div
+            className="overflow-x-auto rounded-md border border-pierre-300 bg-white print:overflow-visible print:rounded-none print:border-black"
+            tabIndex={0}
+            role="region"
+            aria-label="Horaire de la semaine"
+          >
             <table className="w-full min-w-[60rem] border-collapse text-sm print:min-w-0 print:text-[11px]">
               <thead>
                 <tr className="bg-pierre-50 print:bg-white">
