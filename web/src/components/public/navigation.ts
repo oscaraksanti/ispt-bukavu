@@ -16,7 +16,7 @@ const principale: Lien[] = [
 const utilitaires: Lien[] = [
   { libelle: "Valve", href: "/valve", disponible: true },
   { libelle: "Galerie", href: "/galerie", disponible: false },
-  { libelle: "Vérifier un document", href: "/verifier", disponible: false },
+  { libelle: "Vérifier un document", href: "/verifier", disponible: true },
 ];
 
 export const navigationPrincipale = principale.filter((l) => l.disponible);

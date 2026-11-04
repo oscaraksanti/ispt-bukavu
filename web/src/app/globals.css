@@ -497,3 +497,14 @@
     margin: 0;
   }
 }
+
+/* Documents officiels : A4 portrait, sans marges du navigateur. */
+@page document {
+  size: A4 portrait;
+  margin: 0;
+}
+@media print {
+  .document-a4 {
+    page: document;
+  }
+}
