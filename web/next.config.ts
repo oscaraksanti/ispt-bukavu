@@ -50,6 +50,19 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     qualities: [75],
   },
+  // L'ancienne adresse technique renvoie vers le nom de domaine officiel (un seul site indexé).
+  async redirects() {
+    const officiel = process.env.NEXT_PUBLIC_SITE_URL;
+    if (!officiel || officiel.includes("vercel.app")) return [];
+    return [
+      {
+        source: "/:chemin*",
+        has: [{ type: "host" as const, value: "ispt-bukavu.vercel.app" }],
+        destination: `${officiel}/:chemin*`,
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: entetesSecurite },

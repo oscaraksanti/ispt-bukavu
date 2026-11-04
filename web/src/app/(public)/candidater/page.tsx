@@ -85,25 +85,23 @@ export default async function Candidater() {
       <section className="conteneur grid gap-14 py-16 lg:grid-cols-12 lg:py-20">
         <aside className="revele space-y-8 lg:col-span-4">
           <dl className="divide-y divide-pierre-200 border-y border-pierre-200">
-            <div className="flex gap-4 py-4">
-              <CalendarDays aria-hidden className="mt-0.5 size-5 shrink-0 text-ispt-600" />
-              <div>
-                <dt className="font-mono text-xs tracking-wide text-pierre-500 uppercase">Dépôt</dt>
-                <dd className="mt-1 text-pierre-900">
-                  Jusqu&apos;au {formatJour.format(new Date(campagne.cloture))}
-                </dd>
-              </div>
+            <div className="py-4">
+              <dt className="flex items-center gap-4 font-mono text-xs tracking-wide text-pierre-500 uppercase">
+                <CalendarDays aria-hidden className="size-5 shrink-0 text-ispt-600" />
+                Dépôt
+              </dt>
+              <dd className="mt-1 pl-9 text-pierre-900">
+                Jusqu&apos;au {formatJour.format(new Date(campagne.cloture))}
+              </dd>
             </div>
-            <div className="flex gap-4 py-4">
-              <CircleDollarSign aria-hidden className="mt-0.5 size-5 shrink-0 text-ispt-600" />
-              <div>
-                <dt className="font-mono text-xs tracking-wide text-pierre-500 uppercase">
-                  Frais d&apos;inscription
-                </dt>
-                <dd className="mt-1 text-pierre-900">
-                  {formatMontant(campagne.frais, campagne.devise)}
-                </dd>
-              </div>
+            <div className="py-4">
+              <dt className="flex items-center gap-4 font-mono text-xs tracking-wide text-pierre-500 uppercase">
+                <CircleDollarSign aria-hidden className="size-5 shrink-0 text-ispt-600" />
+                Frais d&apos;inscription
+              </dt>
+              <dd className="mt-1 pl-9 text-pierre-900">
+                {formatMontant(campagne.frais, campagne.devise)}
+              </dd>
             </div>
           </dl>
           <div>
