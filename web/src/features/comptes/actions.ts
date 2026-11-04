@@ -11,6 +11,7 @@ import { journaliser } from "@/lib/journal";
 import { PERMISSIONS, ROLES_PERSONNEL } from "@/lib/permissions";
 import { empreinte, jetonAleatoire } from "@/lib/securite";
 import { rolesAttribuablesPar } from "./catalogue";
+import { type LignePersonnel, lireListePersonnel } from "./import";
 import { compteModifiable } from "./regles";
 
 /** Crée un lien d'invitation à usage unique et l'envoie par email. */
@@ -54,6 +55,38 @@ const schemaInvitation = z.object({
   roles: z.array(z.string()).min(1, "Choisissez au moins un rôle."),
 });
 
+/** Crée un compte invité avec ses rôles (et son profil d'enseignant). */
+async function creerCompteInvite(donnees: {
+  prenom: string;
+  nom: string;
+  postnom: string;
+  email: string;
+  roles: string[];
+  titre?: string;
+  domaine?: string;
+}) {
+  const roles = await db.role.findMany({ where: { code: { in: donnees.roles } } });
+  const utilisateur = await db.utilisateur.create({
+    data: {
+      email: donnees.email,
+      prenom: donnees.prenom || null,
+      nom: donnees.nom.toUpperCase(),
+      postnom: donnees.postnom ? donnees.postnom.toUpperCase() : null,
+      statut: "INVITE",
+      roles: { create: roles.map((role) => ({ roleId: role.id })) },
+    },
+  });
+  if (donnees.roles.includes("enseignant"))
+    await db.profilEnseignant.create({
+      data: {
+        utilisateurId: utilisateur.id,
+        titre: donnees.titre || null,
+        domaine: donnees.domaine || null,
+      },
+    });
+  return utilisateur;
+}
+
 export async function inviterCompte(
   _etat: EtatFormulaire,
   formData: FormData,
@@ -74,19 +107,7 @@ export async function inviterCompte(
   if (await db.utilisateur.findUnique({ where: { email } }))
     return echec("Un compte existe déjà avec cette adresse.");
 
-  const roles = await db.role.findMany({ where: { code: { in: r.data.roles } } });
-  const utilisateur = await db.utilisateur.create({
-    data: {
-      email,
-      prenom: r.data.prenom,
-      nom: r.data.nom.toUpperCase(),
-      postnom: r.data.postnom ? r.data.postnom.toUpperCase() : null,
-      statut: "INVITE",
-      roles: { create: roles.map((role) => ({ roleId: role.id })) },
-    },
-  });
-  if (r.data.roles.includes("enseignant"))
-    await db.profilEnseignant.create({ data: { utilisateurId: utilisateur.id } });
+  const utilisateur = await creerCompteInvite({ ...r.data, email });
   await journaliser({
     auteurId: auteur.id,
     action: "utilisateur_cree",
@@ -97,6 +118,113 @@ export async function inviterCompte(
   const { lien, envoye } = await emettreInvitation(utilisateur);
   refresh();
   return succes(`Compte créé. ${messageInvitation(envoye, lien)}`);
+}
+
+/* ---------- Invitation en masse ---------- */
+
+export type EtatImportPersonnel = EtatFormulaire & {
+  lignes?: LignePersonnel[];
+  /** Liens à transmettre à la main quand l'email n'a pas pu partir. */
+  liens?: { email: string; lien: string }[];
+};
+
+/**
+ * Invite en une fois une liste du personnel ou des enseignants : aperçu, puis
+ * import confirmé. Les adresses déjà connues sont ignorées, jamais écrasées.
+ */
+export async function importerPersonnel(
+  _etat: EtatImportPersonnel,
+  fd: FormData,
+): Promise<EtatImportPersonnel> {
+  const auteur = await exigerPermission("utilisateurs.gerer");
+  const contenu = String(fd.get("contenu") ?? "");
+  if (contenu.length > 300_000) return echec("Fichier trop volumineux.");
+  const permis = await rolesAttribuablesPar(auteur);
+  const roles = await db.role.findMany({
+    where: { code: { in: permis } },
+    select: { code: true, libelle: true },
+  });
+  const lignes = lireListePersonnel(contenu, roles);
+  if (lignes.length === 0)
+    return echec(
+      "Aucune ligne lisible. La première ligne doit contenir au moins les colonnes « Nom », « Email » et « Rôle ».",
+    );
+  const existants = new Set(
+    (
+      await db.utilisateur.findMany({
+        where: { email: { in: lignes.map((l) => l.email).filter(Boolean) } },
+        select: { email: true },
+      })
+    ).map((u) => u.email),
+  );
+  for (const l of lignes)
+    if (!l.erreur && existants.has(l.email)) l.erreur = "Un compte existe déjà avec cette adresse";
+  if (fd.get("mode") !== "importer") return { statut: null, lignes, horodatage: Date.now() };
+
+  const valides = lignes.filter((l) => !l.erreur);
+  if (valides.length === 0) return { ...echec("Aucune ligne valide à importer."), lignes };
+  let envoyes = 0;
+  const liens: { email: string; lien: string }[] = [];
+  const erreurs: string[] = [];
+  for (const l of valides) {
+    try {
+      const u = await creerCompteInvite(l);
+      const r = await emettreInvitation(u);
+      if (r.envoye) envoyes++;
+      else liens.push({ email: l.email, lien: r.lien });
+    } catch (e) {
+      erreurs.push(`ligne ${l.ligne} : ${(e as Error).message.split("\n")[0]}`);
+    }
+  }
+  const crees = valides.length - erreurs.length;
+  await journaliser({
+    auteurId: auteur.id,
+    action: "personnel_importe",
+    entite: "Utilisateur",
+    apres: { crees, envoyes, erreurs: erreurs.length },
+  });
+  refresh();
+  const resume = `${crees} compte(s) créé(s), ${envoyes} invitation(s) envoyée(s) par email.`;
+  const suite = liens.length
+    ? ` ${liens.length} lien(s) à transmettre à la main ci-dessous (valables 72 heures).`
+    : "";
+  return erreurs.length
+    ? { ...echec(`${resume}${suite} À corriger : ${erreurs.join(" ; ")}`), liens }
+    : { ...succes(`${resume}${suite}`), liens };
+}
+
+/** Renvoie une invitation à chaque compte du personnel encore en attente. */
+export async function relancerInvitations(): Promise<EtatFormulaire> {
+  const auteur = await exigerPermission("utilisateurs.gerer");
+  const comptes = await db.utilisateur.findMany({
+    where: {
+      statut: "INVITE",
+      motDePasseHash: null,
+      email: { not: null },
+      profilEtudiant: null,
+      roles: { some: { role: { code: { notIn: ["etudiant", "candidat"] } } } },
+    },
+    include: { roles: { include: { role: true } } },
+    take: 200,
+  });
+  const cibles = comptes.filter((u) =>
+    compteModifiable(auteur, { id: u.id, roles: u.roles.map((r) => r.role.code) }),
+  );
+  if (cibles.length === 0) return echec("Aucune invitation en attente.");
+  let envoyes = 0;
+  for (const u of cibles) if ((await emettreInvitation(u)).envoye) envoyes++;
+  await journaliser({
+    auteurId: auteur.id,
+    action: "invitations_relancees",
+    entite: "Utilisateur",
+    apres: { comptes: cibles.length, envoyes },
+  });
+  refresh();
+  return envoyes === cibles.length
+    ? succes(`${envoyes} invitation(s) renvoyée(s) par email.`)
+    : echec(
+        `${envoyes} invitation(s) envoyée(s) sur ${cibles.length}. Pour les autres, utilisez « Renvoyer l'invitation » sur la fiche du compte afin d'obtenir le lien.`,
+      );
 }
 
 export async function renvoyerInvitation(id: string): Promise<EtatFormulaire> {

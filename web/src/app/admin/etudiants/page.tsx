@@ -15,6 +15,7 @@ import {
 } from "@/features/academique/actions-etudiants";
 import { libellePromotion } from "@/features/academique/regles";
 import { exigerPermission } from "@/features/auth/acces";
+import { qrSvg } from "@/features/documents/qr";
 import { db } from "@/lib/db";
 import { urlSite } from "@/lib/email";
 
@@ -72,6 +73,10 @@ export default async function Etudiants({ searchParams }: PageProps<"/admin/etud
     ],
   });
   const aActiver = inscriptions.filter((i) => i.etudiant.utilisateur.statut === "INVITE").length;
+  const avecEmail = inscriptions.filter(
+    (i) => i.etudiant.utilisateur.statut === "INVITE" && i.etudiant.utilisateur.email,
+  ).length;
+  const qrActivation = await qrSvg(`${urlSite()}/activer`);
 
   return (
     <>
@@ -246,7 +251,10 @@ export default async function Etudiants({ searchParams }: PageProps<"/admin/etud
         description={`${aActiver} étudiant(s) de la promotion n'ont pas encore activé leur compte.`}
       >
         <CodesActivation
-          action={genererCodes.bind(null, promotion.id)}
+          action={genererCodes.bind(null, promotion.id, false)}
+          actionEmail={genererCodes.bind(null, promotion.id, true)}
+          avecEmail={avecEmail}
+          qr={qrActivation}
           promotion={libellePromotion(promotion)}
           urlActivation={`${urlSite().replace(/^https?:\/\//, "")}/activer`}
         />

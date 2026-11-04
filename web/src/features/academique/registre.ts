@@ -16,14 +16,14 @@ export type LigneRegistre = {
   erreur?: string;
 };
 
-function separateur(entete: string) {
+export function separateur(entete: string) {
   const candidats = [";", "\t", ","];
   return candidats.reduce((meilleur, c) =>
     entete.split(c).length > entete.split(meilleur).length ? c : meilleur,
   );
 }
 
-function decouper(ligne: string, sep: string) {
+export function decouper(ligne: string, sep: string) {
   const cellules: string[] = [];
   let courante = "";
   let guillemets = false;
@@ -43,7 +43,7 @@ function decouper(ligne: string, sep: string) {
   return cellules;
 }
 
-const sansAccents = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+export const sansAccents = (t: string) => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 /**
  * Sépare « NOM POST-NOM Prénom » : les mots en capitales forment le nom et le

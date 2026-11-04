@@ -7,6 +7,7 @@ import { exigerPermission } from "@/features/auth/acces";
 import { normaliserMatricule, verifierMotDePasse } from "@/features/auth/regles";
 import { ipDuClient, ouvrirSession } from "@/features/auth/session";
 import { db } from "@/lib/db";
+import { envoyerEmail, urlSite } from "@/lib/email";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
 import { codeLisible, empreinte } from "@/lib/securite";
@@ -163,7 +164,7 @@ export async function changerStatutInscription(
 /* ---------- Codes d'activation ---------- */
 
 export type EtatCodes = EtatFormulaire & {
-  codes?: { matricule: string; nom: string; code: string }[];
+  codes?: { matricule: string; nom: string; code: string; envoye?: boolean }[];
 };
 
 /**
@@ -172,7 +173,7 @@ export type EtatCodes = EtatFormulaire & {
  * (seule leur empreinte est conservée) ; en générer de nouveaux annule les
  * précédents.
  */
-export async function genererCodes(promotionId: string): Promise<EtatCodes> {
+export async function genererCodes(promotionId: string, parEmail = false): Promise<EtatCodes> {
   const auteur = await exigerPermission("etudiants.gerer");
   const inscriptions = await db.inscription.findMany({
     where: { promotionId, etudiant: { utilisateur: { statut: "INVITE" } } },
@@ -195,10 +196,22 @@ export async function genererCodes(promotionId: string): Promise<EtatCodes> {
         },
       }),
     ]);
+    let envoye = false;
+    if (parEmail && u.email) {
+      const lien = `${urlSite()}/activer`;
+      envoye = (
+        await envoyerEmail({
+          a: u.email,
+          sujet: "Activez votre compte étudiant de l'ISPT-Bukavu",
+          texte: `Bonjour${u.prenom ? ` ${u.prenom}` : ""},\n\nVotre compte étudiant sur la plateforme de l'ISPT-Bukavu est prêt.\n\nMatricule : ${i.etudiant.matricule}\nCode d'activation : ${formaterCode(code)}\n\nOuvrez ${lien}, saisissez votre matricule et ce code, puis choisissez votre mot de passe. Le code est valable 30 jours et ne sert qu'une fois.\n\nISPT-Bukavu`,
+        })
+      ).envoye;
+    }
     codes.push({
       matricule: i.etudiant.matricule,
       nom: [u.nom, u.postnom, u.prenom].filter(Boolean).join(" "),
       code: formaterCode(code),
+      envoye,
     });
   }
   await journaliser({
@@ -206,9 +219,15 @@ export async function genererCodes(promotionId: string): Promise<EtatCodes> {
     action: "codes_generes",
     entite: "Promotion",
     entiteId: promotionId,
-    apres: { nombre: codes.length },
+    apres: { nombre: codes.length, parEmail: codes.filter((c) => c.envoye).length },
   });
-  return { ...succes(`${codes.length} code(s) générés, valables 30 jours.`), codes };
+  const envoyes = codes.filter((c) => c.envoye).length;
+  return {
+    ...succes(
+      `${codes.length} code(s) générés, valables 30 jours.${parEmail ? ` ${envoyes} envoyé(s) par email ; imprimez la feuille pour les autres.` : ""}`,
+    ),
+    codes,
+  };
 }
 
 /* ---------- Activation par l'étudiant ---------- */
