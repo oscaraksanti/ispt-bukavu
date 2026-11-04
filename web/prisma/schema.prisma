@@ -371,6 +371,8 @@ model Filiere {
   campagnes    CampagneAdmission[]
   communiques  Communique[]
   baremes      BaremeFrais[]
+  anciens      Ancien[]
+  offres       OffreInsertion[]
 }
 
 model Niveau {
@@ -1147,4 +1149,78 @@ model EpreuveSurveillant {
   enseignant   ProfilEnseignant @relation(fields: [enseignantId], references: [id], onDelete: Cascade)
 
   @@id([epreuveId, enseignantId])
+}
+
+/**
+ * ---------- Anciens et insertion ----------
+ */
+
+enum StatutAncien {
+  EN_ATTENTE
+  PUBLIE
+  REFUSE
+  RETIRE
+}
+
+/// Inscription volontaire d'un diplômé à l'annuaire public des anciens,
+/// publiée après vérification par l'institut et retirable à tout moment.
+model Ancien {
+  id                String       @id @default(cuid())
+  nom               String
+  postnom           String?
+  prenom            String
+  email             String
+  filiereId         String?
+  filiere           Filiere?     @relation(fields: [filiereId], references: [id], onDelete: SetNull)
+  anneeSortie       Int
+  poste             String?
+  employeur         String?
+  ville             String?
+  parcours          String?
+  lienProfessionnel String?
+  statut            StatutAncien @default(EN_ATTENTE)
+  motifRefus        String?
+  consentementLe    DateTime
+  /// Empreinte du lien personnel de retrait envoyé par email.
+  jetonRetraitHash  String?      @unique
+  verifieParId      String?
+  verifieLe         DateTime?
+  creeLe            DateTime     @default(now())
+  majLe             DateTime     @updatedAt
+
+  @@index([statut, anneeSortie])
+}
+
+enum TypeOffre {
+  STAGE
+  EMPLOI
+  BOURSE
+  FORMATION
+}
+
+enum StatutOffre {
+  BROUILLON
+  PUBLIEE
+  ARCHIVEE
+}
+
+/// Offre de stage, d'emploi, de bourse ou de formation publiée par l'institut.
+model OffreInsertion {
+  id               String      @id @default(cuid())
+  titre            String
+  type             TypeOffre
+  organisation     String
+  lieu             String?
+  description      String
+  lienCandidature  String?
+  emailCandidature String?
+  dateLimite       DateTime?
+  statut           StatutOffre @default(BROUILLON)
+  publieeLe        DateTime?
+  auteurId         String?
+  filieres         Filiere[]
+  creeLe           DateTime    @default(now())
+  majLe            DateTime    @updatedAt
+
+  @@index([statut, publieeLe])
 }
