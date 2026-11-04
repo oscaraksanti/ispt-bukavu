@@ -72,7 +72,7 @@ export default async function Notes({ searchParams }: PageProps<"/admin/notes">)
                 : "border-pierre-300 bg-white text-pierre-700 hover:border-encre",
             )}
           >
-            {x.libelle} <span className="font-mono text-xs opacity-70">{compte(x.cle)}</span>
+            {x.libelle} <span className="font-mono text-xs opacity-85">{compte(x.cle)}</span>
           </Link>
         ))}
       </nav>
