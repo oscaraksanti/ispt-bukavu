@@ -39,6 +39,7 @@ const {
   AlignmentType,
   BorderStyle,
   Document,
+  ExternalHyperlink,
   Footer,
   HeadingLevel,
   ImageRun,
@@ -238,9 +239,18 @@ function bibliographie() {
       );
       if (ref.url)
         texte += ref.consulte
-          ? ` Consulté le ${ref.consulte}, à l’adresse ${ref.url}`
-          : ` ${ref.url}`;
-      sortie.push(new Paragraph({ style: "Reference", children: enLigne(texte) }));
+          ? ` Consulté le ${ref.consulte}, à l’adresse `
+          : " ";
+      const enfants = enLigne(texte);
+      // Adresse cliquable dans le PDF et dans Word, sans changer son aspect à l’impression.
+      if (ref.url)
+        enfants.push(
+          new ExternalHyperlink({
+            link: ref.url,
+            children: [new TextRun({ text: ref.url })],
+          }),
+        );
+      sortie.push(new Paragraph({ style: "Reference", children: enfants }));
     }
   }
   return sortie;
@@ -744,6 +754,7 @@ const titre = (taille, extra = {}) => ({
 
 const doc = new Document({
   creator: meta.auteur,
+  lastModifiedBy: meta.auteur,
   title: `${meta.titre} : ${meta.sousTitre}`,
   description: meta.nature,
   features: { updateFields: true },
