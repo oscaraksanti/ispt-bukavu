@@ -47,3 +47,4 @@ npm run construire   # produit docs/tfc/sortie/TFC-Aksanti-Cirhuza-Oscar.docx
 - Les schémas sont écrits en Graphviz dans `figures/*.dot` ; régénération : `cd docs/tfc/figures && for f in *.dot; do dot -Tpng -Gdpi=220 "$f" -o "${f%.dot}.png"; done`.
 - Une partie en anglais (abstract) porte la classe `{.anglais}` sur son titre : la typographie française (espaces insécables avant `: ; ? !`) n'y est pas appliquée.
 - `::tableau` sans légende produit un tableau qui n'entre pas dans la liste des tableaux (liste des sigles).
+- Classe `{.decale}` sur le titre (épigraphe, dédicace) : texte reporté dans le bas de la page, décalé à droite.

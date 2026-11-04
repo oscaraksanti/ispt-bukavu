@@ -407,8 +407,24 @@ function convertir(source, { premierePage }) {
   const lignes = source.replace(/\r\n?/g, "\n").split("\n");
   let i = 0;
   let premierTitre = true;
+  // Classe {.decale} (épigraphe, dédicace) : texte reporté dans le bas de la
+  // page et décalé vers la droite, sans justification.
+  let decale = false;
+  let premierBloc = true;
+  const miseEnPageDecalee = () => {
+    if (!decale) return {};
+    const avant = premierBloc ? 5200 : 0;
+    premierBloc = false;
+    return {
+      indent: { left: 6 * CM },
+      alignment: AlignmentType.LEFT,
+      spacing: { before: avant, after: 160 },
+    };
+  };
   const paragraphe = (texte) =>
-    sortie.push(new Paragraph({ style: "Corps", children: enLigne(texte) }));
+    sortie.push(
+      new Paragraph({ style: "Corps", ...miseEnPageDecalee(), children: enLigne(texte) }),
+    );
 
   while (i < lignes.length) {
     const ligne = lignes[i];
@@ -419,7 +435,11 @@ function convertir(source, { premierePage }) {
     }
     const titre = /^(#{1,3})\s+(.*?)\s*(\{([^}]*)\})?$/.exec(brut);
     if (titre) {
-      if (titre[1].length === 1) typoFrancaise = !(titre[4] ?? "").includes(".anglais");
+      if (titre[1].length === 1) {
+        typoFrancaise = !(titre[4] ?? "").includes(".anglais");
+        decale = (titre[4] ?? "").includes(".decale");
+        premierBloc = true;
+      }
       const niveau = titre[1].length;
       const texte = titre[2];
       sortie.push(
@@ -574,7 +594,11 @@ function convertir(source, { premierePage }) {
       while (i < lignes.length && lignes[i].trim().startsWith(">"))
         bloc.push(lignes[i++].trim().replace(/^>\s?/, ""));
       sortie.push(
-        new Paragraph({ style: "Citation", children: enLigne(bloc.join(" ")) }),
+        new Paragraph({
+          style: "Citation",
+          ...miseEnPageDecalee(),
+          children: enLigne(bloc.join(" ")),
+        }),
       );
       continue;
     }
