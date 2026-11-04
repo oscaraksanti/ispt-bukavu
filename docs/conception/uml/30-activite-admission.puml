@@ -1,39 +1,33 @@
 @startuml activite-admission
 !include _style.iuml
+skinparam linetype polyline
 title Activité — parcours d'admission en première année
 |Candidat|
 start
-:Créer son compte et vérifier l'email;
-:Remplir identité, études secondaires\net filière souhaitée;
-:Téléverser les pièces exigées;
-:Payer les frais de dossier à la banque\net saisir la référence;
-:Soumettre la candidature;
-|Appariteur / section|
-:Contrôler les pièces et la référence de paiement;
-if (Dossier complet ?) then (non)
-  :Demander un complément;
-  |Candidat|
-  :Compléter le dossier;
-  |Appariteur / section|
-  :Contrôler à nouveau;
-else (oui)
-endif
-if (Pourcentage à l'examen d'État) then (≥ seuil d'admission sur titre)
-  :Admettre sur titre;
-else (sous le seuil)
-  :Convoquer au concours;
-  if (Concours réussi ?) then (oui)
-    :Admettre;
-  else (non)
-    :Refuser avec motif;
-    stop
-  endif
-endif
+:Créer son compte\net confirmer son adresse électronique;
+:Remplir le dossier\net téléverser les pièces exigées;
+:Indiquer le mode et la référence\ndu paiement des frais de dossier;
+:Déposer le dossier;
 |Caisse|
-:Enregistrer les frais d'inscription;
-|Appariteur / section|
-:Convertir en inscription\net générer le matricule;
-|Candidat|
-:Recevoir ses identifiants étudiant;
+:Vérifier le paiement\net émettre le reçu;
+|Secrétariat / section|
+:Examiner les pièces et le dossier;
+while (Dossier incomplet ?) is (oui)
+  :Demander un complément motivé;
+  |Candidat|
+  :Compléter et redéposer;
+  |Secrétariat / section|
+endwhile (non)
+if (Décision) then (admis)
+  :Admettre;
+  :Inscrire l'admis\n(matricule, promotion\nde première année);
+  |Candidat|
+  :Recevoir son matricule\net activer son compte étudiant;
+else (refusé)
+  |Secrétariat / section|
+  :Refuser avec motif;
+  |Candidat|
+  :Consulter la décision motivée;
+endif
 stop
 @enduml

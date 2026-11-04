@@ -6,21 +6,23 @@ title États d'une candidature
 state "Brouillon" as Brouillon
 state "Soumise" as Soumise
 state "En examen" as EnExamen
-state "Complément demandé" as ComplementDemande
+state "Complément demandé" as Complement
 state "Admise" as Admise
 state "Refusée" as Refusee
 state "Inscrite" as Inscrite
-state "Abandonnée" as Abandonnee
 [*] --> Brouillon
-Brouillon --> Soumise : soumettre\n[pièces obligatoires présentes]
-Soumise --> EnExamen : ouvrir
-EnExamen --> ComplementDemande : demander un complément
-ComplementDemande --> Soumise : compléter
+Brouillon --> Soumise : déposer [email confirmé,\npièces et frais]
+Soumise --> EnExamen : examiner
+EnExamen --> Complement : demander un\ncomplément [motif]
+Complement --> Soumise : compléter\net redéposer
 EnExamen --> Admise : admettre
-EnExamen --> Refusee : refuser
-Admise --> Inscrite : inscrire\n[frais d'inscription enregistrés]
-Brouillon --> Abandonnee : clôture de la campagne
-Refusee --> [*]
+EnExamen --> Refusee : refuser [motif]
+Refusee --> EnExamen : réexaminer
+Admise --> Inscrite : inscrire [matricule attribué]
 Inscrite --> [*]
-Abandonnee --> [*]
+note right of Soumise
+  Les décisions peuvent aussi être
+  prises directement depuis l'état
+  « Soumise ».
+end note
 @enduml

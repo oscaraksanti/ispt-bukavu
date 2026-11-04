@@ -12,35 +12,42 @@ actor "Communication" as M
 actor "Administrateur\ntechnique" as X
 
 rectangle "Administration" {
-  usecase "Consulter le tableau\nde bord de pilotage" as U1
-  usecase "Signer les documents\nofficiels" as U2
-  usecase "Gérer la structure\nacadémique (LMD)" as U3
-  usecase "Valider et publier\nles notes" as U4
-  usecase "Émettre un document\nvérifiable" as U5
-  usecase "Construire et publier\nl'horaire" as U6
-  usecase "Publier un communiqué" as U7
-  usecase "Gérer les stages" as U8
-  usecase "Enregistrer un paiement\net émettre le reçu" as U9
-  usecase "Suivre les impayés" as U10
-  usecase "Modifier les pages,\ntextes et images" as U11
-  usecase "Publier actualités,\névénements et galerie" as U12
-  usecase "Gérer les comptes" as U13
-  usecase "Gérer rôles et permissions" as U14
-  usecase "Consulter le journal\nd'activité" as U15
+  together {
+    usecase "Consulter le tableau\nde bord de pilotage" as U1
+    usecase "Valider les\ncommuniqués" as U2
+    usecase "Gérer la structure\nacadémique (LMD)" as U3
+    usecase "Valider et publier\nles notes" as U4
+    usecase "Conduire une\ndélibération" as U5
+    usecase "Émettre un document\nvérifiable" as U6
+    usecase "Instruire les\ncandidatures" as U7
+    usecase "Construire l'horaire et\nplanifier les examens" as U8
+  }
+  together {
+    usecase "Gérer les stages\net les offres" as U9
+    usecase "Enregistrer un paiement\net émettre le reçu" as U10
+    usecase "Vérifier les frais\nde dossier" as U11
+    usecase "Modifier les pages,\nactualités et galerie" as U12
+    usecase "Modérer l'annuaire\ndes anciens" as U13
+    usecase "Gérer les comptes,\nrôles et permissions" as U14
+    usecase "Consulter le journal\nd'activité" as U15
+  }
 }
 D --> U1
 D --> U2
 A --> U3
 A --> U4
 A --> U5
-S --> U6
+A --> U6
 S --> U7
 S --> U8
-U9 <-- K
+U9 <-- S
 U10 <-- K
-U11 <-- M
+U11 <-- K
 U12 <-- M
-U13 <-- X
+U13 <-- M
 U14 <-- X
 U15 <-- X
+U2 -[hidden]-> U10
+U4 -[hidden]-> U12
+U6 -[hidden]-> U14
 @enduml

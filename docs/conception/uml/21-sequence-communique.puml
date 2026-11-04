@@ -6,30 +6,29 @@ actor "Auteur\n(section / enseignant)" as A
 participant "Interface web" as UI
 participant "Serveur" as S
 database "Base de\ndonnées" as DB
-participant "Service\nemail" as M
-actor "Validateur\n(SGAc / Direction)" as V
+actor "Validateur\n(direction)" as V
 actor "Étudiant ciblé" as E
 
-A -> UI : Rédige, joint un PDF, choisit la cible
-UI -> S : creerCommunique(titre, contenu, cible)
-S -> S : vérifier que l'auteur peut cibler ce périmètre
-alt l'auteur peut publier directement
-  S -> DB : statut = PUBLIÉ
-else validation requise
+A -> UI : Rédige, joint un fichier, choisit la cible
+UI -> S : enregistrerCommunique(titre, contenu, cible)
+S -> S : l'auteur peut-il cibler ce périmètre ?\n(institut, filière, promotion ou cours)
+alt cible « institut » ou « public » et auteur non validateur
   S -> DB : statut = EN_VALIDATION
-  S -> V : notification
+  S -> V : notification « Communiqué à valider »
   V -> UI : Relit et approuve
-  UI -> S : approuver(communiqué)
-  S -> DB : statut = PUBLIÉ, journal
+  UI -> S : validerCommunique(communiqué)
+  S -> S : permission « valve.valider »
+  S -> DB : statut = PUBLIE, journal
+else autre cas
+  S -> DB : statut = PUBLIE, journal
 end
-S -> DB : calculer les destinataires (filière, promotion, cours)
-S -> DB : créer les notifications
-S -> M : email aux destinataires ayant activé l'option
+S -> DB : calculer les destinataires
+S -> E : notification « Nouveau communiqué à la valve »
 E -> UI : Ouvre sa valve
-UI -> S : valve(utilisateur)
-S -> DB : communiqués visibles pour son profil
+UI -> S : communiqués visibles pour son profil
+S -> DB : filtrer selon ses inscriptions en cours
 S --> UI : liste triée (épinglés d'abord)
 E -> UI : Ouvre le communiqué
 UI -> S : marquerLu(communiqué)
-S -> DB : créer Lecture
+S -> DB : créer Lecture (accusé de lecture)
 @enduml

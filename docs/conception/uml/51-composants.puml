@@ -13,31 +13,34 @@ package "Application (serveur)" {
   [Contrôle d'accès\n(rôles et permissions)] as A0
   [Admissions] as A1
   [Valve] as A2
-  [Académique\n(structure, horaires, notes)] as A3
+  [Académique\n(structure, horaires,\nexamens)] as A3
+  [Notes et\ndélibérations] as A9
   [Frais] as A4
   [Documents\nvérifiables] as A5
-  [Contenus et médias] as A6
+  [Contenus, médias,\ngalerie, anciens] as A6
   [Notifications] as A7
   [Journal d'activité] as A8
 }
 package "Infrastructure" {
-  [Accès aux données\n(ORM)] as I1
+  [Accès aux données\n(Prisma)] as I1
   [Stockage de fichiers] as I2
   [Envoi d'emails] as I3
-  [Génération PDF\net QR code] as I4
+  [Pages imprimables\net codes QR] as I4
 }
 P1 --> A6
 P1 --> A5
 P2 --> A1
 P3 --> A2
 P3 --> A3
+P3 --> A9
 P3 --> A4
-P4 --> A2
 P4 --> A3
+P4 --> A9
 P5 --> A0
 A1 --> A7
 A2 --> A7
-A3 --> A7
+A9 --> A7
+A9 --> A5
 A1 --> I2
 A6 --> I2
 A5 --> I4

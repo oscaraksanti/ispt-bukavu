@@ -18,13 +18,15 @@
 | Classes — structure académique et évaluation | [`classes-academique.png`](figures/classes-academique.png) |
 | Classes — admissions, valve, frais et documents | [`classes-admissions-valve.png`](figures/classes-admissions-valve.png) |
 | Classes — contenus, accès et traçabilité | [`classes-contenu.png`](figures/classes-contenu.png) |
+| Classes — délibérations, examens, devoirs et présences | [`classes-deliberations-examens.png`](figures/classes-deliberations-examens.png) |
 | Séquence — candidature | [`sequence-candidature.png`](figures/sequence-candidature.png) |
 | Séquence — publication d'un communiqué | [`sequence-communique.png`](figures/sequence-communique.png) |
 | Séquence — notes | [`sequence-notes.png`](figures/sequence-notes.png) |
 | Séquence — document vérifiable | [`sequence-verification.png`](figures/sequence-verification.png) |
 | Activité — parcours d'admission | [`activite-admission.png`](figures/activite-admission.png) |
 | États — candidature | [`etats-candidature.png`](figures/etats-candidature.png) |
-| États — note | [`etats-note.png`](figures/etats-note.png) |
+| États — évaluation et notes | [`etats-note.png`](figures/etats-note.png) |
+| États — délibération | [`etats-deliberation.png`](figures/etats-deliberation.png) |
 | Déploiement | [`deploiement.png`](figures/deploiement.png) |
 | Architecture logique | [`composants.png`](figures/composants.png) |
 
@@ -34,5 +36,7 @@
 cd docs/conception/uml
 java -jar plantuml.jar -tpng -charset UTF-8 -o ../figures *.puml
 ```
+
+`plantuml.jar` : version 1.2025.10, depuis Maven Central (`net.sourceforge.plantuml:plantuml`) ; Graphviz requis. Les diagrammes ont été mis en conformité avec le code le 4 novembre 2026 (noms des actions, états réels, délibérations et examens).
 
 Police utilisée : IBM Plex Sans (à installer localement pour un rendu identique).

@@ -24,9 +24,9 @@ class Page {
   statut : StatutPublication
 }
 class BlocPage {
-  type : TypeBloc
+  cle : Texte
   ordre : Entier
-  contenu : JSON
+  donnees : JSON
 }
 class Actualite {
   titre : Texte
@@ -56,15 +56,16 @@ class Reglage {
   valeur : JSON
 }
 class Notification {
-  type : TypeNotification
-  lue : Booléen
+  type : Texte
+  titre : Texte
+  lueLe : DateHeure
 }
 class JournalActivite {
   action : Texte
   entite : Texte
   avant : JSON
   apres : JSON
-  date : DateHeure
+  creeLe : DateHeure
 }
 
 Utilisateur "*" -- "*" Role

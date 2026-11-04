@@ -6,24 +6,22 @@ actor Étudiant as E
 actor "Secrétariat\nacadémique" as A
 participant "Serveur" as S
 database "Base de\ndonnées" as DB
-participant "Générateur\nPDF" as P
 actor "Vérificateur\n(employeur)" as V
 
 E -> S : demanderDocument(type)
 S -> DB : DemandeDocument (EN_ATTENTE)
-A -> S : emettre(demande)
+A -> S : emettreDemande(demande)
+S -> S : permission « documents.emettre »
 S -> S : générer un code aléatoire non devinable
-S -> DB : DocumentOfficiel(code, type, titulaire, date)
-S -> P : PDF avec QR code → /verifier/{code}
-P --> S : fichier PDF
-S --> E : document disponible
-V -> S : scanne le QR code\nGET /verifier/{code}
+S -> DB : DocumentOfficiel(code, type, données figées)
+S --> E : document disponible (page A4 imprimable\navec code QR vers /verifier/{code})
+V -> S : scanne le code QR\nGET /verifier/{code}
 S -> DB : rechercher le code
 alt document trouvé et non révoqué
-  S --> V : VALIDE — type, titulaire, date d'émission
-else révoqué
-  S --> V : RÉVOQUÉ — date de révocation
-else inconnu
+  S --> V : AUTHENTIQUE — type, titulaire, date d'émission
+else document révoqué
+  S --> V : RÉVOQUÉ — date et motif
+else code inconnu
   S --> V : AUCUN DOCUMENT
 end
 @enduml

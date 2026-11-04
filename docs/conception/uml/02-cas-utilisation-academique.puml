@@ -8,20 +8,25 @@ actor "Étudiant" as E
 actor "Enseignant" as T
 
 rectangle "Espaces étudiant et enseignant" {
-  usecase "Consulter la valve\nnumérique" as U1
-  usecase "Consulter son horaire" as U2
-  usecase "Télécharger les supports\nde cours" as U3
-  usecase "Consulter ses notes\net son relevé" as U4
-  usecase "Consulter son solde\net ses reçus" as U5
-  usecase "Demander un document\nofficiel" as U6
-  usecase "Suivre son stage\net déposer le rapport" as U7
-  usecase "Publier un communiqué\nà ses étudiants" as U8
-  usecase "Déposer des supports" as U9
-  usecase "Saisir les notes\nd'une évaluation" as U10
-  usecase "Soumettre les notes\nà validation" as U11
-  usecase "Signaler un changement\nde séance" as U12
+  together {
+    usecase "Consulter la valve\net accuser lecture" as U1
+    usecase "Consulter son horaire\net ses examens" as U2
+    usecase "Télécharger les supports\nde cours" as U3
+    usecase "Remettre un devoir" as U4
+    usecase "Consulter ses notes\net ses résultats" as U5
+    usecase "Consulter son solde\net ses reçus" as U6
+    usecase "Demander un document\nofficiel" as U7
+    usecase "Suivre son stage\net déposer le rapport" as U8
+  }
+  together {
+    usecase "Publier un communiqué\nà ses étudiants" as U9
+    usecase "Déposer des supports" as U10
+    usecase "Publier et corriger\nun devoir" as U11
+    usecase "Faire l'appel\nd'une séance" as U12
+    usecase "Saisir les notes\nd'une évaluation" as U13
+    usecase "Transmettre les notes\nau secrétariat" as U14
+  }
 }
-
 E --> U1
 E --> U2
 E --> U3
@@ -29,11 +34,16 @@ E --> U4
 E --> U5
 E --> U6
 E --> U7
+E --> U8
 U1 <-- T
 U2 <-- T
-U8 <-- T
 U9 <-- T
 U10 <-- T
+U11 <-- T
 U12 <-- T
-U11 .> U10 : <<extend>>
+U13 <-- T
+U14 .> U13 : <<extend>>
+U3 -[hidden]-> U10
+U4 -[hidden]-> U11
+U5 -[hidden]-> U13
 @enduml

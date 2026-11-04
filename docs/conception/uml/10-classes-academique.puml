@@ -34,7 +34,7 @@ class Filiere {
   ouverte : Booléen
 }
 class Niveau {
-  code : L1..L4
+  code : BAC1..BAC4
   ordre : Entier
 }
 class Promotion
@@ -55,13 +55,14 @@ class Cours {
 }
 class CoursOffert
 class Evaluation {
+  intitule : Texte
   type : TypeEvaluation
   ponderation : Décimal
-  date : Date
+  statut : StatutEvaluation
 }
 class Note {
   valeur : Décimal
-  statut : StatutNote
+  absent : Booléen
 }
 class Seance {
   date : Date

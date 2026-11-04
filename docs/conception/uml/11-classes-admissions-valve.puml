@@ -8,10 +8,11 @@ class Filiere
 class Promotion
 class ProfilEtudiant
 class CampagneAdmission {
-  annee : Texte
+  libelle : Texte
   ouverture : Date
   cloture : Date
-  fraisDossier : Montant
+  fraisInscription : Montant
+  statut : StatutCampagne
 }
 class PieceExigee {
   libelle : Texte
@@ -20,7 +21,7 @@ class PieceExigee {
 }
 class Candidature {
   numero : Texte
-  pourcentageExamenEtat : Décimal
+  pourcentage : Décimal
   sectionHumanites : Texte
   statut : StatutCandidature
   referencePaiement : Texte
@@ -32,8 +33,8 @@ class PieceDeposee {
 class Communique {
   titre : Texte
   contenu : TexteRiche
-  cible : TypeCible
-  statut : StatutPublication
+  cible : CibleCommunique
+  statut : StatutCommunique
   epingle : Booléen
   publieLe : DateHeure
   expireLe : DateHeure
@@ -64,11 +65,13 @@ class Stage {
   type : Pédagogique | Professionnel
   debut : Date
   fin : Date
-  evaluation : Décimal
+  statut : StatutStage
+  note : Décimal
 }
 class LieuStage {
   nom : Texte
-  categorie : Texte
+  type : Texte
+  convention : Booléen
 }
 
 CampagneAdmission "1" *-- "*" PieceExigee

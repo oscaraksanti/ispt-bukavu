@@ -1,23 +1,25 @@
 @startuml deploiement
 !include _style.iuml
 skinparam linetype polyline
-left to right direction
 title Diagramme de déploiement
 node "Terminal de l'utilisateur" as T {
   component "Navigateur\n(application installable)" as B
-  component "Cache hors-ligne\n(service worker)" as SW
+  component "Cache hors connexion\n(service worker)" as SW
 }
 cloud "Internet" as I
-node "Plateforme d'hébergement web\n(région Francfort)" as V {
+node "Hébergement web (Vercel)" as V {
   component "Réseau de diffusion\n(pages et fichiers statiques)" as CDN
   component "Fonctions serveur\nNext.js" as FN
 }
-node "Plateforme de données\n(région Francfort)" as D {
-  database "PostgreSQL" as PG
-  component "Stockage d'objets\n(compatible S3)" as ST
+node "Plateforme de données (Supabase,\nUnion européenne)" as D {
+  database "PostgreSQL 17" as PG
+  component "Stockage d'objets\n(privé)" as ST
 }
-node "Service email transactionnel" as EM
-node "Surveillance\n(erreurs et disponibilité)" as MO
+node "Service email (Resend)" as EM
+node "GitHub" as GH {
+  component "Dépôt du code" as GIT
+  component "Intégration continue\net sauvegarde nocturne chiffrée" as CI
+}
 B -- SW
 B --> I : HTTPS
 I --> CDN
@@ -25,10 +27,11 @@ CDN --> FN
 FN --> PG : TLS
 FN --> ST : HTTPS
 FN --> EM : API HTTPS
-FN ..> MO
+GIT --> V : déploiement à chaque version
+CI ..> PG : sauvegarde
 note right of D
-  Composants standards (PostgreSQL, S3) :
-  migration possible vers un hébergeur
-  situé en RDC pour la production.
+  Composants standards (PostgreSQL, stockage
+  d'objets) : migration possible vers un
+  hébergeur situé en RDC.
 end note
 @enduml

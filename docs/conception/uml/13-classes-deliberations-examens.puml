@@ -1,0 +1,76 @@
+@startuml classes-deliberations-examens
+!include _style.iuml
+title Diagramme de classes — délibérations, examens, devoirs et présences
+
+class AnneeAcademique
+class Promotion
+class CoursOffert
+class Seance
+class ProfilEtudiant
+class ProfilEnseignant
+class DocumentOfficiel {
+  code : Texte
+  type : TypeDocument
+  revoqueLe : DateHeure
+}
+class ReglementAcademique {
+  regles : JSON
+}
+class Deliberation {
+  periode : SEMESTRE | ANNUELLE
+  semestre : Entier
+  statut : StatutDeliberation
+  regles : JSON (figé)
+  presidentJury : Texte
+  secretaireJury : Texte
+}
+class ResultatDeliberation {
+  moyenne : Décimal
+  creditsValides : Entier
+  mention : Texte
+  decisionProposee : Texte
+  decisionJury : Texte
+  motifJury : Texte
+  details : JSON (figé)
+}
+class SessionExamen {
+  type : ORDINAIRE | RATTRAPAGE
+  debut : Date
+  fin : Date
+  statut : BROUILLON | PUBLIEE
+}
+class Epreuve {
+  debut : DateHeure
+  fin : DateHeure
+  salle : Texte
+  modalite : ModaliteEpreuve
+}
+class Devoir {
+  titre : Texte
+  echeance : DateHeure
+  accepteRetard : Booléen
+}
+class Remise {
+  deposeLe : DateHeure
+  enRetard : Booléen
+  note : Décimal
+}
+class Presence {
+  statut : StatutPresence
+}
+
+AnneeAcademique "1" -- "0..1" ReglementAcademique
+Promotion "1" -- "*" Deliberation
+Deliberation "1" *-- "*" ResultatDeliberation
+ResultatDeliberation "*" -- "1" ProfilEtudiant
+ResultatDeliberation "0..1" -- "0..1" DocumentOfficiel : bulletin >
+AnneeAcademique "1" -- "*" SessionExamen
+SessionExamen "1" *-- "*" Epreuve
+Epreuve "*" -- "1" CoursOffert
+Epreuve "*" -- "*" ProfilEnseignant : surveillée par >
+CoursOffert "1" *-- "*" Devoir
+Devoir "1" *-- "*" Remise
+Remise "*" -- "1" ProfilEtudiant
+Seance "1" *-- "*" Presence
+Presence "*" -- "1" ProfilEtudiant
+@enduml

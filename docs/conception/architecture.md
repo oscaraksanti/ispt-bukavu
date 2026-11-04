@@ -17,10 +17,10 @@ La plateforme est une **application web unique** (Next.js, rendu serveur) qui se
 | Interface | Tailwind CSS 4, composants maison | Identité visuelle propre à l'institut, CSS minimal envoyé au navigateur |
 | Données | PostgreSQL + Prisma | Base relationnelle adaptée aux données académiques ; schéma versionné par migrations |
 | Fichiers | Stockage S3 (Supabase Storage) | Standard du marché, portable vers tout autre fournisseur ou un serveur en RDC |
-| Authentification | Auth.js, sessions chiffrées, mots de passe hachés (bcrypt) | Maîtrise complète des règles d'accès et des rôles |
+| Authentification | Module maison : sessions en base (cookie httpOnly, jeton stocké sous forme d'empreinte), mots de passe hachés avec Argon2id | Maîtrise complète des règles d'accès et des rôles |
 | Validation | Zod | Même schéma de validation côté formulaire et côté serveur |
-| Emails | Resend + modèles React | Délivrabilité, modèles d'emails versionnés avec le code |
-| PDF | @react-pdf/renderer + QR code | Relevés, reçus et attestations générés côté serveur |
+| Emails | Resend | Délivrabilité ; sans clé, les emails sont seulement journalisés |
+| Documents | Pages imprimables A4 + codes QR (`qrcode`) | Relevés, reçus, bulletins et attestations vérifiables |
 | Tests | Vitest (règles métier), Playwright (parcours), axe (accessibilité) | Preuves de qualité mesurables |
 | Hébergement | Vercel (Francfort) | Déploiement continu à chaque push, préproduction par branche |
 
@@ -60,7 +60,7 @@ web/
 | Risque (OWASP Top 10) | Mesure |
 |---|---|
 | Contrôle d'accès défaillant | Chaque action serveur vérifie la permission requise et le périmètre (ses cours, sa promotion, ses données) ; tests automatisés d'intrusion par rôle |
-| Défaillances cryptographiques | HTTPS partout, mots de passe hachés (bcrypt), jetons de réinitialisation hachés et à usage unique |
+| Défaillances cryptographiques | HTTPS partout, mots de passe hachés (Argon2id), jetons de réinitialisation hachés et à usage unique |
 | Injection | Requêtes paramétrées via l'ORM, validation systématique des entrées |
 | Conception non sécurisée | Règles métier isolées et testées, principe du moindre privilège |
 | Mauvaise configuration | En-têtes de sécurité (CSP, HSTS, X-Frame-Options), secrets uniquement en variables d'environnement |

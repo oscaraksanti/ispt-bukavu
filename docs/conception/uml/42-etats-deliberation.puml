@@ -1,0 +1,17 @@
+@startuml etats-deliberation
+!include _style.iuml
+hide empty description
+title États d'une délibération
+state "En préparation" as Preparation
+state "Clôturée" as Cloturee
+state "Proclamée" as Proclamee
+[*] --> Preparation : ouvrir (promotion, période)
+Preparation --> Preparation : recalculer, saisir le jury,\ndécisions motivées
+Preparation --> Cloturee : clôturer\n[notes publiées, jury renseigné,\ndécisions motivées]
+Cloturee --> Preparation : rouvrir
+Cloturee --> Proclamee : proclamer\n(bulletins vérifiables émis)
+Proclamee --> Cloturee : annuler la proclamation\n(bulletins révoqués)
+Preparation : règlement de l'année appliqué
+Cloturee : règlement figé
+Proclamee : résultats visibles par les étudiants
+@enduml

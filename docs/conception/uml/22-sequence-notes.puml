@@ -9,27 +9,28 @@ database "Base de\ndonnées" as DB
 actor "Secrétariat\nacadémique" as A
 actor Étudiant as E
 
-T -> UI : Ouvre l'évaluation de son cours
-UI -> S : grilleNotes(évaluation)
-S -> S : vérifier que T enseigne ce cours
+T -> UI : Ouvre une évaluation de son cours
+UI -> S : grille de notes
+S -> S : vérifier que le cours lui est confié
 S --> UI : étudiants inscrits et notes existantes
-T -> UI : Saisit les notes
+T -> UI : Saisit les notes ou les absences
 UI -> S : enregistrerNotes(liste)
-S -> S : contrôler bornes (0 à 20)
-S -> DB : notes en BROUILLON
-T -> UI : Soumet
-UI -> S : soumettre(évaluation)
-S -> DB : notes = SOUMISES, journal
-S -> A : notification
-A -> UI : Contrôle et valide
-UI -> S : valider(évaluation)
-S -> DB : notes = VALIDÉES
-A -> UI : Publie après délibération
-UI -> S : publier(évaluation)
-S -> DB : notes = PUBLIÉES, journal
-S -> E : notification « nouvelle note »
-E -> UI : Consulte son relevé
-UI -> S : releve(étudiant, semestre)
-S -> DB : notes PUBLIÉES uniquement
-S --> UI : moyennes et crédits calculés
+S -> S : contrôler les bornes (0 à 20)
+S -> DB : notes enregistrées (évaluation en BROUILLON)
+T -> UI : Transmet
+UI -> S : transmettreEvaluation(évaluation)
+S -> S : chaque étudiant a une note ou une absence ?
+S -> DB : évaluation = SOUMISE, journal
+A -> UI : Relit les statistiques et valide
+UI -> S : changerStatutEvaluation(VALIDEE)
+S -> S : permission « academique.notes.valider »\net transition autorisée
+S -> DB : évaluation = VALIDEE, journal
+A -> UI : Publie
+UI -> S : changerStatutEvaluation(PUBLIEE)
+S -> DB : évaluation = PUBLIEE, journal
+S -> E : notification « Nouvelle note publiée »
+E -> UI : Consulte ses notes
+UI -> S : notes de l'étudiant connecté
+S -> DB : évaluations PUBLIEE uniquement
+S --> UI : notes et moyenne par cours
 @enduml

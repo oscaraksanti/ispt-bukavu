@@ -8,35 +8,40 @@ participant "Serveur\n(actions)" as S
 database "Base de\ndonnées" as DB
 participant "Stockage\nfichiers" as F
 participant "Service\nemail" as M
-actor "Appariteur" as A
+actor "Caisse" as K
+actor "Secrétariat /\nsection" as A
 
 C -> UI : Crée son compte
-UI -> S : inscrireCandidat(email, mot de passe)
-S -> DB : créer Utilisateur (rôle candidat)
-S -> M : email de vérification
-C -> UI : Remplit les étapes de la candidature
-UI -> S : enregistrerBrouillon(données)
-S -> DB : upsert Candidature (BROUILLON)
+UI -> S : creerCompteCandidat(email, mot de passe)
+S -> DB : créer le compte et un jeton de confirmation
+S -> M : lien de confirmation
+S --> UI : message identique, que l'adresse soit connue ou non
+C -> UI : Ouvre le lien et confirme
+UI -> S : confirmerEmail(jeton)
+C -> UI : Remplit son dossier
+UI -> S : enregistrerDossier(données)
 loop pour chaque pièce exigée
   C -> UI : Téléverse la pièce
   UI -> S : deposerPiece(fichier)
-  S -> S : contrôler type et taille
-  S -> F : enregistrer le fichier
+  S -> S : contrôler le type réel et la taille
+  S -> F : enregistrer le fichier (privé)
   S -> DB : créer PieceDeposee
 end
-C -> UI : Déclare le paiement et soumet
-UI -> S : soumettreCandidature(référence)
-S -> DB : contrôler les pièces obligatoires
+C -> UI : Indique le mode et la référence du paiement, puis dépose
+UI -> S : soumettreDossier()
+S -> S : email confirmé ? pièces obligatoires ? frais déclarés ?
 alt dossier complet
   S -> DB : statut = SOUMISE, historique
-  S -> M : accusé de réception
-  S --> UI : numéro de candidature
-else pièces manquantes
-  S --> UI : liste des pièces manquantes
+  S --> UI : numéro de dossier
+else éléments manquants
+  S --> UI : liste des éléments manquants
 end
-A -> UI : Ouvre la candidature
-UI -> S : decider(candidature, décision, motif)
-S -> S : vérifier la permission « admissions.decider »
-S -> DB : statut = ADMISE / REFUSÉE / COMPLÉMENT, journal
-S -> M : notification au candidat
+K -> S : verifierPaiementDossier(dossier)
+S -> S : permission « finances.encaisser »
+S -> DB : reçu AD-AAAA-NNNN, montant figé
+A -> S : statuerPiece(pièce, acceptée / rejetée)
+A -> S : deciderCandidature(dossier, décision, motif)
+S -> S : permission « admissions.decider »\net transition autorisée
+S -> DB : statut = ADMISE / REFUSEE / COMPLEMENT,\nhistorique et journal
+S -> M : email et notification au candidat
 @enduml
