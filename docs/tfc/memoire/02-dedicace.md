@@ -1,3 +1,9 @@
-# DÉDICACE {.liminaire}
+# DÉDICACE {.liminaire .decale}
 
-::a-rediger Texte personnel, rédigé par l'auteur.
+À ma très chère famille BAGUMA CIRHUZA,
+
+à mon épouse, Ange RAMAZANI,
+
+je dédie ce travail.
+
+**AKSANTI CIRHUZA Oscar**
