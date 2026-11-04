@@ -9,7 +9,7 @@
 - un site institutionnel entièrement administrable par l'institut ;
 - des admissions en ligne, du dépôt du dossier à l'inscription de l'admis ;
 - une valve numérique de communiqués ciblés, avec accusé de lecture ;
-- des espaces pour les candidats, les étudiants et les enseignants, utilisables sur téléphone et consultables hors connexion ;
+- des espaces pour les candidats, les étudiants et les enseignants, utilisables sur téléphone, dont les pages déjà consultées restent lisibles hors connexion pour les étudiants et les enseignants ;
 - la gestion des horaires, des notes, des délibérations, des examens, des frais, des stages et des offres d'insertion ;
 - des documents officiels vérifiables par code QR ;
 - une administration avec gestion des rôles, journal d'activité et tableau de bord de pilotage.
