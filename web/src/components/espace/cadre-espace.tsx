@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Signature } from "@/components/marque/blason";
 import { seDeconnecter } from "@/features/auth/actions";
+import { BandeauHorsLigne } from "@/components/pwa/bandeau-hors-ligne";
 import { NavigationEspace } from "./navigation-espace";
 
 /** Cadre commun des espaces étudiant et enseignant : en-tête, onglets, contenu. */
@@ -21,6 +22,7 @@ export function CadreEspace({
 }) {
   return (
     <div className="min-h-svh bg-papier">
+      <BandeauHorsLigne />
       <header className="border-b border-pierre-200 bg-white">
         <div className="conteneur flex h-16 items-center justify-between gap-4">
           <Link href="/" aria-label="Retour au site de l'ISPT-Bukavu">

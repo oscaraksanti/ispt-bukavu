@@ -22,7 +22,17 @@ const nextConfig: NextConfig = {
     qualities: [75],
   },
   async headers() {
-    return [{ source: "/:path*", headers: entetesSecurite }];
+    return [
+      { source: "/:path*", headers: entetesSecurite },
+      {
+        // Le service worker doit être relu à chaque visite pour se mettre à jour.
+        source: "/sw.js",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Content-Type", value: "application/javascript; charset=utf-8" },
+        ],
+      },
+    ];
   },
   turbopack: {
     rules: {

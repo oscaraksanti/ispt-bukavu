@@ -26,6 +26,8 @@ async function Cadre({ children }: { children: React.ReactNode }) {
         { libelle: "Mes cours", href: "/etudiant/cours" },
         { libelle: "Notes", href: "/etudiant/notes" },
         { libelle: "Frais", href: "/etudiant/frais" },
+        { libelle: "Stages", href: "/etudiant/stages" },
+        { libelle: "Documents", href: "/etudiant/documents" },
       ]}
       autresEspaces={u.estPersonnel ? [{ libelle: "Administration", href: "/admin" }] : undefined}
     >

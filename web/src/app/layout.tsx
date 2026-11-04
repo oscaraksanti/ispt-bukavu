@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
+import { EnregistrementServiceWorker } from "@/components/pwa/service-worker";
 import { AnimationsDefilement } from "@/components/mouvement/animations-defilement";
 import "./globals.css";
 
@@ -55,6 +56,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         {children}
         <AnimationsDefilement />
+        <EnregistrementServiceWorker />
       </body>
     </html>
   );
