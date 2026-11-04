@@ -32,6 +32,9 @@ export const ETIQUETTES = {
   agenda: "agenda",
   faq: "faq",
   admissions: "admissions",
+  galerie: "galerie",
+  anciens: "anciens",
+  offres: "offres",
 } as const;
 
 function signalerPanne(origine: string, erreur: unknown) {

@@ -1,6 +1,9 @@
 "use client";
 
 import {
+  BriefcaseBusiness,
+  UsersRound,
+  Camera,
   Briefcase,
   ChartColumn,
   Scale,
@@ -45,6 +48,9 @@ import { cn } from "@/lib/cn";
 import type { GroupeNavigation } from "./navigation";
 
 const ICONES: Record<string, LucideIcon> = {
+  BriefcaseBusiness,
+  UsersRound,
+  Camera,
   Scale,
   Briefcase,
   ChartColumn,

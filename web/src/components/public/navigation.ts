@@ -15,7 +15,9 @@ const principale: Lien[] = [
 
 const utilitaires: Lien[] = [
   { libelle: "Valve", href: "/valve", disponible: true },
-  { libelle: "Galerie", href: "/galerie", disponible: false },
+  { libelle: "Galerie", href: "/galerie", disponible: true },
+  { libelle: "Anciens", href: "/anciens", disponible: true },
+  { libelle: "Stages et emplois", href: "/offres", disponible: true },
   { libelle: "Vérifier un document", href: "/verifier", disponible: true },
 ];
 

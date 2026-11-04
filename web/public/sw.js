@@ -6,7 +6,7 @@
  *   « hors ligne » ;
  * - l'administration, les actions et les fichiers privés ne sont jamais mis en cache.
  */
-const VERSION = "v3";
+const VERSION = "v4";
 const STATIQUE = `ispt-statique-${VERSION}`;
 const PAGES = `ispt-pages-${VERSION}`;
 const ESPACES = "ispt-espaces";
@@ -30,6 +30,7 @@ const JAMAIS = [
   /^\/affiche/,
   /^\/examens\//,
   /\/examens\/agenda$/,
+  /^\/anciens\/retrait/,
 ];
 const ESPACE_PERSONNEL = /^\/(etudiant|enseignant)(\/|$)/;
 

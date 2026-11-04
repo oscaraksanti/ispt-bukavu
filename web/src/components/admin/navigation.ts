@@ -63,6 +63,18 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
         permission: "medias.gerer",
       },
       {
+        libelle: "Galerie",
+        href: "/admin/galerie",
+        icone: "Camera",
+        permission: "medias.gerer",
+      },
+      {
+        libelle: "Anciens",
+        href: "/admin/anciens",
+        icone: "UsersRound",
+        permission: "contenu.modifier",
+      },
+      {
         libelle: "Identité et contacts",
         href: "/admin/site/reglages",
         icone: "Settings2",
@@ -119,6 +131,12 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
         libelle: "Stages",
         href: "/admin/stages",
         icone: "Briefcase",
+        permission: "stages.gerer",
+      },
+      {
+        libelle: "Offres d'insertion",
+        href: "/admin/offres",
+        icone: "BriefcaseBusiness",
         permission: "stages.gerer",
       },
       {
