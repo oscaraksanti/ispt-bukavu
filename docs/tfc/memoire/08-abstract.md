@@ -1,3 +1,9 @@
-# ABSTRACT {.liminaire}
+# ABSTRACT {.liminaire .anglais}
 
-::a-rediger Written last, once the content is final (step 10).
+At the Higher Pedagogical and Technical Institute of Bukavu (ISPT-Bukavu), in the Democratic Republic of the Congo, official information is posted on the institute's notice board and relayed informally, administrative procedures rely on paper and in-person visits, and issued documents cannot be verified remotely. This work asks how to provide the institute with a single, reliable digital tool, suited to weak and costly connectivity, that disseminates information in a targeted and verifiable way, digitises the main academic processes and remains manageable by the institute's own staff.
+
+Following a design science research approach, combined with a systems analysis and an iterative development process, we analysed five of the institute's processes, compared the online services of nine Congolese higher education institutions and examined the regulatory framework, in particular the Bachelor-Master-Doctorate (LMD) system and the Digital Code. The platform, modelled in UML and built with Next.js, TypeScript and PostgreSQL, brings together an administrable institutional website, online admissions, a targeted digital notice board with read receipts, spaces for applicants, students and teachers, management of grades, deliberations, examinations and fees, and documents verifiable by QR code.
+
+The platform is online. Its 150 unit tests and 95 end-to-end tests pass; no violation of the WCAG 2.2 level AA accessibility criteria is reported; its public pages weigh between 320 and 602 KB on first visit over a simulated slow mobile network. User evaluation and the hosting of data within the Democratic Republic of the Congo remain to be carried out.
+
+**Keywords:** web platform, academic management, institutional communication, digital notice board, progressive web application, role-based access control, ISPT-Bukavu.

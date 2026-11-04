@@ -1,3 +1,9 @@
 # RÉSUMÉ {.liminaire}
 
-::a-rediger Rédigé à la fin, quand le contenu est arrêté (étape 10).
+À l'Institut Supérieur Pédagogique et Technique de Bukavu (ISPT-Bukavu), en République démocratique du Congo, l'information officielle est affichée à la valve de l'institut et relayée de manière informelle, les démarches se font sur papier et au guichet, et les documents délivrés ne peuvent pas être vérifiés à distance. Ce travail se demande comment doter l'institut d'un outil numérique unique, fiable et adapté à une connectivité faible et coûteuse, qui diffuse l'information de façon ciblée et vérifiable, dématérialise les principaux processus académiques et reste administrable par le personnel.
+
+Suivant la démarche de la recherche par la conception, combinée à une analyse systémique et à un développement itératif, nous avons analysé cinq processus de l'institut, comparé les services en ligne de neuf établissements congolais et confronté le projet au cadre réglementaire, notamment au système LMD et au Code du numérique. La plateforme, modélisée en UML et réalisée avec Next.js, TypeScript et PostgreSQL, réunit un site institutionnel administrable, les admissions en ligne, une valve numérique ciblée avec accusé de lecture, des espaces pour les candidats, les étudiants et les enseignants, la gestion des notes, des délibérations, des examens et des frais, et des documents vérifiables par code QR.
+
+Elle est en ligne. Ses 150 tests unitaires et 95 tests de bout en bout réussissent ; aucune violation des règles d'accessibilité WCAG 2.2 de niveau AA n'est relevée ; ses pages publiques pèsent de 320 à 602 Ko à la première visite en réseau mobile lent simulé. L'évaluation par les usagers et l'hébergement des données en RDC restent à réaliser.
+
+**Mots-clés :** plateforme web, gestion académique, communication institutionnelle, valve numérique, application web progressive, contrôle d'accès basé sur les rôles, ISPT-Bukavu.
