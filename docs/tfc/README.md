@@ -48,3 +48,10 @@ npm run construire   # produit docs/tfc/sortie/TFC-Aksanti-Cirhuza-Oscar.docx
 - Une partie en anglais (abstract) porte la classe `{.anglais}` sur son titre : la typographie française (espaces insécables avant `: ; ? !`) n'y est pas appliquée.
 - `::tableau` sans légende produit un tableau qui n'entre pas dans la liste des tableaux (liste des sigles).
 - Classe `{.decale}` sur le titre (épigraphe, dédicace) : texte reporté dans le bas de la page, décalé à droite.
+
+## Soutenance (`soutenance/`)
+
+- `construire-diaporama.cjs` : diaporama PowerPoint 16:9 aux couleurs de la charte, avec notes du présentateur (pptxgenjs, react-icons, sharp). Sortie : `sortie/soutenance/`.
+- `scenario-demonstration.md` : démonstration minutée de 5 minutes sur l'instance de démonstration.
+- `video-secours.cjs` : vidéo de secours de la même démonstration, enregistrée avec Playwright sur une instance de démonstration (refuse la production), puis assemblée avec ffmpeg. Variable `SCENES` pour tourner par lots.
+- `preparation-jury.md` : questions probables du jury, réponses tirées du mémoire, minutage et programme de répétition.
