@@ -47,3 +47,7 @@ next-env.d.ts
 /tests/e2e/.donnees.json
 /test-results/
 /playwright-report/
+
+# sauvegardes (données personnelles : jamais dans Git)
+/sauvegarde-*/
+*.tar.gz.gpg

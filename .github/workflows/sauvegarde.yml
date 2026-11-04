@@ -1,0 +1,68 @@
+name: Sauvegarde
+
+# Chaque nuit à 3 h 30, heure de Bukavu (1 h 30 UTC), et à la demande.
+on:
+  schedule:
+    - cron: "30 1 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: sauvegarde
+  cancel-in-progress: false
+
+jobs:
+  sauvegarde:
+    name: Base de données et fichiers
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DATABASE_URL: ${{ secrets.SAUVEGARDE_BASE_URL }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      STOCKAGE_BUCKET: medias
+      PHRASE: ${{ secrets.SAUVEGARDE_PHRASE }}
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Vérification de la configuration
+        working-directory: .
+        run: |
+          for v in DATABASE_URL SUPABASE_URL SUPABASE_SERVICE_ROLE_KEY PHRASE; do
+            if [ -z "${!v}" ]; then echo "::error::Secret manquant pour $v (voir docs/exploitation/sauvegarde-et-restauration.md)"; exit 1; fi
+          done
+          if [ ${#PHRASE} -lt 20 ]; then echo "::error::La phrase de chiffrement doit compter au moins 20 caractères."; exit 1; fi
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Outil de sauvegarde (seul le pilote PostgreSQL est installé)
+        run: |
+          mkdir -p "$RUNNER_TEMP/outil"
+          cp scripts/sauvegarde.mjs scripts/sauvegarde-commun.mjs "$RUNNER_TEMP/outil/"
+          cd "$RUNNER_TEMP/outil" && npm init -y >/dev/null && npm install --silent pg@8
+
+      - name: Sauvegarde
+        run: cd "$RUNNER_TEMP/outil" && node sauvegarde.mjs "$RUNNER_TEMP/sauvegarde"
+
+      - name: Archivage et chiffrement (AES-256)
+        run: |
+          nom="ispt-bukavu-$(date -u +%Y%m%d-%H%M)"
+          tar -czf "$RUNNER_TEMP/$nom.tar.gz" -C "$RUNNER_TEMP" sauvegarde
+          printf '%s' "$PHRASE" | gpg --batch --yes --quiet --pinentry-mode loopback --passphrase-fd 0 \
+            --symmetric --cipher-algo AES256 -o "$RUNNER_TEMP/$nom.tar.gz.gpg" "$RUNNER_TEMP/$nom.tar.gz"
+          # Les données en clair ne quittent jamais la machine de sauvegarde.
+          rm -rf "$RUNNER_TEMP/sauvegarde" "$RUNNER_TEMP/$nom.tar.gz"
+          echo "NOM=$nom" >> "$GITHUB_ENV"
+          ls -la "$RUNNER_TEMP/$nom.tar.gz.gpg"
+
+      - name: Conservation 30 jours
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.NOM }}
+          path: ${{ runner.temp }}/${{ env.NOM }}.tar.gz.gpg
+          retention-days: 30
+          compression-level: 0
