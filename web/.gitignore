@@ -42,3 +42,8 @@ yarn-error.log*
 next-env.d.ts
 /src/generated
 /stockage-local
+
+# tests de bout en bout
+/tests/e2e/.donnees.json
+/test-results/
+/playwright-report/

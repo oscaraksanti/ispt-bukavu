@@ -62,3 +62,20 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Navigateur de test
+        run: npx playwright install --with-deps chromium
+
+      - name: Données de test de bout en bout
+        run: npx tsx tests/e2e/preparer.ts
+
+      - name: Tests de bout en bout (accès par rôle, accessibilité)
+        run: npm run test:e2e
+
+      - name: Rapport en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rapport-e2e
+          path: web/test-results
+          retention-days: 7
