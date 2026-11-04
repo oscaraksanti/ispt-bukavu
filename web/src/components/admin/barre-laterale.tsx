@@ -1,6 +1,9 @@
 "use client";
 
 import {
+  Briefcase,
+  ChartColumn,
+  FileBadge,
   Wallet,
   CalendarClock,
   ClipboardCheck,
@@ -38,6 +41,9 @@ import { cn } from "@/lib/cn";
 import type { GroupeNavigation } from "./navigation";
 
 const ICONES: Record<string, LucideIcon> = {
+  Briefcase,
+  ChartColumn,
+  FileBadge,
   Wallet,
   CalendarClock,
   ClipboardCheck,

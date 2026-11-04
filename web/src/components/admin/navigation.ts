@@ -12,7 +12,15 @@ export type GroupeNavigation = { titre: string; entrees: EntreeNavigation[] };
 export const NAVIGATION_ADMIN: GroupeNavigation[] = [
   {
     titre: "Général",
-    entrees: [{ libelle: "Tableau de bord", href: "/admin", icone: "LayoutDashboard" }],
+    entrees: [
+      { libelle: "Tableau de bord", href: "/admin", icone: "LayoutDashboard" },
+      {
+        libelle: "Pilotage",
+        href: "/admin/pilotage",
+        icone: "ChartColumn",
+        permission: "pilotage.consulter",
+      },
+    ],
   },
   {
     titre: "Site public",
@@ -87,6 +95,18 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
         href: "/admin/notes",
         icone: "ClipboardCheck",
         permission: "academique.notes.valider",
+      },
+      {
+        libelle: "Documents officiels",
+        href: "/admin/documents",
+        icone: "FileBadge",
+        permission: "documents.emettre",
+      },
+      {
+        libelle: "Stages",
+        href: "/admin/stages",
+        icone: "Briefcase",
+        permission: "stages.gerer",
       },
       {
         libelle: "Étudiants",

@@ -83,6 +83,17 @@ export const LIBELLES_ACTIONS: Record<string, string> = {
   paiement_enregistre: "Paiement enregistré",
   paiement_annule: "Paiement annulé",
   exoneration_ajoutee: "Exonération accordée",
+  document_demande: "Document demandé",
+  document_emis: "Document officiel émis",
+  document_refuse: "Demande de document refusée",
+  document_revoque: "Document révoqué",
+  lieu_stage_cree: "Lieu de stage ajouté",
+  lieu_stage_modifie: "Lieu de stage modifié",
+  lieux_stage_importes: "Lieux de stage repris des partenaires",
+  stage_affecte: "Stage attribué",
+  stage_statut: "Stage mis à jour",
+  stage_evalue: "Stage évalué",
+  rapport_depose: "Rapport de stage déposé",
 };
 
 export function libelleAction(action: string) {
