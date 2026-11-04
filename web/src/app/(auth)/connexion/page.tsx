@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ViderEspacesHorsLigne } from "@/components/pwa/service-worker";
+import { COMPTES_DEMO, MODE_DEMO, MOT_DE_PASSE_DEMO } from "@/lib/demo";
 import { FormulaireConnexion } from "./formulaire-connexion";
 
 export const metadata: Metadata = { title: "Connexion", robots: { index: false } };
@@ -28,6 +29,27 @@ export default function PageConnexion({ searchParams }: PageProps<"/connexion">)
           <AvecSuite searchParams={searchParams} />
         </Suspense>
       </div>
+      {MODE_DEMO && (
+        <section
+          aria-labelledby="comptes-demo"
+          className="mt-8 rounded-md border border-chantier/60 bg-chantier/10 p-4 text-sm"
+        >
+          <h2 id="comptes-demo" className="font-sans text-sm font-semibold text-encre">
+            Comptes de démonstration
+          </h2>
+          <p className="mt-1 text-pierre-700">
+            Mot de passe commun : <span className="font-mono">{MOT_DE_PASSE_DEMO}</span>
+          </p>
+          <dl className="mt-3 space-y-2">
+            {COMPTES_DEMO.map((c) => (
+              <div key={c.identifiant}>
+                <dt className="text-xs text-pierre-600">{c.profil}</dt>
+                <dd className="font-mono text-[0.8125rem] text-encre">{c.identifiant}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
     </>
   );
 }

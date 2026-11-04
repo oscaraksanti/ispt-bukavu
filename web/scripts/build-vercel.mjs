@@ -16,6 +16,8 @@ const base =
 if (base) {
   executer("npx prisma migrate deploy");
   executer("npx tsx prisma/seed.ts");
+  // Instance de démonstration : données fictives (le script refuse la production).
+  if (process.env.NEXT_PUBLIC_MODE_DEMO === "1") executer("npx tsx scripts/demo/peupler.ts");
 } else {
   console.warn("Aucune base de données configurée : contenus de référence utilisés.");
 }

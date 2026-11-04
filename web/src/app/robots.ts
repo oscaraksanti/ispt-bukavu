@@ -1,8 +1,10 @@
 import type { MetadataRoute } from "next";
+import { MODE_DEMO } from "@/lib/demo";
 
 const BASE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://ispt-bukavu.vercel.app";
 
 export default function robots(): MetadataRoute.Robots {
+  if (MODE_DEMO) return { rules: { userAgent: "*", disallow: "/" } };
   return {
     rules: {
       userAgent: "*",

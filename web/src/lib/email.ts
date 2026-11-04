@@ -9,7 +9,8 @@ type Message = { a: string; sujet: string; texte: string; html?: string };
 export async function envoyerEmail({ a, sujet, texte, html }: Message) {
   const cle = process.env.RESEND_API_KEY;
   const expediteur = process.env.EMAIL_EXPEDITEUR ?? "ISPT-Bukavu <onboarding@resend.dev>";
-  if (!cle) {
+  // En démonstration, aucun email ne part : les adresses sont fictives.
+  if (!cle || process.env.NEXT_PUBLIC_MODE_DEMO === "1") {
     console.info(`[email] à ${a} — ${sujet}\n${texte}`);
     return { envoye: false };
   }

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
 import { EnregistrementServiceWorker } from "@/components/pwa/service-worker";
 import { AnimationsDefilement } from "@/components/mouvement/animations-defilement";
+import { MODE_DEMO } from "@/lib/demo";
 import "./globals.css";
 
 const plexSans = IBM_Plex_Sans({
@@ -34,6 +35,7 @@ export const metadata: Metadata = {
   description:
     "Établissement public d'enseignement supérieur à Bukavu. Formation d'ingénieurs en Électromécanique, Génie Informatique, Électronique et Télécommunications, et Génie Civil.",
   applicationName: "ISPT-Bukavu",
+  ...(MODE_DEMO ? { robots: { index: false, follow: false } } : {}),
 };
 
 export const viewport: Viewport = {
@@ -54,6 +56,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body className="flex min-h-full flex-col">
+        {MODE_DEMO && (
+          <p className="bg-chantier px-4 py-1.5 text-center text-sm font-medium text-encre">
+            Version de démonstration : toutes les données sont fictives et réinitialisées chaque
+            nuit.
+          </p>
+        )}
         {children}
         <AnimationsDefilement />
         <EnregistrementServiceWorker />

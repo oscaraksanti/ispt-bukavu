@@ -1,0 +1,56 @@
+name: Démonstration
+
+# Réinitialise chaque nuit l'instance de démonstration (données fictives),
+# à 2 h 30 heure de Bukavu (0 h 30 UTC), et à la demande.
+# Sans le secret DEMO_BASE_URL, le travail s'arrête sans erreur.
+on:
+  schedule:
+    - cron: "30 0 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: demonstration
+  cancel-in-progress: false
+
+jobs:
+  reinitialiser:
+    name: Réinitialisation des données fictives
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ${{ secrets.DEMO_BASE_URL }}
+      NEXT_PUBLIC_MODE_DEMO: "1"
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - name: Configuration présente ?
+        id: config
+        working-directory: .
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::notice::Secret DEMO_BASE_URL absent : aucune instance de démonstration à réinitialiser."
+            echo "active=non" >> "$GITHUB_OUTPUT"
+          else
+            echo "active=oui" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.config.outputs.active == 'oui'
+
+      - uses: actions/setup-node@v4
+        if: steps.config.outputs.active == 'oui'
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Dépendances
+        if: steps.config.outputs.active == 'oui'
+        run: npm ci
+
+      - name: Migrations et réinitialisation
+        if: steps.config.outputs.active == 'oui'
+        run: |
+          npx prisma migrate deploy
+          npx tsx scripts/demo/reinitialiser.ts
