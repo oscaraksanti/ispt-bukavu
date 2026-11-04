@@ -1,11 +1,46 @@
 /** Documents officiels vérifiables (fonctions pures, testées). */
 
-export type TypeDocument = "ATTESTATION_FREQUENTATION" | "RELEVE_NOTES" | "ATTESTATION_REUSSITE";
+export type TypeDocument =
+  "ATTESTATION_FREQUENTATION" | "RELEVE_NOTES" | "ATTESTATION_REUSSITE" | "BULLETIN";
 
 export const LIBELLES_DOCUMENT: Record<TypeDocument, string> = {
   ATTESTATION_FREQUENTATION: "Attestation de fréquentation",
   RELEVE_NOTES: "Relevé de notes",
   ATTESTATION_REUSSITE: "Attestation de réussite",
+  BULLETIN: "Bulletin de notes",
+};
+
+/** Bulletin issu d'une délibération proclamée (figé au moment de la proclamation). */
+export type DonneesBulletin = {
+  periode: string;
+  annuel: boolean;
+  semestres: {
+    numero: number;
+    moyenne: number | null;
+    creditsValides: number;
+    creditsTotal: number;
+    mention: string | null;
+    cours: {
+      intitule: string;
+      ue: string;
+      credits: number;
+      note: number | null;
+      valide: boolean;
+    }[];
+  }[];
+  moyenne: number | null;
+  total: number;
+  creditsValides: number;
+  creditsTotal: number;
+  mention: { lettre: string; libelle: string } | null;
+  decision: { code: string; libelle: string } | null;
+  rang: number | null;
+  effectif: number;
+  jury: { secretaire: string; president: string };
+  dateJury: string | null;
+  proclameLe: string;
+  reglement: { seuil: number; arrondi: string; calcul: string };
+  echelle: { seuil: number; lettre: string; libelle: string }[];
 };
 
 /** Contenu figé au moment de l'émission : il ne change plus, même si la base évolue. */
@@ -20,6 +55,7 @@ export type DonneesDocument = {
   niveau: string;
   annee: string;
   seuil: number;
+  bulletin?: DonneesBulletin;
   semestres?: {
     numero: number;
     moyenne: number | null;
@@ -46,6 +82,7 @@ export function resumeVerification(d: DonneesDocument) {
     matricule: d.matricule,
     promotion: `${d.niveau} · ${d.filiere}`,
     annee: d.annee,
+    periode: d.bulletin?.periode ?? null,
   };
 }
 

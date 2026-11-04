@@ -22,6 +22,7 @@ const JAMAIS = [
   /^\/valve\/pieces/,
   /^\/stages\/rapport/,
   /^\/devoirs\//,
+  /^\/deliberations\//,
   /^\/medias\//,
   /^\/connexion/,
   /^\/candidat/,

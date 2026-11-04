@@ -26,6 +26,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
         { libelle: "Horaire", href: "/etudiant/horaire" },
         { libelle: "Mes cours", href: "/etudiant/cours" },
         { libelle: "Notes", href: "/etudiant/notes" },
+        { libelle: "Résultats", href: "/etudiant/resultats" },
         { libelle: "Frais", href: "/etudiant/frais" },
         { libelle: "Stages", href: "/etudiant/stages" },
         { libelle: "Documents", href: "/etudiant/documents" },

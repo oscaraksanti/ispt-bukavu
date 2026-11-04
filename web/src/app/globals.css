@@ -508,3 +508,9 @@
     page: document;
   }
 }
+
+@media print {
+  .pv-a4 {
+    page: paysage;
+  }
+}

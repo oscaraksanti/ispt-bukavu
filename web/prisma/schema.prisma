@@ -345,6 +345,7 @@ model AnneeAcademique {
   paiements    Paiement[]
   exonerations Exoneration[]
   stages       Stage[]
+  reglement    ReglementAcademique?
 }
 
 model Filiere {
@@ -391,9 +392,10 @@ model Promotion {
   niveau    Niveau          @relation(fields: [niveauId], references: [id])
   annee     AnneeAcademique @relation(fields: [anneeId], references: [id])
 
-  inscriptions Inscription[]
-  cours        CoursOffert[]
-  communiques  Communique[]
+  inscriptions  Inscription[]
+  cours         CoursOffert[]
+  communiques   Communique[]
+  deliberations Deliberation[]
 
   @@unique([filiereId, niveauId, anneeId])
 }
@@ -422,6 +424,7 @@ model ProfilEtudiant {
   candidature  Candidature?
   presences    Presence[]
   remises      Remise[]
+  resultats    ResultatDeliberation[]
 }
 
 enum StatutInscription {
@@ -841,6 +844,7 @@ enum TypeDocument {
   ATTESTATION_FREQUENTATION
   RELEVE_NOTES
   ATTESTATION_REUSSITE
+  BULLETIN
 }
 
 enum StatutDemande {
@@ -862,20 +866,21 @@ model DemandeDocument {
 }
 
 model DocumentOfficiel {
-  id              String           @id @default(cuid())
+  id              String                @id @default(cuid())
   /// Code de vérification public, aléatoire et non devinable.
-  code            String           @unique
+  code            String                @unique
   type            TypeDocument
   etudiantId      String
-  etudiant        ProfilEtudiant   @relation(fields: [etudiantId], references: [id])
-  demandeId       String?          @unique
-  demande         DemandeDocument? @relation(fields: [demandeId], references: [id])
+  etudiant        ProfilEtudiant        @relation(fields: [etudiantId], references: [id])
+  demandeId       String?               @unique
+  demande         DemandeDocument?      @relation(fields: [demandeId], references: [id])
   /// Copie figée des informations imprimées sur le document.
   donnees         Json
-  emisLe          DateTime         @default(now())
+  emisLe          DateTime              @default(now())
   emisParId       String?
   revoqueLe       DateTime?
   motifRevocation String?
+  resultat        ResultatDeliberation?
 }
 
 // ============================================================================
@@ -987,4 +992,80 @@ model Remise {
   corrigeLe    DateTime?
 
   @@unique([devoirId, etudiantId])
+}
+
+/**
+ * ---------- Délibérations ----------
+ */
+
+/// Règlement de délibération d'une année académique (seuils, arrondi, mentions, décisions).
+model ReglementAcademique {
+  id       String          @id @default(cuid())
+  anneeId  String          @unique
+  annee    AnneeAcademique @relation(fields: [anneeId], references: [id], onDelete: Cascade)
+  regles   Json
+  majLe    DateTime        @updatedAt
+  majParId String?
+}
+
+enum PeriodeDeliberation {
+  SEMESTRE
+  ANNUELLE
+}
+
+enum StatutDeliberation {
+  PREPARATION
+  CLOTUREE
+  PROCLAMEE
+}
+
+/// Session du jury pour une promotion : un semestre, ou l'année entière (semestre = 0).
+model Deliberation {
+  id             String                 @id @default(cuid())
+  promotionId    String
+  promotion      Promotion              @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  periode        PeriodeDeliberation
+  semestre       Int                    @default(0)
+  statut         StatutDeliberation     @default(PREPARATION)
+  /// Règlement appliqué, figé à la clôture du jury.
+  regles         Json?
+  dateJury       DateTime?
+  secretaireJury String?
+  presidentJury  String?
+  calculeLe      DateTime?
+  clotureLe      DateTime?
+  clotureParId   String?
+  proclameLe     DateTime?
+  proclameParId  String?
+  creeLe         DateTime               @default(now())
+  resultats      ResultatDeliberation[]
+
+  @@unique([promotionId, periode, semestre])
+}
+
+model ResultatDeliberation {
+  id                String            @id @default(cuid())
+  deliberationId    String
+  deliberation      Deliberation      @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  etudiantId        String
+  etudiant          ProfilEtudiant    @relation(fields: [etudiantId], references: [id], onDelete: Cascade)
+  moyenne           Decimal?          @db.Decimal(5, 2)
+  moyenneBrute      Decimal?          @db.Decimal(7, 3)
+  total             Decimal           @db.Decimal(8, 2)
+  creditsValides    Int
+  creditsTotal      Int
+  coursNonPresentes Int               @default(0)
+  mention           String?
+  mentionLibelle    String?
+  rang              Int?
+  decisionProposee  String?
+  decisionJury      String?
+  motifJury         String?
+  casLimite         String?
+  /// Détail figé par cours : intitulé, UE, semestre, crédits, note, validé.
+  details           Json
+  documentId        String?           @unique
+  document          DocumentOfficiel? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+
+  @@unique([deliberationId, etudiantId])
 }

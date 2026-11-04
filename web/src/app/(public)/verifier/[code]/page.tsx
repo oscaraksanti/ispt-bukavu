@@ -73,6 +73,7 @@ async function Resultat({ params }: { params: PageProps<"/verifier/[code]">["par
               ["Matricule", r.titulaire.matricule],
               ["Promotion", r.titulaire.promotion],
               ["Année académique", r.titulaire.annee],
+              ...(r.titulaire.periode ? [["Période", r.titulaire.periode]] : []),
               ["Délivré le", formatJour.format(new Date(r.emisLe))],
             ].map(([k, v]) => (
               <div key={k} className="grid grid-cols-[10rem_1fr] gap-4 py-2.5">

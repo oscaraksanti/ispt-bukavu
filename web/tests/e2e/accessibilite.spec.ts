@@ -6,6 +6,7 @@ import { D, seConnecter } from "./outils";
 const NORMES = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 test.use({ contextOptions: { reducedMotion: "reduce" } });
+test.setTimeout(120_000);
 
 async function analyser(page: Page) {
   await page.waitForLoadState("networkidle");
@@ -44,6 +45,7 @@ test("espace étudiant", async ({ page }) => {
     "/etudiant/notes",
     "/etudiant/frais",
     "/etudiant/notifications",
+    "/etudiant/resultats",
     `/etudiant/cours/${D.ids.coursOffert}`,
   ]) {
     await page.goto(chemin);
@@ -73,6 +75,8 @@ test("administration", async ({ page }) => {
     "/admin/utilisateurs",
     "/admin/notes",
     "/admin/notifications",
+    "/admin/deliberations",
+    "/admin/deliberations/reglement",
   ]) {
     await page.goto(chemin);
     await analyser(page);

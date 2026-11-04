@@ -97,6 +97,12 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
         permission: "academique.notes.valider",
       },
       {
+        libelle: "Délibérations",
+        href: "/admin/deliberations",
+        icone: "Scale",
+        permission: "academique.notes.valider",
+      },
+      {
         libelle: "Documents officiels",
         href: "/admin/documents",
         icone: "FileBadge",

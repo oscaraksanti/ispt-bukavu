@@ -3,6 +3,7 @@
 import {
   Briefcase,
   ChartColumn,
+  Scale,
   FileBadge,
   Wallet,
   CalendarClock,
@@ -42,6 +43,7 @@ import { cn } from "@/lib/cn";
 import type { GroupeNavigation } from "./navigation";
 
 const ICONES: Record<string, LucideIcon> = {
+  Scale,
   Briefcase,
   ChartColumn,
   FileBadge,

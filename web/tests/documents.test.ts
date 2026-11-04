@@ -43,6 +43,7 @@ describe("contenu affiché", () => {
       matricule: "GI26001",
       promotion: "BAC 1 · Génie Informatique",
       annee: "2026-2027",
+      periode: null,
     });
     expect(civilite("F")).toBe("Madame");
   });

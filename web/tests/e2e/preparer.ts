@@ -74,6 +74,8 @@ async function main() {
     update: {},
     create: { filiereId: filiere.id, niveauId: niveau.id, anneeId: annee.id },
   });
+  // Délibérations rejouées à chaque passage des tests.
+  await db.deliberation.deleteMany({ where: { promotionId: promotion.id } });
   for (const e of [a, b])
     await db.inscription.upsert({
       where: { etudiantId_promotionId: { etudiantId: e.id, promotionId: promotion.id } },
@@ -204,6 +206,7 @@ async function main() {
       promotion: promotion.id,
       etudiantB: b.id,
       seance: seance.id,
+      promotionLibelle: `${niveau.code} ${filiere.nomCourt}`,
     },
   };
   await writeFile(path.join(__dirname, ".donnees.json"), JSON.stringify(donnees, null, 2));
