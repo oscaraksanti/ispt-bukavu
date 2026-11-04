@@ -514,3 +514,28 @@
     page: paysage;
   }
 }
+
+/* Visionneuse de la galerie : apparition douce, sans mouvement si l'utilisateur le demande. */
+.visionneuse[open] {
+  animation: visionneuse-entree 220ms ease-out;
+}
+.visionneuse-image {
+  animation: visionneuse-image 280ms ease-out;
+}
+@keyframes visionneuse-entree {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes visionneuse-image {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .visionneuse[open],
+  .visionneuse-image {
+    animation: none;
+  }
+}
