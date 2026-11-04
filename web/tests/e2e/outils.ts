@@ -82,3 +82,24 @@ export async function lienConfirmation(email: string) {
   }
   return `/confirmer-email/${jeton}`;
 }
+
+/** Lien de retrait de l'annuaire pour un ancien de la base de TEST (les emails ne partent pas). */
+export async function lienRetraitAncien(email: string) {
+  const url = process.env.DIRECT_URL ?? process.env.DATABASE_URL ?? "";
+  if (!url || /supabase|neon\.tech/.test(url)) throw new Error("Base de test requise.");
+  const { Client } = await import("pg");
+  const { createHash, randomBytes } = await import("node:crypto");
+  const jeton = randomBytes(32).toString("base64url");
+  const c = new Client({ connectionString: url });
+  await c.connect();
+  try {
+    const r = await c.query(
+      `UPDATE "Ancien" SET "jetonRetraitHash" = $1 WHERE email = $2 AND statut = 'PUBLIE'`,
+      [createHash("sha256").update(`retrait:${jeton}`).digest("hex"), email],
+    );
+    if (r.rowCount !== 1) throw new Error(`Aucune fiche publiée pour ${email}`);
+  } finally {
+    await c.end();
+  }
+  return `/anciens/retrait/${jeton}`;
+}

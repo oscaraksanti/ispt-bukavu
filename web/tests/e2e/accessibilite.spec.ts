@@ -34,6 +34,10 @@ for (const chemin of [
   "/aide/etudiant",
   "/mentions-legales",
   "/confirmer-email/exemple-de-lien-0123456789",
+  "/galerie",
+  "/anciens",
+  "/anciens/rejoindre",
+  "/offres",
 ]) {
   test(`page publique ${chemin}`, async ({ page }) => {
     await page.goto(chemin);
@@ -87,6 +91,9 @@ test("administration", async ({ page }) => {
     "/admin/deliberations/reglement",
     "/admin/admissions",
     "/admin/examens",
+    "/admin/galerie",
+    "/admin/anciens",
+    "/admin/offres",
     "/admin/finances",
     `/affiche/${D.ids.campagne}`,
   ]) {
