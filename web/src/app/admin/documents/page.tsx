@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { BoutonAction } from "@/components/admin/bouton-action";
+import { EditeurBloc } from "@/components/admin/editeur-bloc";
 import { EnteteAdmin, Panneau } from "@/components/admin/entete-admin";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
 import { Champ, Liste, Saisie } from "@/components/ui/champs";
 import { Etiquette } from "@/components/ui/elements";
 import { formatJour } from "@/features/actualites/dates";
 import { exigerPermission } from "@/features/auth/acces";
+import { enregistrerReglagesDocuments } from "@/features/contenu/actions";
+import { REGLAGES_DOCUMENTS } from "@/features/contenu/reglages";
+import { lireParametresDocuments } from "@/features/documents/parametres";
 import {
   emettreDemande,
   emettreDirectement,
@@ -22,7 +26,7 @@ export const metadata: Metadata = { title: "Documents officiels" };
 
 export default async function Documents() {
   await exigerPermission("documents.emettre");
-  const [demandes, documents] = await Promise.all([
+  const [demandes, documents, parametres] = await Promise.all([
     db.demandeDocument.findMany({
       where: { statut: "EN_ATTENTE" },
       include: { etudiant: { include: { utilisateur: true } } },
@@ -33,6 +37,7 @@ export default async function Documents() {
       orderBy: { emisLe: "desc" },
       take: 100,
     }),
+    lireParametresDocuments(),
   ]);
   const nom = (u: { nom: string; postnom: string | null; prenom: string | null }) =>
     [u.nom, u.postnom, u.prenom].filter(Boolean).join(" ");
@@ -138,6 +143,21 @@ export default async function Documents() {
           ))}
         </ul>
       </section>
+
+      <Panneau
+        id="parametres"
+        className="mt-10"
+        titre={REGLAGES_DOCUMENTS.titre}
+        description={REGLAGES_DOCUMENTS.description}
+      >
+        <EditeurBloc
+          definition={REGLAGES_DOCUMENTS}
+          valeursInitiales={parametres}
+          medias={[]}
+          action={enregistrerReglagesDocuments}
+          libelleEnvoi="Enregistrer"
+        />
+      </Panneau>
     </>
   );
 }

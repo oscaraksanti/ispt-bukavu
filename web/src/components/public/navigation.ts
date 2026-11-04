@@ -19,6 +19,13 @@ const utilitaires: Lien[] = [
   { libelle: "Vérifier un document", href: "/verifier", disponible: true },
 ];
 
+/** Liens du bas de page : aide et informations légales. */
+export const liensLegaux = [
+  { libelle: "Aide", href: "/aide" },
+  { libelle: "Mentions légales", href: "/mentions-legales" },
+  { libelle: "Confidentialité", href: "/confidentialite" },
+];
+
 export const navigationPrincipale = principale.filter((l) => l.disponible);
 export const liensUtilitaires = utilitaires.filter((l) => l.disponible);
 

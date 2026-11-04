@@ -80,6 +80,54 @@ export const REGLAGES_INSTITUT: DefinitionBloc = {
 
 export type ReglagesInstitut = Record<keyof typeof DEFAUT_INSTITUT, string>;
 
+const DEFAUT_DOCUMENTS = {
+  entete: "Enseignement supérieur et universitaire",
+  signataireFonction: "",
+  signataireNom: "",
+  formuleFinale:
+    "En foi de quoi, le présent document lui est délivré pour servir et valoir ce que de droit.",
+  mentionPied: "",
+} satisfies Record<string, string>;
+
+/**
+ * Paramètres des documents officiels (attestations, relevés). Le signataire et
+ * les formules exactes doivent être confirmés par l'institut : tant qu'ils ne
+ * sont pas saisis, le signataire est déduit des autorités (Secrétaire général
+ * académique) et la formule usuelle est utilisée.
+ */
+export const REGLAGES_DOCUMENTS: DefinitionBloc = {
+  cle: "documents",
+  titre: "Paramètres des documents officiels",
+  description:
+    "En-tête, signataire et formules imprimés sur les attestations et relevés de notes. Les bulletins portent les signatures du jury de délibération.",
+  champs: [
+    { type: "texte", cle: "entete", libelle: "Ligne d'en-tête (tutelle)" },
+    {
+      type: "texte",
+      cle: "signataireFonction",
+      libelle: "Fonction du signataire",
+      aide: "Exemple : Le Secrétaire Général Académique. Laisser vide pour reprendre l'autorité « académique » de la page Autorités.",
+    },
+    { type: "texte", cle: "signataireNom", libelle: "Nom du signataire" },
+    {
+      type: "texteLong",
+      cle: "formuleFinale",
+      libelle: "Formule finale des attestations",
+      max: 400,
+    },
+    {
+      type: "texteLong",
+      cle: "mentionPied",
+      libelle: "Mention en bas de page (facultatif)",
+      aide: "Exemple : référence réglementaire ou mention exigée par l'institut.",
+      max: 400,
+    },
+  ],
+  defaut: DEFAUT_DOCUMENTS,
+};
+
+export type ReglagesDocuments = Record<keyof typeof DEFAUT_DOCUMENTS, string>;
+
 /** Numéro au format international (+243…) à partir d'un numéro affiché localement. */
 export function numeroInternational(affichage: string, indicatif = "243") {
   const chiffres = affichage.replace(/\D/g, "");

@@ -460,6 +460,64 @@ export const PAGES: DefinitionPage[] = [
       },
     ],
   },
+  {
+    slug: "mentions-legales",
+    titre: "Mentions légales",
+    chemin: "/mentions-legales",
+    blocs: [
+      {
+        cle: "texte",
+        titre: "Texte",
+        description:
+          "Texte juridique à fournir par l'institut (éditeur du site, responsable de la publication, hébergement, propriété intellectuelle). Tant qu'il est vide, la page indique qu'il est en cours de validation.",
+        champs: [
+          {
+            type: "texteLong",
+            cle: "texte",
+            libelle: "Texte",
+            aide: "Paragraphes séparés par une ligne vide ; intertitres précédés de « ## » ; listes avec « - ».",
+            max: 20000,
+          },
+          {
+            type: "texte",
+            cle: "miseAJour",
+            libelle: "Date de dernière mise à jour",
+            aide: "Exemple : 4 novembre 2026",
+          },
+        ],
+        defaut: { texte: "", miseAJour: "" },
+      },
+    ],
+  },
+  {
+    slug: "confidentialite",
+    titre: "Confidentialité",
+    chemin: "/confidentialite",
+    blocs: [
+      {
+        cle: "texte",
+        titre: "Texte",
+        description:
+          "Politique de protection des données personnelles, à valider par l'institut (données collectées, finalités, durée de conservation, droits des personnes, contact). Tant qu'elle est vide, la page indique qu'elle est en cours de validation.",
+        champs: [
+          {
+            type: "texteLong",
+            cle: "texte",
+            libelle: "Texte",
+            aide: "Paragraphes séparés par une ligne vide ; intertitres précédés de « ## » ; listes avec « - ».",
+            max: 20000,
+          },
+          {
+            type: "texte",
+            cle: "miseAJour",
+            libelle: "Date de dernière mise à jour",
+            aide: "Exemple : 4 novembre 2026",
+          },
+        ],
+        defaut: { texte: "", miseAJour: "" },
+      },
+    ],
+  },
 ];
 
 export function definitionPage(slug: string) {

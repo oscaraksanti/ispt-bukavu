@@ -8,7 +8,7 @@ import { journaliser } from "@/lib/journal";
 import { type DefinitionBloc, definitionBloc, definitionPage } from "./definitions";
 import { imagesDuBloc, schemaBloc } from "./donnees";
 import { ETIQUETTES } from "./lecture";
-import { REGLAGES_INSTITUT } from "./reglages";
+import { REGLAGES_DOCUMENTS, REGLAGES_INSTITUT } from "./reglages";
 
 /** Lit et valide les données envoyées par l'éditeur de bloc. */
 async function validerDonnees(definition: DefinitionBloc, formData: FormData) {
@@ -105,4 +105,29 @@ export async function enregistrerReglages(
   });
   updateTag(ETIQUETTES.reglages);
   return succes("Les informations de l'institut sont enregistrées et publiées.");
+}
+
+/** Paramètres des documents officiels : réservés à qui émet les documents. */
+export async function enregistrerReglagesDocuments(
+  _etat: EtatFormulaire,
+  formData: FormData,
+): Promise<EtatFormulaire> {
+  const auteur = await exigerPermission("documents.emettre");
+  const { donnees, erreur } = await validerDonnees(REGLAGES_DOCUMENTS, formData);
+  if (erreur) return erreur;
+  const avant = await db.reglage.findUnique({ where: { cle: REGLAGES_DOCUMENTS.cle } });
+  await db.reglage.upsert({
+    where: { cle: REGLAGES_DOCUMENTS.cle },
+    update: { valeur: donnees as object },
+    create: { cle: REGLAGES_DOCUMENTS.cle, valeur: donnees as object },
+  });
+  await journaliser({
+    auteurId: auteur.id,
+    action: "reglages_modifies",
+    entite: "Reglage",
+    entiteId: REGLAGES_DOCUMENTS.cle,
+    avant: avant?.valeur ?? null,
+    apres: donnees,
+  });
+  return succes("Les paramètres des documents sont enregistrés.");
 }

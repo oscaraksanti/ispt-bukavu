@@ -32,7 +32,9 @@ export function Panneau({
   children,
   actions,
   className,
+  id,
 }: {
+  id?: string;
   titre?: string;
   description?: ReactNode;
   children: ReactNode;
@@ -40,7 +42,10 @@ export function Panneau({
   className?: string;
 }) {
   return (
-    <section className={`rounded-md border border-pierre-200 bg-white ${className ?? ""}`}>
+    <section
+      id={id}
+      className={`scroll-mt-24 rounded-md border border-pierre-200 bg-white ${className ?? ""}`}
+    >
       {(titre || actions) && (
         <div className="flex items-start justify-between gap-4 border-b border-pierre-200 px-5 py-4">
           <div>

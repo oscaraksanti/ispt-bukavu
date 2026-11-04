@@ -5,6 +5,7 @@ import { DocumentOfficiel } from "@/components/documents/document-officiel";
 import { BoutonImprimer } from "@/components/horaires/bouton-imprimer";
 import { utilisateurConnecte } from "@/features/auth/acces";
 import { lireInstitut } from "@/features/contenu/lecture";
+import { lireParametresDocuments, signataireDocuments } from "@/features/documents/parametres";
 import { qrSvg } from "@/features/documents/qr";
 import type { DonneesDocument } from "@/features/documents/regles";
 import { db } from "@/lib/db";
@@ -21,12 +22,8 @@ async function Contenu({ params }: { params: PageProps<"/documents/[id]">["param
   const doc = await db.documentOfficiel.findUnique({ where: { id }, include: { etudiant: true } });
   if (!doc || (doc.etudiant.utilisateurId !== u.id && !u.permissions.has("documents.emettre")))
     notFound();
-  const [institut, autorites] = await Promise.all([
-    lireInstitut(),
-    db.autorite.findMany({ where: { visible: true }, orderBy: { ordre: "asc" } }),
-  ]);
-  // Signataire : le Secrétaire général académique s'il figure parmi les autorités.
-  const sga = autorites.find((a) => /acad[ée]mique/i.test(a.fonction)) ?? null;
+  const [institut, parametres] = await Promise.all([lireInstitut(), lireParametresDocuments()]);
+  const signataire = await signataireDocuments(parametres);
   const url = `${urlSite()}/verifier/${doc.code}`;
   return (
     <main className="min-h-svh bg-pierre-100 py-8 print:bg-white print:py-0">
@@ -40,7 +37,8 @@ async function Contenu({ params }: { params: PageProps<"/documents/[id]">["param
           code={doc.code}
           emisLe={doc.emisLe}
           institut={institut}
-          signataire={sga ? { fonction: sga.fonction, nom: sga.nom } : null}
+          signataire={signataire}
+          parametres={parametres}
           qr={await qrSvg(url)}
           urlVerification={url.replace(/^https?:\/\//, "")}
           revoque={doc.revoqueLe ? (doc.motifRevocation ?? "révoqué") : null}

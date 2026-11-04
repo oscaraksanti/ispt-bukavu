@@ -7,6 +7,7 @@ import {
   type TypeDocument,
 } from "@/features/documents/regles";
 import type { Institut } from "@/features/contenu/lecture";
+import type { ReglagesDocuments } from "@/features/contenu/reglages";
 
 const fmt = (n: number) => n.toLocaleString("fr-FR", { maximumFractionDigits: 2 });
 
@@ -21,6 +22,7 @@ export function DocumentOfficiel({
   qr,
   urlVerification,
   revoque,
+  parametres,
 }: {
   type: TypeDocument;
   donnees: DonneesDocument;
@@ -31,6 +33,7 @@ export function DocumentOfficiel({
   qr: string;
   urlVerification: string;
   revoque: string | null;
+  parametres: ReglagesDocuments;
 }) {
   const ne = d.sexe === "F" ? "née" : "né";
   const inscrit = d.sexe === "F" ? "inscrite" : "inscrit";
@@ -50,9 +53,7 @@ export function DocumentOfficiel({
       <header className="flex items-center gap-5 border-b-2 border-encre pb-4">
         <Blason hauteur={90} decoratif />
         <div className="flex-1 text-center leading-tight">
-          <p className="font-sans text-[10pt] font-bold uppercase">
-            Enseignement supérieur et universitaire
-          </p>
+          <p className="font-sans text-[10pt] font-bold uppercase">{parametres.entete}</p>
           <p className="font-sans text-[12pt] font-bold">{institut.nom}</p>
           <p className="font-sans text-[10pt] font-bold">{institut.sigle.toUpperCase()}</p>
           <p className="font-sans text-[9pt]">
@@ -160,10 +161,7 @@ export function DocumentOfficiel({
           </>
         )}
         {type !== "RELEVE_NOTES" && type !== "BULLETIN" && (
-          <p className="mt-6">
-            En foi de quoi, le présent document lui est délivré pour servir et valoir ce que de
-            droit.
-          </p>
+          <p className="mt-6">{parametres.formuleFinale}</p>
         )}
       </div>
 
@@ -206,6 +204,11 @@ export function DocumentOfficiel({
           )}
         </div>
       </footer>
+      {parametres.mentionPied && (
+        <p className="mt-6 border-t border-pierre-300 pt-2 text-center text-[8pt] text-pierre-700">
+          {parametres.mentionPied}
+        </p>
+      )}
     </article>
   );
 }

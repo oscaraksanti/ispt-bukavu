@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Blason } from "@/components/marque/blason";
 import { majuscule } from "@/lib/cn";
 import { lireFilieres, lireInstitut } from "@/features/contenu/lecture";
-import { liensUtilitaires, navigationPrincipale } from "./navigation";
+import { liensLegaux, liensUtilitaires, navigationPrincipale } from "./navigation";
 
 export async function PiedDePage() {
   "use cache";
@@ -82,7 +82,15 @@ export async function PiedDePage() {
           <p>
             © {annee} {institut.sigle} · {institut.acteCreation}
           </p>
-          <p>{institut.coordonnees}</p>
+          <ul className="flex flex-wrap gap-x-5 gap-y-1">
+            {liensLegaux.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className="inline-block py-1 hover:text-white">
+                  {l.libelle}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>
