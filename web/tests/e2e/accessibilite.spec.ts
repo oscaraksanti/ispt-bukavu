@@ -30,6 +30,9 @@ for (const chemin of [
   "/contact",
   "/verifier",
   "/connexion",
+  "/aide",
+  "/aide/etudiant",
+  "/mentions-legales",
 ]) {
   test(`page publique ${chemin}`, async ({ page }) => {
     await page.goto(chemin);
@@ -71,6 +74,8 @@ test("administration", async ({ page }) => {
   await seConnecter(page, D.comptes.admin);
   for (const chemin of [
     "/admin",
+    "/admin/demarrage",
+    "/admin/documents",
     "/admin/pilotage",
     "/admin/utilisateurs",
     "/admin/notes",
