@@ -36,3 +36,5 @@ npm run construire   # produit docs/tfc/sortie/TFC-Aksanti-Cirhuza-Oscar.docx
 - `::bibliographie` produit la bibliographie des **seules références citées**, classées par catégorie puis par auteur et date, avec retrait suspendu et interligne simple.
 - Une clé inconnue arrête la construction : aucune source non vérifiée ne peut entrer dans le mémoire. Pour ajouter une source, la vérifier (catalogue, éditeur, DOI ou page consultée) puis l'ajouter à `references.json`.
 - `TFC_BIBLIO=toutes` affiche toute la base, pour la relecture.
+- Les lettres APA (2023a, 2023b, s. d.-a) sont ajoutées automatiquement quand plusieurs références citées ont le même auteur et la même année ; ne pas les écrire dans `references.json`. Deux références du même auteur citées ensemble sont regroupées : (Auteur, 2023, 2025).
+- Chaque liste numérotée repart à 1.

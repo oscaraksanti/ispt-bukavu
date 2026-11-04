@@ -224,8 +224,8 @@
       "cle": "unesco2023",
       "categorie": "rapport",
       "auteur": "UNESCO",
-      "annee": "2023a",
-      "reference": "UNESCO. (2023a). *Global education monitoring report 2023: Technology in education: A tool on whose terms?*",
+      "annee": "2023",
+      "reference": "UNESCO. (2023). *Global education monitoring report 2023: Technology in education: A tool on whose terms?*",
       "url": "https://doi.org/10.54676/UZQV8501",
       "verification": "DOI vérifié (docs/recherche/cadre-reglementaire.md)."
     },
@@ -233,8 +233,8 @@
       "cle": "unesco2023resume",
       "categorie": "en-ligne",
       "auteur": "UNESCO",
-      "annee": "2023b",
-      "reference": "UNESCO. (2023b). *Technology in education: GEM Report 2023* [Résumé en ligne].",
+      "annee": "2023",
+      "reference": "UNESCO. (2023). *Technology in education: GEM Report 2023* [Résumé en ligne].",
       "url": "https://gem-report-2023.unesco.org/",
       "consulte": "3 novembre 2026",
       "verification": "Page consultée (docs/recherche/cadre-reglementaire.md)."
@@ -273,8 +273,8 @@
       "cle": "actualite2023a",
       "categorie": "en-ligne",
       "auteur": "Actualite.cd",
-      "annee": "2023a",
-      "reference": "Actualite.cd. (2023a, 20 octobre). *Enseignement supérieur : la numérisation des diplômes parmi les réformes du secteur*.",
+      "annee": "2023",
+      "reference": "Actualite.cd. (2023, 20 octobre). *Enseignement supérieur : la numérisation des diplômes parmi les réformes du secteur*.",
       "url": "https://actualite.cd/2023/10/20/enseignement-superieur-la-numerisation-des-diplomes-parmi-les-reformes-du-secteur",
       "consulte": "3 novembre 2026",
       "verification": "Article consulté (docs/recherche/cadre-reglementaire.md)."
@@ -283,8 +283,8 @@
       "cle": "actualite2023b",
       "categorie": "en-ligne",
       "auteur": "Actualite.cd",
-      "annee": "2023b",
-      "reference": "Actualite.cd. (2023b, 23 octobre). *Le gouvernement adopte le projet de décret sur les appellations des grades académiques du système LMD*.",
+      "annee": "2023",
+      "reference": "Actualite.cd. (2023, 23 octobre). *Le gouvernement adopte le projet de décret sur les appellations des grades académiques du système LMD*.",
       "url": "https://actualite.cd/2023/10/23/le-gouvernement-adopte-le-projet-de-decret-sur-les-appellations-des-grades-academiques",
       "consulte": "3 novembre 2026",
       "verification": "Article consulté (docs/recherche/cadre-reglementaire.md)."
@@ -458,6 +458,22 @@
       "url": "https://pie.ucad.sn/docs/preinscription_guide_utilisateur_2020_2021_v1.pdf",
       "consulte": "3 novembre 2026",
       "verification": "Document consulté (docs/recherche/etat-de-l-art.md)."
+    },
+    {
+      "cle": "ispt-depliant",
+      "categorie": "rapport",
+      "auteur": "ISPT-Bukavu",
+      "annee": "s. d.",
+      "reference": "Institut Supérieur Pédagogique et Technique de Bukavu [ISPT-Bukavu]. (s. d.). *Institut Supérieur Pédagogique et Technique ISPT-Bukavu* [Dépliant de présentation].",
+      "verification": "Document officiel remis par l'institut (docs/sources/depliant-ispt-bukavu.pdf)."
+    },
+    {
+      "cle": "ispt-donnees2026",
+      "categorie": "rapport",
+      "auteur": "ISPT-Bukavu",
+      "annee": "2026",
+      "reference": "Institut Supérieur Pédagogique et Technique de Bukavu [ISPT-Bukavu]. (2026). *Données site ISPT* [Document interne remis à l'auteur].",
+      "verification": "Document remis par l'institut en novembre 2026, transcrit dans docs/sources/donnees-site-ispt.md."
     },
     {
       "cle": "owasp2025",
@@ -696,8 +712,8 @@
       "cle": "openeducat-a",
       "categorie": "en-ligne",
       "auteur": "OpenEduCat",
-      "annee": "s. d.-a",
-      "reference": "OpenEduCat. (s. d.-a). *Open source education ERP, free for schools & universities*.",
+      "annee": "s. d.",
+      "reference": "OpenEduCat. (s. d.). *Open source education ERP, free for schools & universities*.",
       "url": "https://openeducat.org/open-source-education-erp/",
       "consulte": "3 novembre 2026",
       "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
@@ -706,8 +722,8 @@
       "cle": "openeducat-b",
       "categorie": "en-ligne",
       "auteur": "OpenEduCat",
-      "annee": "s. d.-b",
-      "reference": "OpenEduCat. (s. d.-b). *What is Odoo ERP for education?*",
+      "annee": "s. d.",
+      "reference": "OpenEduCat. (s. d.). *What is Odoo ERP for education?*",
       "url": "https://openeducat.org/glossary/what-is-odoo-erp-education/",
       "consulte": "3 novembre 2026",
       "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
@@ -766,8 +782,8 @@
       "cle": "uct-peoplesoft",
       "categorie": "en-ligne",
       "auteur": "University of Cape Town ICTS",
-      "annee": "s. d.-a",
-      "reference": "University of Cape Town ICTS. (s. d.-a). *What is PeopleSoft?*",
+      "annee": "s. d.",
+      "reference": "University of Cape Town ICTS. (s. d.). *What is PeopleSoft?*",
       "url": "https://icts.uct.ac.za/node/8183",
       "consulte": "3 novembre 2026",
       "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."
@@ -776,8 +792,8 @@
       "cle": "uct-amathuba",
       "categorie": "en-ligne",
       "auteur": "University of Cape Town ICTS",
-      "annee": "s. d.-b",
-      "reference": "University of Cape Town ICTS. (s. d.-b). *Amathuba*.",
+      "annee": "s. d.",
+      "reference": "University of Cape Town ICTS. (s. d.). *Amathuba*.",
       "url": "https://icts.uct.ac.za/amathuba",
       "consulte": "3 novembre 2026",
       "verification": "Page consultée (docs/recherche/etat-de-l-art.md)."

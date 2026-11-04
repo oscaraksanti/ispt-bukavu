@@ -99,6 +99,49 @@ for (const ref of BASE.references) {
 const citees = new Set();
 
 /**
+ * Lettres a, b… des références d'un même auteur la même année (APA 7),
+ * attribuées par ordre alphabétique des titres et seulement parmi les
+ * références réellement citées : les sources sont lues une première fois.
+ */
+const MOTIF_CITATION = /\[(\+?)(@[^\]]+)\]/g;
+const SUFFIXES = new Map();
+{
+  const prevues = new Set();
+  if (process.env.TFC_BIBLIO === "toutes")
+    for (const cle of REFERENCES.keys()) prevues.add(cle);
+  for (const f of readdirSync(SOURCES).filter((f) => f.endsWith(".md")))
+    for (const m of readFileSync(path.join(SOURCES, f), "utf8").matchAll(
+      MOTIF_CITATION,
+    ))
+      for (const c of m[2].matchAll(/@([\w.:-]+)/g)) prevues.add(c[1]);
+  const groupes = new Map();
+  for (const cle of prevues) {
+    const ref = REFERENCES.get(cle);
+    if (!ref) continue; // signalé plus loin, à la conversion
+    const auteurs = ref.reference.split(" (")[0];
+    const groupe = `${auteurs}|${ref.annee}`;
+    groupes.set(groupe, [...(groupes.get(groupe) ?? []), ref]);
+  }
+  for (const refs of groupes.values()) {
+    if (refs.length < 2) continue;
+    refs
+      .sort((a, b) =>
+        a.reference
+          .split(") ")
+          .slice(1)
+          .join(") ")
+          .localeCompare(b.reference.split(") ").slice(1).join(") "), "fr"),
+      )
+      .forEach((ref, n) => {
+        const lettre = String.fromCharCode(97 + n);
+        SUFFIXES.set(ref.cle, ref.annee === "s. d." ? `-${lettre}` : lettre);
+      });
+  }
+}
+/** Année affichée, avec sa lettre éventuelle (2023a, s. d.-b). */
+const annee = (ref) => `${ref.annee}${SUFFIXES.get(ref.cle) ?? ""}`;
+
+/**
  * Remplace les citations par leur forme auteur-date :
  *   [@cle]             → (Auteur, 2018)
  *   [@cle, p. 14]      → (Auteur, 2018, p. 14)
@@ -108,7 +151,7 @@ const citees = new Set();
  * source non vérifiée ne peut entrer dans le mémoire.
  */
 function citations(texte) {
-  return texte.replace(/\[(\+?)(@[^\]]+)\]/g, (_, narratif, contenu) => {
+  return texte.replace(MOTIF_CITATION, (_, narratif, contenu) => {
     const parties = contenu.split(";").map((morceau) => {
       const m = /^\s*@([\w.:-]+)\s*(?:,\s*(.+?))?\s*$/.exec(morceau);
       if (!m) throw new Error(`Citation mal formée : [${contenu}]`);
@@ -121,14 +164,19 @@ function citations(texte) {
       return parties
         .map(
           ({ ref, precision }) =>
-            `${ref.auteur} (${ref.annee}${precision ? `, ${precision}` : ""})`,
+            `${ref.auteur} (${annee(ref)}${precision ? `, ${precision}` : ""})`,
         )
         .join(", ");
-    return `(${parties
-      .map(
-        ({ ref, precision }) =>
-          `${ref.auteur}, ${ref.annee}${precision ? `, ${precision}` : ""}`,
-      )
+    // Même auteur cité à la suite : (Auteur, 2023, 2025), selon l'APA 7.
+    const groupes = [];
+    for (const { ref, precision } of parties) {
+      const date = `${annee(ref)}${precision ? `, ${precision}` : ""}`;
+      const dernier = groupes.at(-1);
+      if (dernier && dernier.auteur === ref.auteur) dernier.dates.push(date);
+      else groupes.push({ auteur: ref.auteur, dates: [date] });
+    }
+    return `(${groupes
+      .map(({ auteur, dates }) => `${auteur}, ${dates.join(", ")}`)
       .join(" ; ")})`;
   });
 }
@@ -174,7 +222,10 @@ function bibliographie() {
       }),
     );
     for (const ref of liste) {
-      let texte = ref.reference;
+      let texte = ref.reference.replace(
+        `(${ref.annee}`,
+        `(${annee(ref)}`,
+      );
       if (ref.url)
         texte += ref.consulte
           ? ` Consulté le ${ref.consulte}, à l’adresse ${ref.url}`
@@ -339,7 +390,7 @@ function pageDeGarde() {
 }
 
 /* ---------- Conversion d'un fichier Markdown ---------- */
-const compteurs = { figure: 0 };
+const compteurs = { figure: 0, listes: 0 };
 
 function convertir(source, { premierePage }) {
   const sortie = [];
@@ -472,11 +523,12 @@ function convertir(source, { premierePage }) {
       continue;
     }
     if (/^\d+\.\s+/.test(brut)) {
+      const instance = ++compteurs.listes; // chaque liste repart à 1
       while (i < lignes.length && /^\d+\.\s+/.test(lignes[i].trim())) {
         sortie.push(
           new Paragraph({
             style: "Corps",
-            numbering: { reference: "numeros", level: 0 },
+            numbering: { reference: "numeros", level: 0, instance },
             children: enLigne(lignes[i].trim().replace(/^\d+\.\s+/, "")),
           }),
         );
