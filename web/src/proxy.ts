@@ -23,6 +23,7 @@ export const config = {
     "/recu/:path*",
     "/recu-dossier/:path*",
     "/affiche/:path*",
+    "/examens/:path*",
     "/documents/:path*",
     "/deliberations/:path*",
   ],

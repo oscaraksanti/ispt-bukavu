@@ -21,6 +21,7 @@ export default function robots(): MetadataRoute.Robots {
         "/activer",
         "/confirmer-email",
         "/affiche",
+        "/examens",
         "/hors-ligne",
         "/documents",
         "/devoirs",

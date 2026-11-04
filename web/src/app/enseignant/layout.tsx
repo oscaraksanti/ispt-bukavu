@@ -22,6 +22,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
       liens={[
         { libelle: "Mes cours", href: "/enseignant" },
         { libelle: "Horaire", href: "/enseignant/horaire" },
+        { libelle: "Examens", href: "/enseignant/examens" },
         { libelle: "Valve", href: "/enseignant/valve" },
         { libelle: "Stages", href: "/enseignant/stages" },
       ]}
