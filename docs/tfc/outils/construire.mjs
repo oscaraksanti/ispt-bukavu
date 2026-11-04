@@ -622,14 +622,19 @@ function tableau(legende, lignesTableau) {
     throw new Error(`Tableau mal formé : ${legende}`);
   const n = entete.length;
   // Largeurs proportionnelles au contenu, avec un minimum par colonne.
-  const poids = entete.map((_, k) =>
-    Math.max(
-      6,
-      ...[entete, ...corps].map((r) => Math.min(60, (r[k] ?? "").length)),
-    ),
+  // Largeur minimale : le plus long mot tient sur une ligne (≈ 105 DXA par
+  // caractère en 10 pt, plus les marges) ; le reste de la largeur est réparti
+  // selon la longueur des textes.
+  const textes = (k) => [entete, ...corps].map((r) => r[k] ?? "");
+  const minimum = entete.map((_, k) =>
+    Math.max(...textes(k).flatMap((t) => t.split(/\s+/).map((m) => m.length))) * 105 + 220,
   );
+  const poids = entete.map((_, k) =>
+    Math.max(...textes(k).map((t) => Math.min(60, t.length))),
+  );
+  const reste = Math.max(0, LARGEUR_TEXTE - minimum.reduce((a, b) => a + b, 0));
   const total = poids.reduce((a, b) => a + b, 0);
-  const largeurs = poids.map((w) => Math.floor((w / total) * LARGEUR_TEXTE));
+  const largeurs = minimum.map((m, k) => Math.floor(m + (reste * poids[k]) / total));
   const cellule = (texte, k, enTete) =>
     new TableCell({
       width: { size: largeurs[k], type: WidthType.DXA },
