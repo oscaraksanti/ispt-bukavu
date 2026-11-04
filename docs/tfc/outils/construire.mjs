@@ -12,7 +12,9 @@
  *   # Titre de niveau 1 (chapitre, partie liminaire)  {.liminaire}
  *   ## Niveau 2   ### Niveau 3
  *   paragraphes, **gras**, *italique*, listes « - » et « 1. »
- *   ![Figure 3.1 : légende](chemin/image.png)   figure numérotée et listée
+ *   ![Figure 3.1 : légende](chemin/image.png){largeur=12}   figure (largeur en cm, facultative)
+ *   ::tableau Tableau 1.1 : légende   suivi d'un tableau Markdown « | a | b | »
+ *   ::source texte             source sous une figure ou un tableau
  *   > citation longue
  *   ::a-rediger texte          repère visible d'une section à écrire
  *   ::saut                     saut de page
@@ -45,8 +47,14 @@ const {
   PageBreak,
   PageNumber,
   Paragraph,
-  SimpleField,
+  StyleLevel,
+  Table,
+  TableCell,
+  TableRow,
   TableOfContents,
+  VerticalAlign,
+  WidthType,
+  ShadingType,
   TextRun,
   NumberFormat,
 } = require("docx");
@@ -455,55 +463,77 @@ function convertir(source, { premierePage }) {
       else if (directive === "liste-figures")
         sortie.push(
           new TableOfContents("Liste des figures", {
-            captionLabelIncludingNumbers: "Figure",
+            stylesWithLevels: [new StyleLevel("Légende de figure", 1)],
             hyperlink: true,
           }),
         );
       else if (directive === "liste-tableaux")
         sortie.push(
           new TableOfContents("Liste des tableaux", {
-            captionLabelIncludingNumbers: "Tableau",
+            stylesWithLevels: [new StyleLevel("Légende de tableau", 1)],
             hyperlink: true,
           }),
         );
+      else if (directive === "source")
+        sortie.push(
+          new Paragraph({ style: "Source", children: enLigne(`Source : ${texte}`) }),
+        );
+      else if (directive === "tableau") {
+        i++;
+        const lignesTableau = [];
+        while (i < lignes.length && lignes[i].trim().startsWith("|"))
+          lignesTableau.push(lignes[i++].trim());
+        sortie.push(...tableau(texte, lignesTableau));
+        continue;
+      }
       i++;
       continue;
     }
-    const figure = /^!\[(Figure\s+[\d.]+)\s*:\s*(.*)\]\((.+)\)$/.exec(brut);
+    const figure =
+      /^!\[(Figure\s+[\d.]+)\s*:\s*(.*)\]\((.+?)\)(?:\{largeur=([\d.]+)\})?$/.exec(
+        brut,
+      );
     if (figure) {
       const fichier = path.resolve(RACINE, figure[3]);
-      if (existsSync(fichier)) {
-        const donnees = readFileSync(fichier);
-        const largeur = 15 * 37.8;
-        sortie.push(
-          new Paragraph({
-            alignment: AlignmentType.CENTER,
-            keepNext: true,
-            spacing: { before: 120, after: 60 },
-            children: [
-              new ImageRun({
-                type: fichier.endsWith(".jpg") ? "jpg" : "png",
-                data: donnees,
-                transformation: { width: largeur, height: largeur * 0.6 },
-                altText: {
-                  title: figure[1],
-                  description: figure[2],
-                  name: figure[1],
-                },
-              }),
-            ],
-          }),
-        );
+      if (!existsSync(fichier)) throw new Error(`Image introuvable : ${figure[3]}`);
+      const donnees = readFileSync(fichier);
+      const { largeur: lpx, hauteur: hpx } = dimensions(donnees);
+      // Largeur demandée (cm), bornée à la zone de texte et à 19 cm de haut.
+      let largeur = (Number(figure[4] ?? 15) * 37.8);
+      let hauteur = (largeur * hpx) / lpx;
+      if (hauteur > 19 * 37.8) {
+        hauteur = 19 * 37.8;
+        largeur = (hauteur * lpx) / hpx;
       }
+      sortie.push(
+        new Paragraph({
+          alignment: AlignmentType.CENTER,
+          keepNext: true,
+          spacing: { before: 120, after: 60, line: 240 },
+          children: [
+            new ImageRun({
+              type: /\.jpe?g$/i.test(fichier) ? "jpg" : "png",
+              data: donnees,
+              transformation: {
+                width: Math.round(largeur),
+                height: Math.round(hauteur),
+              },
+              altText: {
+                title: figure[1],
+                description: figure[2],
+                name: figure[1],
+              },
+            }),
+          ],
+        }),
+      );
       compteurs.figure++;
       sortie.push(
         new Paragraph({
-          style: "Legende",
-          children: [
-            new TextRun({ text: "Figure " }),
-            new SimpleField("SEQ Figure \\* ARABIC", String(compteurs.figure)),
-            new TextRun({ text: typographie(` : ${figure[2]}`) }),
-          ],
+          style: "LegendeFigure",
+          keepNext: /^::source/.test(lignes[i + 1]?.trim() ?? "")
+            || /^::source/.test(lignes[i + 2]?.trim() ?? ""),
+          children: enLigne(`${figure[1]} : ${figure[2]}`),
         }),
       );
       i++;
@@ -556,6 +586,98 @@ function convertir(source, { premierePage }) {
     paragraphe(bloc.join(" "));
   }
   return sortie;
+}
+
+/* ---------- Images et tableaux ---------- */
+/** Dimensions en pixels d'une image PNG ou JPEG. */
+function dimensions(donnees) {
+  if (donnees.readUInt32BE(0) === 0x89504e47)
+    return { largeur: donnees.readUInt32BE(16), hauteur: donnees.readUInt32BE(20) };
+  let p = 2;
+  while (p < donnees.length) {
+    const marqueur = donnees.readUInt16BE(p);
+    const taille = donnees.readUInt16BE(p + 2);
+    if (marqueur >= 0xffc0 && marqueur <= 0xffc3)
+      return {
+        hauteur: donnees.readUInt16BE(p + 5),
+        largeur: donnees.readUInt16BE(p + 7),
+      };
+    p += 2 + taille;
+  }
+  throw new Error("Format d'image non reconnu");
+}
+
+const LARGEUR_TEXTE = 11906 - 3 * CM - 2.5 * CM; // en DXA
+const filet = { style: BorderStyle.SINGLE, size: 4, color: "7F7F7F" };
+
+/**
+ * Tableau Markdown (« | a | b | », ligne « |---| » après l'en-tête),
+ * précédé de sa légende « Tableau 1.1 : … », reprise dans la liste des tableaux.
+ */
+function tableau(legende, lignesTableau) {
+  const cellules = (l) =>
+    l.replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+  const [entete, , ...corps] = lignesTableau.map(cellules);
+  if (!entete || !lignesTableau[1]?.includes("-"))
+    throw new Error(`Tableau mal formé : ${legende}`);
+  const n = entete.length;
+  // Largeurs proportionnelles au contenu, avec un minimum par colonne.
+  const poids = entete.map((_, k) =>
+    Math.max(
+      6,
+      ...[entete, ...corps].map((r) => Math.min(60, (r[k] ?? "").length)),
+    ),
+  );
+  const total = poids.reduce((a, b) => a + b, 0);
+  const largeurs = poids.map((w) => Math.floor((w / total) * LARGEUR_TEXTE));
+  const cellule = (texte, k, enTete) =>
+    new TableCell({
+      width: { size: largeurs[k], type: WidthType.DXA },
+      verticalAlign: VerticalAlign.CENTER,
+      margins: { top: 50, bottom: 50, left: 90, right: 90 },
+      shading: enTete
+        ? { type: ShadingType.CLEAR, color: "auto", fill: "E8EAF2" }
+        : undefined,
+      children: [
+        new Paragraph({
+          style: "Cellule",
+          children: enLigne(texte ?? "", enTete ? { bold: true } : {}),
+        }),
+      ],
+    });
+  return [
+    new Paragraph({
+      style: "LegendeTableau",
+      children: enLigne(legende),
+    }),
+    new Table({
+      width: { size: LARGEUR_TEXTE, type: WidthType.DXA },
+      columnWidths: largeurs,
+      borders: {
+        top: filet,
+        bottom: filet,
+        left: filet,
+        right: filet,
+        insideHorizontal: filet,
+        insideVertical: filet,
+      },
+      rows: [
+        new TableRow({
+          tableHeader: true,
+          cantSplit: true,
+          children: entete.map((t, k) => cellule(t, k, true)),
+        }),
+        ...corps.map(
+          (r) =>
+            new TableRow({
+              cantSplit: true,
+              children: Array.from({ length: n }, (_, k) => cellule(r[k], k, false)),
+            }),
+        ),
+      ],
+    }),
+    new Paragraph({ spacing: { before: 0, after: 120, line: 240 }, children: [] }),
+  ];
 }
 
 /* ---------- Assemblage ---------- */
@@ -628,13 +750,41 @@ const doc = new Document({
         },
       },
       {
-        id: "Legende",
-        name: "Caption",
+        id: "LegendeFigure",
+        name: "Légende de figure",
         basedOn: "Normal",
         run: { font: POLICE, size: 20, italics: true },
         paragraph: {
           alignment: AlignmentType.CENTER,
           spacing: { line: 240, before: 60, after: 240 },
+        },
+      },
+      {
+        id: "LegendeTableau",
+        name: "Légende de tableau",
+        basedOn: "Normal",
+        run: { font: POLICE, size: 20, italics: true },
+        paragraph: {
+          alignment: AlignmentType.CENTER,
+          keepNext: true,
+          spacing: { line: 240, before: 200, after: 80 },
+        },
+      },
+      {
+        id: "Cellule",
+        name: "Texte de tableau",
+        basedOn: "Normal",
+        run: { font: POLICE, size: 20 },
+        paragraph: { spacing: { line: 240, before: 0, after: 0 } },
+      },
+      {
+        id: "Source",
+        name: "Source",
+        basedOn: "Normal",
+        run: { font: POLICE, size: 18, italics: true },
+        paragraph: {
+          alignment: AlignmentType.CENTER,
+          spacing: { line: 240, before: 0, after: 240 },
         },
       },
       {

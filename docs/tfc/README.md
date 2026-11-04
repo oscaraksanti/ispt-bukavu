@@ -38,3 +38,10 @@ npm run construire   # produit docs/tfc/sortie/TFC-Aksanti-Cirhuza-Oscar.docx
 - `TFC_BIBLIO=toutes` affiche toute la base, pour la relecture.
 - Les lettres APA (2023a, 2023b, s. d.-a) sont ajoutées automatiquement quand plusieurs références citées ont le même auteur et la même année ; ne pas les écrire dans `references.json`. Deux références du même auteur citées ensemble sont regroupées : (Auteur, 2023, 2025).
 - Chaque liste numérotée repart à 1.
+
+## Figures et tableaux
+
+- `![Figure 1.2 : légende](figures/x.png){largeur=15}` : figure en largeur donnée (cm), proportions réelles conservées ; `::source …` juste en dessous.
+- `::tableau Tableau 1.1 : légende` suivi d'un tableau Markdown : légende au-dessus, en-tête répété sur chaque page.
+- Les listes des figures et des tableaux sont construites à partir des styles de légende.
+- Les schémas sont écrits en Graphviz dans `figures/*.dot` ; régénération : `cd docs/tfc/figures && for f in *.dot; do dot -Tpng -Gdpi=220 "$f" -o "${f%.dot}.png"; done`.
