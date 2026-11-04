@@ -5,11 +5,12 @@ import { expect, type Page } from "@playwright/test";
 type Donnees = {
   motDePasse: string;
   comptes: Record<
-    "admin" | "gestionnaire" | "prof" | "autreProf" | "etudiantA" | "etudiantB",
+    "admin" | "gestionnaire" | "caisse" | "prof" | "autreProf" | "etudiantA" | "etudiantB",
     string
   >;
   ids: Record<
     | "gestionnaire"
+    | "campagne"
     | "coursOffert"
     | "evaluationPubliee"
     | "evaluationBrouillon"
@@ -48,4 +49,36 @@ export async function attendreRefus(page: Page) {
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     /ne vous est pas ouverte|introuvable|n'existe pas/i,
   );
+}
+
+/**
+ * Lien de confirmation d'adresse pour un compte de la base de TEST : les
+ * emails n'étant pas envoyés en test, le jeton est créé directement.
+ */
+export async function lienConfirmation(email: string) {
+  const url = process.env.DIRECT_URL ?? process.env.DATABASE_URL ?? "";
+  if (!url || /supabase|neon\.tech/.test(url)) throw new Error("Base de test requise.");
+  const { Client } = await import("pg");
+  const { createHash, randomBytes } = await import("node:crypto");
+  const jeton = randomBytes(32).toString("base64url");
+  const c = new Client({ connectionString: url });
+  await c.connect();
+  try {
+    const r = await c.query<{ id: string }>(`SELECT id FROM "Utilisateur" WHERE email = $1`, [
+      email,
+    ]);
+    if (!r.rows[0]) throw new Error(`Aucun compte pour ${email}`);
+    await c.query(
+      `INSERT INTO "JetonReinitialisation" (id, "jetonHash", "utilisateurId", "expireLe")
+       VALUES ($1, $2, $3, now() + interval '1 hour')`,
+      [
+        `e2e${randomBytes(8).toString("hex")}`,
+        createHash("sha256").update(`confirmation:${jeton}`).digest("hex"),
+        r.rows[0].id,
+      ],
+    );
+  } finally {
+    await c.end();
+  }
+  return `/confirmer-email/${jeton}`;
 }

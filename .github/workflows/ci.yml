@@ -60,14 +60,16 @@ jobs:
       - name: Base de données (migrations et données initiales)
         run: npx prisma migrate deploy && npm run db:initialiser
 
+      # Avant le build : les pages publiques mises en cache (campagne ouverte…)
+      # sont générées à partir de ces données.
+      - name: Données de test de bout en bout
+        run: npx tsx tests/e2e/preparer.ts
+
       - name: Build
         run: npm run build
 
       - name: Navigateur de test
         run: npx playwright install --with-deps chromium
-
-      - name: Données de test de bout en bout
-        run: npx tsx tests/e2e/preparer.ts
 
       - name: Tests de bout en bout (accès par rôle, accessibilité)
         run: npm run test:e2e

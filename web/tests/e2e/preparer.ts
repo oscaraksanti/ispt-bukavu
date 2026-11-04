@@ -61,6 +61,7 @@ async function main() {
   ]);
   const prof = await enseignant("e2e.prof@example.org", "TITULAIRE");
   await enseignant("e2e.autre@example.org", "AUTRE");
+  await compte("e2e.caisse@example.org", "CAISSE", ["caisse"]);
   const a = await etudiant("E2E0001", "ETUDIANT-A");
   const b = await etudiant("E2E0002", "ETUDIANT-B");
 
@@ -74,6 +75,28 @@ async function main() {
     update: {},
     create: { filiereId: filiere.id, niveauId: niveau.id, anneeId: annee.id },
   });
+  // Campagne d'admission ouverte, avec des frais de dossier et une pièce exigée.
+  // Elle porte sur une autre filière que la promotion de test : les admis
+  // inscrits par les tests n'en modifient donc pas l'effectif.
+  const filiereAdmission = await db.filiere.findFirstOrThrow({
+    where: { id: { not: filiere.id } },
+    orderBy: { ordre: "asc" },
+  });
+  const campagne =
+    (await db.campagneAdmission.findFirst({ where: { libelle: "Campagne E2E" } })) ??
+    (await db.campagneAdmission.create({
+      data: {
+        libelle: "Campagne E2E",
+        anneeId: annee.id,
+        ouverture: new Date(Date.now() - 86_400_000),
+        cloture: new Date(Date.now() + 60 * 86_400_000),
+        fraisInscription: 10,
+        statut: "OUVERTE",
+        filieres: { connect: [{ id: filiereAdmission.id }] },
+        pieces: { create: [{ libelle: "Pièce d'identité E2E", ordre: 0 }] },
+      },
+    }));
+
   // Délibérations rejouées à chaque passage des tests.
   await db.deliberation.deleteMany({ where: { promotionId: promotion.id } });
   for (const e of [a, b])
@@ -190,6 +213,7 @@ async function main() {
     comptes: {
       admin: "e2e.admin@example.org",
       gestionnaire: "e2e.gestion@example.org",
+      caisse: "e2e.caisse@example.org",
       prof: "e2e.prof@example.org",
       autreProf: "e2e.autre@example.org",
       etudiantA: "E2E0001",
@@ -197,6 +221,7 @@ async function main() {
     },
     ids: {
       gestionnaire: gestionnaire.id,
+      campagne: campagne.id,
       coursOffert: offert.id,
       evaluationPubliee: publiee.id,
       evaluationBrouillon: brouillon.id,
