@@ -2,6 +2,7 @@
 
 import { hash } from "@node-rs/argon2";
 import { refresh, updateTag } from "next/cache";
+import { after } from "next/server";
 import { redirect } from "next/navigation";
 import sharp from "sharp";
 import { z } from "zod";
@@ -13,14 +14,17 @@ import { envoyerEmail, urlSite } from "@/lib/email";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
 import { notifier, personnelAvecPermission } from "@/features/notifications/emettre";
-import { jetonAleatoire } from "@/lib/securite";
+import { empreinte, jetonAleatoire } from "@/lib/securite";
 import { stockage } from "@/lib/stockage";
 import { dossierDuCandidat, exigerCandidat } from "./acces";
 import {
   campagneOuverte,
   dossierModifiable,
   elementsManquants,
+  etatPaiement,
+  fraisExiges,
   numeroCandidature,
+  paiementCorrigeable,
   type Statut,
 } from "./regles";
 import { TAILLE_MAX_PIECE, TYPES_PIECES } from "./fichiers";
@@ -62,6 +66,36 @@ async function creerDossier(
   throw new Error("Numérotation impossible.");
 }
 
+/** Durée de validité du lien de confirmation de l'adresse email. */
+const DUREE_CONFIRMATION_MS = 72 * 60 * 60 * 1000;
+const MESSAGE_INSCRIPTION =
+  "Si cette adresse peut être utilisée, un lien de confirmation vient d'y être envoyé. Ouvrez-le pour accéder à votre dossier (pensez à vérifier les courriers indésirables).";
+
+/**
+ * Envoie un lien de confirmation de l'adresse. Le jeton est conservé haché,
+ * avec un préfixe qui l'empêche de servir de lien de réinitialisation.
+ */
+async function emettreConfirmation(u: { id: string; email: string; prenom: string | null }) {
+  const jeton = jetonAleatoire();
+  await db.jetonReinitialisation.create({
+    data: {
+      jetonHash: empreinte(`confirmation:${jeton}`),
+      utilisateurId: u.id,
+      expireLe: new Date(Date.now() + DUREE_CONFIRMATION_MS),
+    },
+  });
+  await envoyerEmail({
+    a: u.email,
+    sujet: "Confirmez votre adresse email — candidature ISPT-Bukavu",
+    texte: `Bonjour${u.prenom ? ` ${u.prenom}` : ""},\n\nPour activer votre espace candidat et accéder à votre dossier, confirmez votre adresse en ouvrant ce lien (valable 72 heures) :\n${urlSite()}/confirmer-email/${jeton}\n\nSi vous n'avez pas demandé à candidater à l'ISPT-Bukavu, ignorez ce message.\n\nISPT-Bukavu`,
+  });
+}
+
+/**
+ * Ouvre un compte candidat. La réponse est identique que l'adresse soit déjà
+ * connue ou non (aucune énumération des comptes) : le titulaire d'une adresse
+ * existante reçoit seulement un email lui rappelant comment se connecter.
+ */
 export async function creerCompteCandidat(
   _etat: EtatFormulaire,
   formData: FormData,
@@ -96,32 +130,43 @@ export async function creerCompteCandidat(
   if (!campagne) return echec("Les candidatures en ligne ne sont pas ouvertes actuellement.");
 
   const email = normaliserEmail(r.data.email);
-  // Limite : 5 comptes candidats par heure depuis une même connexion.
+  // Limites : 5 comptes par heure depuis une même connexion, 3 demandes par adresse.
   const ip = await ipDuClient();
-  if (ip) {
-    const recentes = await db.tentativeConnexion.count({
-      where: {
-        ip,
-        email: { startsWith: "inscription:" },
-        creeLe: { gte: new Date(Date.now() - 60 * 60 * 1000) },
-      },
-    });
-    if (recentes >= 5)
-      return {
-        ...echec("Trop de comptes créés depuis cette connexion. Réessayez dans une heure."),
-        valeurs: saisie,
-      };
-  }
+  const depuis = new Date(Date.now() - 60 * 60 * 1000);
+  const [parIp, parEmail] = await Promise.all([
+    ip
+      ? db.tentativeConnexion.count({
+          where: { ip, email: { startsWith: "inscription:" }, creeLe: { gte: depuis } },
+        })
+      : 0,
+    db.tentativeConnexion.count({
+      where: { email: `inscription:${email}`, creeLe: { gte: depuis } },
+    }),
+  ]);
+  if (parIp >= 5 || parEmail >= 3)
+    return {
+      ...echec("Trop de demandes depuis cette connexion. Réessayez dans une heure."),
+      valeurs: saisie,
+    };
   await db.tentativeConnexion.create({
     data: { email: `inscription:${email}`, ip, reussie: true },
   });
-  if (await db.utilisateur.findUnique({ where: { email } }))
-    return {
-      ...echec(
-        "Un compte existe déjà avec cette adresse : connectez-vous pour reprendre votre dossier.",
-      ),
-      valeurs: saisie,
-    };
+
+  // Le mot de passe est haché dans tous les cas : le temps de réponse ne
+  // trahit pas l'existence du compte.
+  const motDePasseHash = await hash(motDePasse);
+  const existant = await db.utilisateur.findUnique({ where: { email } });
+  if (existant) {
+    if (existant.statut !== "SUSPENDU")
+      after(() =>
+        envoyerEmail({
+          a: email,
+          sujet: "Votre compte sur la plateforme de l'ISPT-Bukavu",
+          texte: `Bonjour,\n\nUne demande d'ouverture de compte candidat vient d'être faite avec cette adresse, qui possède déjà un compte. Pour reprendre votre dossier, connectez-vous :\n${urlSite()}/connexion\n\nMot de passe oublié ? ${urlSite()}/mot-de-passe-oublie\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez ce message.\n\nISPT-Bukavu`,
+        }).then(() => undefined),
+      );
+    return succes(MESSAGE_INSCRIPTION);
+  }
 
   const role = await db.role.findUniqueOrThrow({ where: { code: "candidat" } });
   const utilisateur = await db.utilisateur.create({
@@ -131,9 +176,8 @@ export async function creerCompteCandidat(
       nom: r.data.nom.toUpperCase(),
       postnom: r.data.postnom ? r.data.postnom.toUpperCase() : null,
       telephone: r.data.telephone,
-      motDePasseHash: await hash(motDePasse),
+      motDePasseHash,
       statut: "ACTIF",
-      derniereConnexion: maintenant,
       roles: { create: { roleId: role.id } },
     },
   });
@@ -150,13 +194,77 @@ export async function creerCompteCandidat(
     entite: "Candidature",
     entiteId: dossier.id,
   });
-  await envoyerEmail({
-    a: email,
-    sujet: `Votre dossier de candidature n° ${dossier.numero} — ISPT-Bukavu`,
-    texte: `Bonjour ${r.data.prenom},\n\nVotre compte candidat est ouvert. Complétez votre dossier n° ${dossier.numero} et déposez vos pièces depuis votre espace :\n${urlSite()}/candidat\n\nISPT-Bukavu`,
-  }).catch(() => undefined);
-  await ouvrirSession(utilisateur.id);
+  after(() =>
+    emettreConfirmation({ id: utilisateur.id, email, prenom: utilisateur.prenom }).catch((e) =>
+      console.error("[candidature] confirmation non envoyée", e),
+    ),
+  );
+  return succes(MESSAGE_INSCRIPTION);
+}
+
+/** Confirme l'adresse à partir du lien reçu, puis ouvre l'espace candidat. */
+export async function confirmerEmail(
+  _etat: EtatFormulaire,
+  formData: FormData,
+): Promise<EtatFormulaire> {
+  const jeton = String(formData.get("jeton") ?? "");
+  const invalide = echec(
+    "Ce lien n'est plus valable. Connectez-vous à votre espace candidat pour en recevoir un nouveau.",
+  );
+  if (!/^[A-Za-z0-9_-]{20,}$/.test(jeton)) return invalide;
+  const enregistrement = await db.jetonReinitialisation.findUnique({
+    where: { jetonHash: empreinte(`confirmation:${jeton}`) },
+    include: { utilisateur: { select: { statut: true } } },
+  });
+  if (
+    !enregistrement ||
+    enregistrement.utiliseLe ||
+    enregistrement.expireLe < new Date() ||
+    enregistrement.utilisateur.statut === "SUSPENDU"
+  )
+    return invalide;
+  const consomme = await db.$transaction(async (tx) => {
+    const r = await tx.jetonReinitialisation.updateMany({
+      where: { id: enregistrement.id, utiliseLe: null },
+      data: { utiliseLe: new Date() },
+    });
+    if (r.count !== 1) return false;
+    await tx.utilisateur.update({
+      where: { id: enregistrement.utilisateurId },
+      data: { emailVerifieLe: new Date(), derniereConnexion: new Date() },
+    });
+    return true;
+  });
+  if (!consomme) return invalide;
+  await journaliser({
+    auteurId: enregistrement.utilisateurId,
+    action: "email_confirme",
+    entite: "Utilisateur",
+    entiteId: enregistrement.utilisateurId,
+  });
+  await ouvrirSession(enregistrement.utilisateurId);
   redirect("/candidat");
+}
+
+/** Renvoie le lien de confirmation au candidat connecté (3 envois par heure au plus). */
+export async function renvoyerConfirmation(): Promise<EtatFormulaire> {
+  const u = await exigerCandidat();
+  const compte = await db.utilisateur.findUnique({
+    where: { id: u.id },
+    select: { email: true, prenom: true, emailVerifieLe: true },
+  });
+  if (!compte?.email) return echec("Aucune adresse email sur ce compte.");
+  if (compte.emailVerifieLe) return succes("Votre adresse est déjà confirmée.");
+  const marque = `confirmation:${compte.email}`;
+  const recents = await db.tentativeConnexion.count({
+    where: { email: marque, creeLe: { gte: new Date(Date.now() - 60 * 60 * 1000) } },
+  });
+  if (recents >= 3) return echec("Trois liens ont déjà été envoyés cette heure-ci. Patientez.");
+  await db.tentativeConnexion.create({
+    data: { email: marque, ip: await ipDuClient(), reussie: true },
+  });
+  await emettreConfirmation({ id: u.id, email: compte.email, prenom: compte.prenom });
+  return succes(`Un nouveau lien a été envoyé à ${compte.email}.`);
 }
 
 /* ---------- Dossier ---------- */
@@ -178,6 +286,7 @@ const schemaDossier = z.object({
   pourcentage: z.string().regex(/^(\d{2,3}([.,]\d{1,2})?)?$/, "Pourcentage invalide."),
   filiereId: texte(40),
   referencePaiement: texte(80),
+  modePaiement: z.enum(["", "BANQUE", "MOBILE_MONEY", "GUICHET", "AUTRE"]),
 });
 
 async function dossierModifiableDuCandidat() {
@@ -236,7 +345,16 @@ export async function enregistrerDossier(
       anneeDiplome,
       pourcentage,
       filiereId: vide(d.filiereId),
-      referencePaiement: vide(d.referencePaiement),
+      // Une référence vérifiée par la caisse n'est plus modifiable.
+      ...(dossier.paiementVerifieLe
+        ? {}
+        : {
+            referencePaiement: vide(d.referencePaiement),
+            modePaiement: d.modePaiement || null,
+            ...(d.referencePaiement !== (dossier.referencePaiement ?? "")
+              ? { paiementMotifRefus: null }
+              : {}),
+          }),
     },
   });
   refresh();
@@ -332,7 +450,17 @@ export async function soumettreDossier(): Promise<EtatFormulaire> {
   if (erreur) return erreur;
   if (dossier.statut === "BROUILLON" && !campagneOuverte(dossier.campagne))
     return echec("La période de dépôt des candidatures est terminée.");
-  const manquants = elementsManquants(dossier, dossier.campagne.pieces, dossier.pieces);
+  const compte = await db.utilisateur.findUnique({
+    where: { id: u.id },
+    select: { emailVerifieLe: true },
+  });
+  if (!compte?.emailVerifieLe)
+    return echec(
+      "Confirmez d'abord votre adresse email avec le lien reçu (vous pouvez en demander un nouveau en haut de la page).",
+    );
+  const manquants = elementsManquants(dossier, dossier.campagne.pieces, dossier.pieces, {
+    fraisExiges: fraisExiges(dossier.campagne),
+  });
   if (manquants.length > 0) return echec(`Il manque encore : ${manquants.join(", ")}.`);
 
   const complement = dossier.statut === "COMPLEMENT";
@@ -371,4 +499,49 @@ export async function soumettreDossier(): Promise<EtatFormulaire> {
   updateTag(ETIQUETTES.admissions);
   refresh();
   return succes("Votre dossier est déposé. Vous serez informé(e) de la suite dans votre espace.");
+}
+
+/* ---------- Correction d'une référence de paiement refusée ---------- */
+
+const schemaPaiement = z.object({
+  referencePaiement: z.string().trim().min(3, "Indiquez la référence du paiement.").max(80),
+  modePaiement: z.enum(["BANQUE", "MOBILE_MONEY", "GUICHET", "AUTRE"], {
+    message: "Choisissez le mode de paiement.",
+  }),
+});
+
+/** Après un refus de la caisse, le candidat corrige sa référence, même dossier déposé. */
+export async function corrigerPaiement(
+  _etat: EtatFormulaire,
+  formData: FormData,
+): Promise<EtatFormulaire> {
+  const u = await exigerCandidat();
+  const dossier = await dossierDuCandidat(u.id);
+  if (!dossier) return echec("Aucun dossier trouvé.");
+  const etat = etatPaiement(dossier, fraisExiges(dossier.campagne));
+  if (!paiementCorrigeable(dossier.statut as Statut, etat))
+    return echec("Le paiement de ce dossier ne peut pas être modifié.");
+  const r = schemaPaiement.safeParse({
+    referencePaiement: formData.get("referencePaiement") ?? "",
+    modePaiement: formData.get("modePaiement") ?? "",
+  });
+  if (!r.success) return echec(r.error.issues[0]?.message ?? "Valeurs invalides.");
+  await db.candidature.update({
+    where: { id: dossier.id },
+    data: { ...r.data, paiementMotifRefus: null },
+  });
+  await journaliser({
+    auteurId: u.id,
+    action: "paiement_dossier_corrige",
+    entite: "Candidature",
+    entiteId: dossier.id,
+  });
+  await notifier(await personnelAvecPermission("finances.encaisser"), {
+    type: "CANDIDATURE",
+    titre: "Frais de dossier à vérifier",
+    message: `Dossier n° ${dossier.numero} : nouvelle référence de paiement (${r.data.referencePaiement}).`,
+    lien: "/admin/finances#frais-dossier",
+  });
+  refresh();
+  return succes("Référence enregistrée : la caisse va la vérifier.");
 }

@@ -708,39 +708,48 @@ enum StatutCandidature {
 }
 
 model Candidature {
-  id                String            @id @default(cuid())
-  numero            String            @unique
-  campagneId        String
-  campagne          CampagneAdmission @relation(fields: [campagneId], references: [id])
-  candidatId        String
-  candidat          Utilisateur       @relation("CandidaturesDuCandidat", fields: [candidatId], references: [id])
-  filiereId         String?
-  filiere           Filiere?          @relation(fields: [filiereId], references: [id])
-  nom               String?
-  postnom           String?
-  prenom            String?
-  sexe              Sexe?
-  dateNaissance     DateTime?
-  lieuNaissance     String?
-  nationalite       String?
-  telephone         String?
-  adresse           String?
-  ecoleOrigine      String?
-  sectionHumanites  String?
-  anneeDiplome      Int?
-  pourcentage       Decimal?          @db.Decimal(5, 2)
-  referencePaiement String?
-  statut            StatutCandidature @default(BROUILLON)
-  motifDecision     String?
-  consentementLe    DateTime?
-  soumiseLe         DateTime?
-  decideLe          DateTime?
-  decideParId       String?
-  decidePar         Utilisateur?      @relation("CandidaturesDecideur", fields: [decideParId], references: [id])
-  etudiantId        String?           @unique
-  etudiant          ProfilEtudiant?   @relation(fields: [etudiantId], references: [id])
-  creeLe            DateTime          @default(now())
-  majLe             DateTime          @updatedAt
+  id                   String            @id @default(cuid())
+  numero               String            @unique
+  campagneId           String
+  campagne             CampagneAdmission @relation(fields: [campagneId], references: [id])
+  candidatId           String
+  candidat             Utilisateur       @relation("CandidaturesDuCandidat", fields: [candidatId], references: [id])
+  filiereId            String?
+  filiere              Filiere?          @relation(fields: [filiereId], references: [id])
+  nom                  String?
+  postnom              String?
+  prenom               String?
+  sexe                 Sexe?
+  dateNaissance        DateTime?
+  lieuNaissance        String?
+  nationalite          String?
+  telephone            String?
+  adresse              String?
+  ecoleOrigine         String?
+  sectionHumanites     String?
+  anneeDiplome         Int?
+  pourcentage          Decimal?          @db.Decimal(5, 2)
+  referencePaiement    String?
+  /// Frais de dossier : mode déclaré par le candidat, vérification par la caisse.
+  modePaiement         ModePaiement?
+  paiementVerifieLe    DateTime?
+  paiementVerifieParId String?
+  paiementMotifRefus   String?
+  /// Reçu des frais de dossier, numéroté à la vérification (montant figé).
+  numeroRecu           String?           @unique
+  montantFrais         Decimal?          @db.Decimal(10, 2)
+  deviseFrais          Devise?
+  statut               StatutCandidature @default(BROUILLON)
+  motifDecision        String?
+  consentementLe       DateTime?
+  soumiseLe            DateTime?
+  decideLe             DateTime?
+  decideParId          String?
+  decidePar            Utilisateur?      @relation("CandidaturesDecideur", fields: [decideParId], references: [id])
+  etudiantId           String?           @unique
+  etudiant             ProfilEtudiant?   @relation(fields: [etudiantId], references: [id])
+  creeLe               DateTime          @default(now())
+  majLe                DateTime          @updatedAt
 
   pieces     PieceDeposee[]
   historique HistoriqueCandidature[]

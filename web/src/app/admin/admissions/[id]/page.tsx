@@ -11,10 +11,14 @@ import { deciderCandidature, statuerPiece } from "@/features/admissions/actions-
 import {
   DECISIONS,
   elementsManquants,
+  etatPaiement,
+  fraisExiges,
   LIBELLES_STATUT,
   type Statut,
   TON_STATUT,
 } from "@/features/admissions/regles";
+import { formatMontant } from "@/features/finances/regles";
+import { PaiementDossier } from "@/components/admin/paiement-dossier";
 import { aPermission, exigerPermission } from "@/features/auth/acces";
 import { db } from "@/lib/db";
 
@@ -45,7 +49,7 @@ export default async function Dossier({ params }: PageProps<"/admin/admissions/[
     include: {
       campagne: { include: { pieces: { orderBy: { ordre: "asc" } } } },
       filiere: true,
-      candidat: { select: { email: true } },
+      candidat: { select: { email: true, emailVerifieLe: true } },
       pieces: { include: { media: true } },
       historique: { orderBy: { creeLe: "asc" } },
       decidePar: { select: { prenom: true, nom: true } },
@@ -55,7 +59,10 @@ export default async function Dossier({ params }: PageProps<"/admin/admissions/[
   const statut = d.statut as Statut;
   const peutDecider = aPermission(u, "admissions.decider");
   const decisions = DECISIONS[statut];
-  const manquants = elementsManquants(d, d.campagne.pieces, d.pieces);
+  const avecFrais = fraisExiges(d.campagne);
+  const paiement = etatPaiement(d, avecFrais);
+  const manquants = elementsManquants(d, d.campagne.pieces, d.pieces, { fraisExiges: avecFrais });
+  const peutEncaisser = aPermission(u, "finances.encaisser");
   const auteurs = await db.utilisateur.findMany({
     where: { id: { in: d.historique.map((h) => h.auteurId).filter((x): x is string => !!x) } },
     select: { id: true, prenom: true, nom: true },
@@ -77,7 +84,12 @@ export default async function Dossier({ params }: PageProps<"/admin/admissions/[
     ],
     ["Nationalité", d.nationalite],
     ["Téléphone", d.telephone],
-    ["Email", d.candidat.email],
+    [
+      "Email",
+      d.candidat.email
+        ? `${d.candidat.email}${d.candidat.emailVerifieLe ? " (confirmée)" : " (non confirmée)"}`
+        : null,
+    ],
     ["Adresse", d.adresse],
   ];
   const etudes: [string, string | null | undefined][] = [
@@ -86,7 +98,6 @@ export default async function Dossier({ params }: PageProps<"/admin/admissions/[
     ["Diplôme d'État", d.anneeDiplome?.toString()],
     ["Pourcentage", d.pourcentage ? `${d.pourcentage} %` : null],
     ["Filière choisie", d.filiere?.nom],
-    ["Référence de paiement", d.referencePaiement],
   ];
 
   return (
@@ -196,6 +207,14 @@ export default async function Dossier({ params }: PageProps<"/admin/admissions/[
         </div>
 
         <div className="space-y-6">
+          {avecFrais && (
+            <Panneau
+              titre="Frais de dossier"
+              description={formatMontant(Number(d.campagne.fraisInscription), d.campagne.devise)}
+            >
+              <PaiementDossier dossier={d} etat={paiement} peutEncaisser={peutEncaisser} />
+            </Panneau>
+          )}
           {statut === "ADMISE" && aPermission(u, "etudiants.gerer") && (
             <Panneau
               titre="Inscrire l'étudiant"

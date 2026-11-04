@@ -8,17 +8,26 @@ import { Encadre, Etiquette, EtatVide } from "@/components/ui/elements";
 import { formatJour } from "@/features/actualites/dates";
 import { dossierDuCandidat, exigerCandidat } from "@/features/admissions/acces";
 import {
+  corrigerPaiement,
   enregistrerDossier,
+  renvoyerConfirmation,
   retirerPiece,
   soumettreDossier,
 } from "@/features/admissions/actions-candidat";
 import {
   dossierModifiable,
   elementsManquants,
+  type EtatPaiement,
+  etatPaiement,
+  fraisExiges,
+  LIBELLES_PAIEMENT,
   LIBELLES_STATUT,
+  paiementCorrigeable,
   type Statut,
   TON_STATUT,
 } from "@/features/admissions/regles";
+import { formatMontant, MODES_PAIEMENT } from "@/features/finances/regles";
+import { db } from "@/lib/db";
 import { cn } from "@/lib/cn";
 
 /** Page authentifiée : rendue à chaque requête, sans coquille statique. */
@@ -89,7 +98,14 @@ export default async function MonDossier() {
 
   const statut = d.statut as Statut;
   const modifiable = dossierModifiable(statut);
-  const manquants = elementsManquants(d, d.campagne.pieces, d.pieces);
+  const avecFrais = fraisExiges(d.campagne);
+  const paiement = etatPaiement(d, avecFrais);
+  const montant = formatMontant(Number(d.campagne.fraisInscription), d.campagne.devise);
+  const compte = await db.utilisateur.findUnique({
+    where: { id: u.id },
+    select: { email: true, emailVerifieLe: true },
+  });
+  const manquants = elementsManquants(d, d.campagne.pieces, d.pieces, { fraisExiges: avecFrais });
   const piecesManquantes = d.campagne.pieces.filter(
     (p) =>
       p.obligatoire && !d.pieces.some((x) => x.pieceExigeeId === p.id && x.statut !== "REJETEE"),
@@ -122,6 +138,18 @@ export default async function MonDossier() {
         )}
       </header>
 
+      {!compte?.emailVerifieLe && (
+        <Encadre ton="attention" titre="Confirmez votre adresse email">
+          <span className="block">
+            Un lien de confirmation a été envoyé à {compte?.email}. Vous pouvez remplir votre
+            dossier dès maintenant, mais il ne pourra être déposé qu&apos;une fois l&apos;adresse
+            confirmée.
+          </span>
+          <span className="mt-3 block">
+            <BoutonAction action={renvoyerConfirmation}>Renvoyer le lien</BoutonAction>
+          </span>
+        </Encadre>
+      )}
       {statut === "COMPLEMENT" && dernierMessage && (
         <Encadre ton="attention" titre="Le secrétariat demande un complément">
           <span className="whitespace-pre-line">{dernierMessage}</span>
@@ -278,20 +306,54 @@ export default async function MonDossier() {
                       ))}
                     </Liste>
                   </Champ>
-                  <Champ
-                    id="referencePaiement"
-                    libelle="Référence du paiement des frais"
-                    aide={`Frais d'inscription : ${Number(d.campagne.fraisInscription).toLocaleString("fr-FR")} ${d.campagne.devise === "USD" ? "$" : "FC"}. Numéro du bordereau ou du reçu.`}
-                  >
-                    <Saisie
-                      id="referencePaiement"
-                      name="referencePaiement"
-                      defaultValue={d.referencePaiement ?? ""}
-                      maxLength={80}
-                      aria-describedby="referencePaiement-aide"
-                    />
-                  </Champ>
+                  {!avecFrais && (
+                    <p className="self-end text-sm text-pierre-600">
+                      Aucuns frais de dossier ne sont fixés pour cette campagne.
+                    </p>
+                  )}
                 </div>
+                {avecFrais &&
+                  (d.paiementVerifieLe ? (
+                    <p className="text-sm text-succes">
+                      Frais de dossier vérifiés par la caisse (reçu n° {d.numeroRecu}).
+                    </p>
+                  ) : (
+                    <div className="grid gap-5 sm:grid-cols-2">
+                      <Champ
+                        id="modePaiement"
+                        libelle="Mode de paiement des frais"
+                        aide={`Frais de dossier : ${montant}.`}
+                      >
+                        <Liste
+                          id="modePaiement"
+                          name="modePaiement"
+                          defaultValue={d.modePaiement ?? ""}
+                          aria-describedby="modePaiement-aide"
+                        >
+                          <option value="">Choisir…</option>
+                          {Object.entries(MODES_PAIEMENT).map(([v, l]) => (
+                            <option key={v} value={v}>
+                              {l}
+                            </option>
+                          ))}
+                        </Liste>
+                      </Champ>
+                      <Champ
+                        id="referencePaiement"
+                        libelle="Référence du paiement"
+                        aide="Numéro du bordereau, de la transaction mobile money ou du reçu."
+                        erreur={d.paiementMotifRefus ?? undefined}
+                      >
+                        <Saisie
+                          id="referencePaiement"
+                          name="referencePaiement"
+                          defaultValue={d.referencePaiement ?? ""}
+                          maxLength={80}
+                          aria-describedby="referencePaiement-aide"
+                        />
+                      </Champ>
+                    </div>
+                  ))}
               </fieldset>
             </FormulaireAction>
           </Section>
@@ -399,7 +461,6 @@ export default async function MonDossier() {
                 ["École d'origine", d.ecoleOrigine],
                 ["Section", d.sectionHumanites],
                 ["Diplôme d'État", d.anneeDiplome?.toString()],
-                ["Paiement", d.referencePaiement],
               ].map(([cle, valeur]) => (
                 <div key={cle}>
                   <dt className="font-mono text-xs tracking-wide text-pierre-500 uppercase">
@@ -409,6 +470,17 @@ export default async function MonDossier() {
                 </div>
               ))}
             </dl>
+            {avecFrais && (
+              <PanneauPaiement
+                etat={paiement}
+                montant={montant}
+                reference={d.referencePaiement}
+                mode={d.modePaiement}
+                motif={d.paiementMotifRefus}
+                recu={d.numeroRecu ? { id: d.id, numero: d.numeroRecu } : null}
+                corrigeable={paiementCorrigeable(statut, paiement)}
+              />
+            )}
             <h3 className="mt-8 font-sans text-sm font-semibold text-encre">Pièces déposées</h3>
             <ul className="mt-3 divide-y divide-pierre-200 border-y border-pierre-200">
               {d.pieces.map((p) => {
@@ -447,6 +519,86 @@ export default async function MonDossier() {
               ))}
             </ol>
           </section>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const TON_PAIEMENT: Record<EtatPaiement, "neutre" | "ispt" | "succes" | "erreur" | "attention"> = {
+  SANS_FRAIS: "neutre",
+  A_SAISIR: "attention",
+  A_VERIFIER: "ispt",
+  VERIFIE: "succes",
+  REFUSE: "erreur",
+};
+
+function PanneauPaiement({
+  etat,
+  montant,
+  reference,
+  mode,
+  motif,
+  recu,
+  corrigeable,
+}: {
+  etat: EtatPaiement;
+  montant: string;
+  reference: string | null;
+  mode: keyof typeof MODES_PAIEMENT | null;
+  motif: string | null;
+  recu: { id: string; numero: string } | null;
+  corrigeable: boolean;
+}) {
+  return (
+    <div className="mt-8 rounded-md border border-pierre-200 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="font-sans text-sm font-semibold text-encre">Frais de dossier · {montant}</h3>
+        <Etiquette ton={TON_PAIEMENT[etat]}>{LIBELLES_PAIEMENT[etat]}</Etiquette>
+      </div>
+      <p className="mt-2 text-sm text-pierre-700">
+        {reference ? `Référence ${reference}` : "Aucune référence"}
+        {mode ? ` · ${MODES_PAIEMENT[mode]}` : ""}
+      </p>
+      {recu && (
+        <a
+          href={`/recu-dossier/${recu.id}`}
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-ispt-700 underline hover:no-underline"
+        >
+          <FileText aria-hidden className="size-4" /> Reçu n° {recu.numero}
+        </a>
+      )}
+      {etat === "REFUSE" && motif && <p className="mt-2 text-sm text-erreur">{motif}</p>}
+      {corrigeable && (
+        <div className="mt-4 border-t border-pierre-200 pt-4">
+          <FormulaireAction action={corrigerPaiement} libelleEnvoi="Envoyer la référence corrigée">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Champ id="modePaiementCorrige" libelle="Mode de paiement">
+                <Liste
+                  id="modePaiementCorrige"
+                  name="modePaiement"
+                  defaultValue={mode ?? ""}
+                  required
+                >
+                  <option value="">Choisir…</option>
+                  {Object.entries(MODES_PAIEMENT).map(([v, l]) => (
+                    <option key={v} value={v}>
+                      {l}
+                    </option>
+                  ))}
+                </Liste>
+              </Champ>
+              <Champ id="referenceCorrigee" libelle="Référence du paiement">
+                <Saisie
+                  id="referenceCorrigee"
+                  name="referencePaiement"
+                  defaultValue={reference ?? ""}
+                  maxLength={80}
+                  required
+                />
+              </Champ>
+            </div>
+          </FormulaireAction>
         </div>
       )}
     </div>

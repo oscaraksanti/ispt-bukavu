@@ -333,6 +333,7 @@ export async function peupler(db: PrismaClient) {
     });
   }
   const candidat = await compte("demo.candidat@example.org", "CANDIDAT", "Démo", ["candidat"]);
+  await db.utilisateur.update({ where: { id: candidat.id }, data: { emailVerifieLe: new Date() } });
   if (!(await db.candidature.findFirst({ where: { candidatId: candidat.id } })))
     await db.candidature.create({
       data: {

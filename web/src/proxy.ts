@@ -21,6 +21,8 @@ export const config = {
     "/enseignant/:path*",
     "/candidat/:path*",
     "/recu/:path*",
+    "/recu-dossier/:path*",
+    "/affiche/:path*",
     "/documents/:path*",
     "/deliberations/:path*",
   ],

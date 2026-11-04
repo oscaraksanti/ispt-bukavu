@@ -11,7 +11,15 @@ import { envoyerEmail, urlSite } from "@/lib/email";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
 import { notifier } from "@/features/notifications/emettre";
-import { decisionPermise, LIBELLES_STATUT, lirePieces, motifRequis, type Statut } from "./regles";
+import {
+  decisionPermise,
+  fraisExiges,
+  LIBELLES_STATUT,
+  lirePieces,
+  motifRequis,
+  numeroRecuDossier,
+  type Statut,
+} from "./regles";
 
 /* ---------- Campagnes ---------- */
 
@@ -165,15 +173,29 @@ export async function statuerPiece(
   if (statut === "REJETEE") {
     const c = await db.candidature.findUnique({
       where: { id: depot.candidatureId },
-      select: { candidatId: true, numero: true },
+      select: {
+        candidatId: true,
+        numero: true,
+        prenom: true,
+        candidat: { select: { email: true } },
+        pieces: { where: { id: depotId }, select: { pieceExigee: { select: { libelle: true } } } },
+      },
     });
-    if (c)
+    if (c) {
       await notifier([c.candidatId], {
         type: "CANDIDATURE",
         titre: "Une pièce de votre dossier est à remplacer",
         message: commentaire,
         lien: "/candidat",
       });
+      const piece = c.pieces[0]?.pieceExigee.libelle ?? "une pièce";
+      if (c.candidat.email)
+        await envoyerEmail({
+          a: c.candidat.email,
+          sujet: `Dossier n° ${c.numero} : une pièce est à remplacer — ISPT-Bukavu`,
+          texte: `Bonjour ${c.prenom ?? ""},\n\nLe secrétariat ne peut pas accepter la pièce « ${piece} » de votre dossier.\n\nMotif : ${commentaire}\n\nVous pourrez en déposer une nouvelle version depuis votre espace (dès que le dossier est ouvert aux compléments) :\n${urlSite()}/candidat\n\nISPT-Bukavu`,
+        }).catch(() => undefined);
+    }
   }
   refresh();
   return succes(statut === "REJETEE" ? "Pièce refusée." : "Pièce vérifiée.");
@@ -242,4 +264,112 @@ export async function deciderCandidature(
   return succes(
     `Décision enregistrée : ${LIBELLES_STATUT[vers]}. Le candidat en est informé dans son espace${c.candidat.email ? " et par email" : ""}.`,
   );
+}
+
+/* ---------- Frais de dossier (caisse) ---------- */
+
+async function dossierPourCaisse(id: string) {
+  const c = await db.candidature.findUnique({
+    where: { id },
+    include: { campagne: true, candidat: { select: { email: true } } },
+  });
+  if (!c) return { erreur: echec("Ce dossier n'existe plus.") };
+  if (c.paiementVerifieLe) return { erreur: echec("Ce paiement est déjà vérifié.") };
+  if (!fraisExiges(c.campagne)) return { erreur: echec("Cette campagne ne fixe pas de frais.") };
+  if (!c.referencePaiement) return { erreur: echec("Le candidat n'a indiqué aucune référence.") };
+  return { c };
+}
+
+/**
+ * La caisse confirme avoir reçu les frais de dossier : un reçu numéroté est
+ * émis, avec le montant de la campagne figé à cette date.
+ */
+export async function verifierPaiementDossier(id: string): Promise<EtatFormulaire> {
+  const auteur = await exigerPermission("finances.encaisser");
+  const { c, erreur } = await dossierPourCaisse(id);
+  if (erreur) return erreur;
+  const annee = new Date().getFullYear();
+  let numero = "";
+  for (let essai = 0; essai < 5 && !numero; essai++) {
+    const rang =
+      (await db.candidature.count({ where: { numeroRecu: { startsWith: `AD-${annee}-` } } })) +
+      1 +
+      essai;
+    try {
+      const r = await db.candidature.updateMany({
+        where: { id, paiementVerifieLe: null },
+        data: {
+          numeroRecu: numeroRecuDossier(annee, rang),
+          paiementVerifieLe: new Date(),
+          paiementVerifieParId: auteur.id,
+          paiementMotifRefus: null,
+          montantFrais: c.campagne.fraisInscription,
+          deviseFrais: c.campagne.devise,
+        },
+      });
+      if (r.count !== 1) return echec("Ce paiement vient d'être vérifié par quelqu'un d'autre.");
+      numero = numeroRecuDossier(annee, rang);
+    } catch (e) {
+      if ((e as { code?: string }).code !== "P2002") throw e;
+    }
+  }
+  if (!numero) return echec("Numérotation du reçu impossible, réessayez.");
+  await journaliser({
+    auteurId: auteur.id,
+    action: "paiement_dossier_verifie",
+    entite: "Candidature",
+    entiteId: id,
+    apres: { numeroRecu: numero, reference: c.referencePaiement },
+  });
+  await notifier([c.candidatId], {
+    type: "CANDIDATURE",
+    titre: "Frais de dossier reçus",
+    message: `La caisse a vérifié votre paiement (dossier n° ${c.numero}). Reçu n° ${numero}.`,
+    lien: "/candidat",
+  });
+  if (c.candidat.email)
+    await envoyerEmail({
+      a: c.candidat.email,
+      sujet: `Frais de dossier reçus — reçu n° ${numero}, ISPT-Bukavu`,
+      texte: `Bonjour ${c.prenom ?? ""},\n\nLa caisse de l'institut a vérifié le paiement des frais de votre dossier n° ${c.numero}. Votre reçu n° ${numero} est disponible dans votre espace :\n${urlSite()}/candidat\n\nISPT-Bukavu`,
+    }).catch(() => undefined);
+  refresh();
+  return succes(`Paiement vérifié. Reçu n° ${numero} émis.`);
+}
+
+/** La référence indiquée ne correspond à aucun paiement reçu : le candidat est prévenu. */
+export async function refuserPaiementDossier(
+  id: string,
+  _etat: EtatFormulaire,
+  formData: FormData,
+): Promise<EtatFormulaire> {
+  const auteur = await exigerPermission("finances.encaisser");
+  const motif = String(formData.get("motif") ?? "")
+    .trim()
+    .slice(0, 300);
+  if (!motif) return echec("Expliquez au candidat pourquoi le paiement n'est pas reconnu.");
+  const { c, erreur } = await dossierPourCaisse(id);
+  if (erreur) return erreur;
+  await db.candidature.update({ where: { id }, data: { paiementMotifRefus: motif } });
+  await journaliser({
+    auteurId: auteur.id,
+    action: "paiement_dossier_refuse",
+    entite: "Candidature",
+    entiteId: id,
+    apres: { motif, reference: c.referencePaiement },
+  });
+  await notifier([c.candidatId], {
+    type: "CANDIDATURE",
+    titre: "Paiement des frais de dossier non reconnu",
+    message: motif,
+    lien: "/candidat",
+  });
+  if (c.candidat.email)
+    await envoyerEmail({
+      a: c.candidat.email,
+      sujet: `Frais de dossier n° ${c.numero} : paiement non reconnu — ISPT-Bukavu`,
+      texte: `Bonjour ${c.prenom ?? ""},\n\nLa caisse n'a pas pu rattacher la référence « ${c.referencePaiement} » à un paiement reçu.\n\nMessage de la caisse :\n${motif}\n\nCorrigez la référence depuis votre espace :\n${urlSite()}/candidat\n\nISPT-Bukavu`,
+    }).catch(() => undefined);
+  refresh();
+  return succes("Le candidat est invité à corriger sa référence.");
 }

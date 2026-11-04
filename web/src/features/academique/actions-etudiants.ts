@@ -10,6 +10,7 @@ import { db } from "@/lib/db";
 import { envoyerEmail, urlSite } from "@/lib/email";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
+import { notifier } from "@/features/notifications/emettre";
 import { codeLisible, empreinte } from "@/lib/securite";
 import { type LigneRegistre, lireRegistre, separerNomComplet } from "./registre";
 import { formaterCode, normaliserCode } from "./regles";
@@ -368,6 +369,24 @@ export async function inscrireAdmis(
     entiteId: c.id,
     apres: { matricule, promotionId: promotion.id },
   });
+  const compte = await db.utilisateur.findUnique({
+    where: { id: c.candidatId },
+    select: { email: true },
+  });
+  await notifier([c.candidatId], {
+    type: "CANDIDATURE",
+    titre: "Inscription confirmée",
+    message: `Bienvenue à l'ISPT-Bukavu. Votre matricule : ${matricule}. Votre espace étudiant est ouvert.`,
+    lien: "/etudiant",
+  });
+  if (compte?.email)
+    await envoyerEmail({
+      a: compte.email,
+      sujet: `Inscription confirmée — matricule ${matricule}, ISPT-Bukavu`,
+      texte: `Bonjour ${c.prenom ?? ""},\n\nVotre inscription en première année à l'ISPT-Bukavu est confirmée.\n\nMatricule : ${matricule}\n\nVotre espace étudiant (horaire, valve, notes, frais) est ouvert : connectez-vous avec votre adresse email ou votre matricule et le mot de passe de votre compte candidat.\n${urlSite()}/connexion\n\nISPT-Bukavu`,
+    }).catch(() => undefined);
   refresh();
-  return succes(`Inscrit en première année avec le matricule ${matricule}.`);
+  return succes(
+    `Inscrit en première année avec le matricule ${matricule}. L'étudiant en est informé${compte?.email ? " par email" : ""}.`,
+  );
 }

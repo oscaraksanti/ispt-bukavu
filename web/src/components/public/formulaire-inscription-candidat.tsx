@@ -1,5 +1,6 @@
 "use client";
 
+import { MailCheck } from "lucide-react";
 import Link from "next/link";
 import { useActionState } from "react";
 import { Case, Champ, Saisie } from "@/components/ui/champs";
@@ -13,6 +14,27 @@ export function FormulaireInscriptionCandidat() {
   const v = etat.valeurs ?? {};
   const invalide = (cle: string) =>
     e[cle] ? { "aria-invalid": true as const, "aria-describedby": `${cle}-erreur` } : {};
+
+  if (etat.statut === "succes")
+    return (
+      <div role="status" className="rounded-md border border-succes/40 bg-succes-fond p-6">
+        <MailCheck aria-hidden className="size-7 text-succes" />
+        <h3 className="mt-3 font-sans text-lg font-semibold text-encre">
+          Consultez votre boîte mail
+        </h3>
+        <p className="mt-2 leading-relaxed text-pierre-800">{etat.message}</p>
+        <p className="mt-4 text-sm text-pierre-700">
+          Pas de message après quelques minutes ? Vous pouvez aussi{" "}
+          <Link
+            href="/connexion?suite=/candidat"
+            className="font-medium text-ispt-700 underline hover:no-underline"
+          >
+            vous connecter
+          </Link>{" "}
+          avec l&apos;adresse et le mot de passe choisis pour demander un nouveau lien.
+        </p>
+      </div>
+    );
 
   return (
     <form key={etat.horodatage} action={envoyer} noValidate className="space-y-5">

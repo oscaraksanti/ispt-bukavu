@@ -6,6 +6,8 @@ import { EnteteAdmin, Panneau } from "@/components/admin/entete-admin";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
 import { Champ, Liste, Saisie } from "@/components/ui/champs";
 import { EtatVide } from "@/components/ui/elements";
+import { PaiementDossier } from "@/components/admin/paiement-dossier";
+import { fraisDossierPourLaCaisse } from "@/features/admissions/requetes";
 import { formatJour } from "@/features/actualites/dates";
 import { exigerPermission, aPermission } from "@/features/auth/acces";
 import { enregistrerBareme, supprimerBareme } from "@/features/finances/actions";
@@ -69,6 +71,7 @@ export default async function Finances({ searchParams }: PageProps<"/admin/finan
       db.inscription.count({ where: { promotion: { anneeId: annee.id } } }),
       db.inscription.count({ where: { promotion: { anneeId: annee.id }, statut: "EN_REGLE" } }),
     ]);
+  const fraisDossier = await fraisDossierPourLaCaisse();
 
   return (
     <>
@@ -77,6 +80,36 @@ export default async function Finances({ searchParams }: PageProps<"/admin/finan
         titre="Frais et paiements"
         description={`Année ${annee.libelle}. La caisse enregistre chaque paiement reçu (banque, guichet, mobile money) ; l'étudiant voit aussitôt sa situation et son reçu.`}
       />
+
+      {fraisDossier.length > 0 && (
+        <Panneau
+          id="frais-dossier"
+          className="mt-8"
+          titre={`Frais de dossier à vérifier (${fraisDossier.filter((c) => !c.paiementVerifieLe).length})`}
+          description="Références de paiement indiquées par les candidats. Vérifiez chaque versement sur le relevé avant d'émettre le reçu."
+        >
+          <ul className="-my-3 divide-y divide-pierre-200">
+            {fraisDossier.map((c) => (
+              <li key={c.id} className="grid gap-3 py-4 sm:grid-cols-[1fr_1.4fr]">
+                <div className="text-sm">
+                  <p className="font-medium text-pierre-900">
+                    {[c.prenom, c.nom, c.postnom].filter(Boolean).join(" ")}
+                  </p>
+                  <p className="font-mono text-xs text-pierre-600">
+                    Dossier n° {c.numero} ·{" "}
+                    {formatMontant(Number(c.campagne.fraisInscription), c.campagne.devise)}
+                  </p>
+                </div>
+                <PaiementDossier
+                  dossier={c}
+                  etat={c.paiementVerifieLe ? "VERIFIE" : "A_VERIFIER"}
+                  peutEncaisser={encaisse}
+                />
+              </li>
+            ))}
+          </ul>
+        </Panneau>
+      )}
 
       <dl className="mt-8 grid gap-4 sm:grid-cols-3">
         {totaux.length === 0 ? (
