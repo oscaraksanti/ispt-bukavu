@@ -339,13 +339,14 @@ model AnneeAcademique {
   /// Seuil de réussite sur 20, paramétrable par année.
   seuilReussite Decimal  @default(10) @db.Decimal(4, 2)
 
-  promotions   Promotion[]
-  campagnes    CampagneAdmission[]
-  baremes      BaremeFrais[]
-  paiements    Paiement[]
-  exonerations Exoneration[]
-  stages       Stage[]
-  reglement    ReglementAcademique?
+  promotions     Promotion[]
+  campagnes      CampagneAdmission[]
+  baremes        BaremeFrais[]
+  paiements      Paiement[]
+  exonerations   Exoneration[]
+  stages         Stage[]
+  reglement      ReglementAcademique?
+  sessionsExamen SessionExamen[]
 }
 
 model Filiere {
@@ -454,7 +455,8 @@ model ProfilEnseignant {
   titre         String?
   domaine       String?
 
-  cours CoursEnseignant[]
+  cours         CoursEnseignant[]
+  surveillances EpreuveSurveillant[]
 }
 
 model UniteEnseignement {
@@ -498,6 +500,7 @@ model CoursOffert {
   devoirs     Devoir[]
   evaluations Evaluation[]
   communiques Communique[]
+  epreuves    Epreuve[]
 
   @@unique([coursId, promotionId])
 }
@@ -1077,4 +1080,71 @@ model ResultatDeliberation {
   document          DocumentOfficiel? @relation(fields: [documentId], references: [id], onDelete: SetNull)
 
   @@unique([deliberationId, etudiantId])
+}
+
+/**
+ * ---------- Examens ----------
+ */
+
+enum TypeSessionExamen {
+  ORDINAIRE
+  RATTRAPAGE
+}
+
+enum StatutSessionExamen {
+  BROUILLON
+  PUBLIEE
+}
+
+enum ModaliteEpreuve {
+  ECRIT
+  ORAL
+  PRATIQUE
+}
+
+/// Session d'examens (ordinaire ou de rattrapage) d'une année académique.
+model SessionExamen {
+  id        String              @id @default(cuid())
+  anneeId   String
+  annee     AnneeAcademique     @relation(fields: [anneeId], references: [id], onDelete: Cascade)
+  libelle   String
+  type      TypeSessionExamen   @default(ORDINAIRE)
+  /// Premier et dernier jour de la session (minuit, heure de Bukavu).
+  debut     DateTime
+  fin       DateTime
+  statut    StatutSessionExamen @default(BROUILLON)
+  consignes String?
+  publieeLe DateTime?
+  creeLe    DateTime            @default(now())
+  epreuves  Epreuve[]
+
+  @@index([anneeId])
+}
+
+/// Épreuve d'un cours pendant une session : date, heures, salle, surveillants.
+model Epreuve {
+  id            String               @id @default(cuid())
+  sessionId     String
+  session       SessionExamen        @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  coursOffertId String
+  coursOffert   CoursOffert          @relation(fields: [coursOffertId], references: [id], onDelete: Cascade)
+  debut         DateTime
+  fin           DateTime
+  salle         String?
+  modalite      ModaliteEpreuve      @default(ECRIT)
+  remarque      String?
+  majLe         DateTime             @updatedAt
+  surveillants  EpreuveSurveillant[]
+
+  @@index([sessionId])
+  @@index([coursOffertId])
+}
+
+model EpreuveSurveillant {
+  epreuveId    String
+  epreuve      Epreuve          @relation(fields: [epreuveId], references: [id], onDelete: Cascade)
+  enseignantId String
+  enseignant   ProfilEnseignant @relation(fields: [enseignantId], references: [id], onDelete: Cascade)
+
+  @@id([epreuveId, enseignantId])
 }

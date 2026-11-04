@@ -92,6 +92,12 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
         permission: "academique.horaires",
       },
       {
+        libelle: "Examens",
+        href: "/admin/examens",
+        icone: "CalendarCheck",
+        permission: "academique.horaires",
+      },
+      {
         libelle: "Notes",
         href: "/admin/notes",
         icone: "ClipboardCheck",
