@@ -58,6 +58,11 @@ export const GUIDES: Guide[] = [
         ],
       },
       {
+        titre: "Calendrier des examens",
+        texte:
+          "L'onglet « Examens » affiche vos épreuves jour par jour : heure, cours, modalité et salle, avec les consignes de la session. Une épreuve déplacée porte la mention « Modifiée » et vous recevez une notification. « Ajouter à mon agenda » télécharge un fichier à ouvrir sur votre téléphone : chaque épreuve y apparaît avec un rappel la veille.",
+      },
+      {
         titre: "Notes et résultats",
         texte:
           "« Notes » montre les évaluations publiées par vos enseignants, cours par cours. « Résultats » présente les décisions du jury une fois proclamées, avec votre bulletin, téléchargeable et vérifiable par QR code.",
@@ -129,6 +134,11 @@ export const GUIDES: Guide[] = [
         titre: "Présences",
         texte:
           "L'onglet « Présences » reprend les séances de l'horaire. Ouvrez une séance pour faire l'appel (présent, absent, retard, excusé).",
+      },
+      {
+        titre: "Examens et surveillances",
+        texte:
+          "L'onglet « Examens » liste les épreuves de vos cours et celles que vous surveillez, avec les salles. Vous êtes prévenu à la publication du calendrier et à chaque changement.",
       },
       {
         titre: "Communiqués",
@@ -217,6 +227,15 @@ export const GUIDES: Guide[] = [
         ],
         conseil:
           "Le règlement (seuil, arrondi, mentions, décisions) se règle par année dans « Délibérations » › « Règlement ».",
+      },
+      {
+        titre: "Examens",
+        etapes: [
+          "« Examens » › créez la session (ordinaire ou de rattrapage) avec ses dates et ses consignes.",
+          "Ajoutez chaque épreuve : cours, jour, heures, salle, modalité et surveillants.",
+          "Les conflits (même promotion, même salle ou même surveillant au même moment) sont signalés ; la publication est bloquée tant qu'il en reste.",
+          "« Publier le calendrier » prévient étudiants et enseignants ; toute modification ultérieure leur est notifiée. « Imprimer » produit une page par promotion pour les valves.",
+        ],
       },
       {
         titre: "Caisse",
