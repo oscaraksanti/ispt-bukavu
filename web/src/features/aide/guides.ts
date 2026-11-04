@@ -149,12 +149,15 @@ export const GUIDES: Guide[] = [
         etapes: [
           "Ouvrez « Candidater » depuis le site, lorsqu'une campagne d'admission est ouverte.",
           "Indiquez votre nom, votre adresse email et choisissez un mot de passe.",
+          "Ouvrez le lien de confirmation reçu par email, puis « Confirmer mon adresse » : votre dossier s'ouvre.",
         ],
+        conseil:
+          "Pas d'email ? Regardez dans les courriers indésirables, ou connectez-vous et cliquez sur « Renvoyer le lien ». Le dossier ne peut être déposé qu'une fois l'adresse confirmée.",
       },
       {
         titre: "Constituer le dossier",
         etapes: [
-          "Étape 1 : complétez vos informations (identité, coordonnées, études antérieures, filière souhaitée).",
+          "Étape 1 : complétez vos informations (identité, coordonnées, études antérieures, filière souhaitée) et, si la campagne fixe des frais de dossier, le mode et la référence du paiement.",
           "Étape 2 : joignez les pièces demandées (photos nettes ou PDF).",
           "Étape 3 : déposez le dossier. Vous pouvez enregistrer et revenir plus tard avant le dépôt.",
         ],
@@ -164,7 +167,7 @@ export const GUIDES: Guide[] = [
       {
         titre: "Suivre sa candidature",
         texte:
-          "Le suivi indique chaque étape de l'instruction. Si une pièce est refusée, vous êtes prévenu avec le motif et pouvez la remplacer. La décision vous est notifiée dans votre espace et par email.",
+          "Le suivi indique chaque étape de l'instruction. La caisse vérifie votre paiement : votre reçu apparaît alors dans votre espace ; si la référence n'est pas reconnue, vous pouvez la corriger. Si une pièce est refusée, vous êtes prévenu avec le motif. La décision vous est notifiée dans votre espace et par email ; une fois inscrit, vous vous connectez avec le même mot de passe à votre espace étudiant.",
       },
     ],
   },
@@ -221,6 +224,7 @@ export const GUIDES: Guide[] = [
           "« Finances » : enregistrez les barèmes de l'année (montants officiels uniquement).",
           "Enregistrez chaque paiement reçu ; un reçu numéroté et vérifiable est produit.",
           "Les exonérations se saisissent avec leur motif. L'étudiant voit son solde à jour.",
+          "Frais de dossier des candidats : en haut de « Finances », vérifiez chaque référence sur le relevé, puis « Paiement reçu » (reçu numéroté) ou « Référence introuvable » (le candidat est prévenu et corrige).",
         ],
       },
       {
