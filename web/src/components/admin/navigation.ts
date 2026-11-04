@@ -14,6 +14,7 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
     titre: "Général",
     entrees: [
       { libelle: "Tableau de bord", href: "/admin", icone: "LayoutDashboard" },
+      { libelle: "Mise en service", href: "/admin/demarrage", icone: "ListChecks" },
       {
         libelle: "Pilotage",
         href: "/admin/pilotage",

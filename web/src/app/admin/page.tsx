@@ -2,6 +2,8 @@ import { ArrowRight, FileText, Images, Users } from "lucide-react";
 import Link from "next/link";
 import { EnteteAdmin, Panneau } from "@/components/admin/entete-admin";
 import { utilisateurConnecte } from "@/features/auth/acces";
+import { avancement, construireEtapes } from "@/features/demarrage/regles";
+import { lireEtatPlateforme } from "@/features/demarrage/requetes";
 import { libelleAction } from "@/features/journal/libelles";
 import { db } from "@/lib/db";
 
@@ -16,7 +18,7 @@ const formatDate = new Intl.DateTimeFormat("fr-FR", {
 
 export default async function TableauDeBord() {
   const u = (await utilisateurConnecte())!;
-  const [comptes, medias, pages, journal] = await Promise.all([
+  const [comptes, medias, pages, journal, etat] = await Promise.all([
     db.utilisateur.count(),
     db.media.count({ where: { NOT: { cle: { startsWith: "prive/" } } } }),
     db.page.count(),
@@ -27,7 +29,14 @@ export default async function TableauDeBord() {
           include: { auteur: { select: { nom: true, prenom: true } } },
         })
       : Promise.resolve([]),
+    lireEtatPlateforme(),
   ]);
+  const groupes = construireEtapes(etat);
+  const { pourcentage } = avancement(groupes);
+  const prochaines = groupes
+    .flatMap((g) => g.etapes)
+    .filter((e) => e.statut !== "fait")
+    .slice(0, 3);
 
   const raccourcis = [
     { libelle: "Modifier la page d'accueil", href: "/admin/site/pages/accueil", icone: FileText },
@@ -41,6 +50,37 @@ export default async function TableauDeBord() {
         titre={`Bonjour, ${u.prenom ?? u.nom}`}
         description="Vue d'ensemble de la plateforme de l'ISPT-Bukavu."
       />
+      {pourcentage < 100 && (
+        <section
+          aria-labelledby="mise-en-service"
+          className="mt-8 rounded-md border border-ispt-200 bg-ispt-50/60 p-5"
+        >
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <h2 id="mise-en-service" className="font-sans text-base font-semibold text-encre">
+              Mise en service : {pourcentage} %
+            </h2>
+            <Link
+              href="/admin/demarrage"
+              className="inline-flex items-center gap-1.5 text-sm font-medium text-ispt-700 underline hover:no-underline"
+            >
+              Voir toute la liste <ArrowRight aria-hidden className="size-4" />
+            </Link>
+          </div>
+          <ul className="mt-3 space-y-1.5 text-sm text-pierre-800">
+            {prochaines.map((e) => (
+              <li key={e.cle} className="flex gap-2">
+                <span aria-hidden className="text-ispt-600">
+                  →
+                </span>
+                <span>
+                  <span className="font-medium">{e.titre}</span> · {e.detail}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <div className="mt-8 grid gap-4 sm:grid-cols-3">
         {[
           { valeur: comptes, libelle: "Comptes" },

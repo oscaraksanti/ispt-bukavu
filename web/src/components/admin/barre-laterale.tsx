@@ -24,6 +24,7 @@ import {
   Inbox,
   Landmark,
   LayoutDashboard,
+  ListChecks,
   LogOut,
   Menu,
   Newspaper,
@@ -66,6 +67,7 @@ const ICONES: Record<string, LucideIcon> = {
   Inbox,
   Landmark,
   LayoutDashboard,
+  ListChecks,
   Newspaper,
   Settings2,
   ShieldCheck,
@@ -129,14 +131,24 @@ function Pied({ nom, email }: { nom: string; email: string }) {
     <div className="border-t border-white/10 pt-4">
       <p className="truncate text-sm text-white">{nom}</p>
       <p className="truncate text-xs text-white/65">{email}</p>
-      <form action={seDeconnecter} className="mt-3">
-        <button
-          type="submit"
+      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+        {/* Sans préchargement : le guide est une page du site public. */}
+        <Link
+          prefetch={false}
+          href="/aide/administration"
           className="inline-flex items-center gap-2 text-sm text-white/75 hover:text-white"
         >
-          <LogOut aria-hidden className="size-4" /> Se déconnecter
-        </button>
-      </form>
+          <CircleHelp aria-hidden className="size-4" /> Aide
+        </Link>
+        <form action={seDeconnecter}>
+          <button
+            type="submit"
+            className="inline-flex items-center gap-2 text-sm text-white/75 hover:text-white"
+          >
+            <LogOut aria-hidden className="size-4" /> Se déconnecter
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
