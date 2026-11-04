@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react";
+import { CircleHelp, LogOut } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Signature } from "@/components/marque/blason";
@@ -14,8 +14,11 @@ export function CadreEspace({
   liens,
   autresEspaces,
   notifications,
+  aide,
   children,
 }: {
+  /** Guide d'utilisation de l'espace. */
+  aide?: string;
   nom: string;
   sousTitre: string;
   liens: { libelle: string; href: string }[];
@@ -45,6 +48,16 @@ export function CadreEspace({
               <p className="text-sm font-medium text-encre">{nom}</p>
               <p className="text-xs text-pierre-500">{sousTitre}</p>
             </div>
+            {aide && (
+              <Link
+                prefetch={false}
+                href={aide}
+                className="inline-flex size-9 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100"
+              >
+                <CircleHelp aria-hidden className="size-5" />
+                <span className="sr-only">Aide</span>
+              </Link>
+            )}
             <Cloche href={notifications.href} nombre={notifications.nombre} />
             <form action={seDeconnecter}>
               <button

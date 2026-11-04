@@ -1,4 +1,4 @@
-import { LogOut } from "lucide-react";
+import { CircleHelp, LogOut } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -28,6 +28,14 @@ async function Cadre({ children }: { children: React.ReactNode }) {
           </Link>
           <div className="flex items-center gap-2 sm:gap-4">
             <p className="hidden text-sm text-pierre-700 sm:block">{u.nomComplet}</p>
+            <Link
+              prefetch={false}
+              href="/aide/candidat"
+              className="inline-flex size-9 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100"
+            >
+              <CircleHelp aria-hidden className="size-5" />
+              <span className="sr-only">Aide</span>
+            </Link>
             <Cloche href="/candidat/notifications" nombre={nonLues} />
             <form action={seDeconnecter}>
               <button
