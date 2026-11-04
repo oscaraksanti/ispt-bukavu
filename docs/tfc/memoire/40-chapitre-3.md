@@ -75,8 +75,8 @@ Le tableau 3.3 fixe les exigences de qualité et la manière de les vérifier. E
 ::tableau Tableau 3.3 : Besoins non fonctionnels
 | Exigence | Formulation | Vérification |
 |---|---|---|
-| Performance | Pages utilisables en 3G, poids de la première visite nettement inférieur à la médiane du web mobile | Mesure en réseau mobile lent simulé |
-| Mobilité | Toutes les fonctions utilisables sur un écran de 360 pixels de large | Vérification visuelle sur écran de téléphone |
+| Performance | Pages utilisables sur une connexion mobile lente, poids de la première visite nettement inférieur à la médiane du web mobile | Mesure en réseau mobile lent simulé |
+| Mobilité | Toutes les fonctions utilisables sur un écran de téléphone d'environ 390 pixels de large | Vérification visuelle sur écran de téléphone |
 | Hors connexion | Pages personnelles déjà consultées lisibles sans réseau | Test avec le réseau coupé |
 | Accessibilité | Conformité aux règles WCAG 2.2, niveau AA | Analyse automatique et parcours au clavier |
 | Sécurité | Droits vérifiés côté serveur à chaque requête ; mots de passe hachés ; tentatives limitées | Tests d'intrusion entre rôles, revue de code |
@@ -123,7 +123,7 @@ Trois cas d'utilisation concentrent les enjeux de la plateforme. Les tableaux 3.
 | Préconditions | Une campagne d'admission est ouverte ; le candidat a créé un compte |
 | Scénario nominal | 1. Le candidat confirme son adresse électronique par le lien reçu. 2. Il remplit son identité, ses études secondaires et la filière souhaitée. 3. Il téléverse les pièces exigées. 4. Il indique le mode et la référence du paiement des frais de dossier. 5. Il dépose le dossier ; le système vérifie qu'il est complet et lui attribue un numéro. |
 | Scénarios alternatifs | Dossier incomplet : le système liste les éléments manquants et le dossier reste modifiable. Paiement refusé par la caisse : le candidat corrige la référence. Complément demandé par le secrétariat : le candidat complète puis redépose. |
-| Postconditions | Le dossier est à l'état « Soumise » ; le candidat suit son évolution dans son espace et reçoit un courrier électronique à chaque décision |
+| Postconditions | La candidature est à l'état « Soumise » ; le candidat suit son évolution dans son espace et reçoit un courrier électronique à chaque décision |
 
 ::source Production personnelle.
 
@@ -132,8 +132,8 @@ Trois cas d'utilisation concentrent les enjeux de la plateforme. Les tableaux 3.
 |---|---|
 | Acteur principal | Auteur : personnel de section, direction ou enseignant |
 | Préconditions | L'auteur est connecté et dispose d'un droit de publication pour la cible choisie |
-| Scénario nominal | 1. L'auteur rédige le communiqué et joint éventuellement un fichier. 2. Il choisit la cible : tout l'institut, une filière, une promotion ou l'un de ses cours. 3. Le système vérifie que l'auteur peut viser cette cible. 4. Le communiqué est publié et les destinataires sont notifiés. 5. Chaque destinataire qui l'ouvre enregistre un accusé de lecture. |
-| Scénarios alternatifs | Cible « institut » ou « public » choisie par un auteur qui n'est pas validateur : le communiqué passe à l'état « en validation » et la direction est notifiée ; il n'est publié qu'après approbation. |
+| Scénario nominal | 1. L'auteur rédige le communiqué et joint éventuellement un fichier. 2. Il choisit la cible : le public, tout l'institut, une filière, une promotion ou l'un de ses cours. 3. Le système vérifie que l'auteur peut viser cette cible. 4. Le communiqué est publié et les destinataires sont notifiés. 5. L'ouverture du communiqué par un destinataire enregistre un accusé de lecture. |
+| Scénarios alternatifs | Cible « institut » ou « public » choisie par un auteur qui n'est pas validateur : le communiqué passe à l'état « En validation » et la direction est notifiée ; il n'est publié qu'après approbation. |
 | Postconditions | Le communiqué est visible des seuls destinataires concernés ; l'auteur voit le nombre de lectures |
 
 ::source Production personnelle.
@@ -171,7 +171,7 @@ La figure 3.6 décrit le circuit des notes. La règle centrale est qu'un étudia
 
 ::source Production personnelle.
 
-La figure 3.7 décrit l'émission et la vérification d'un document officiel. Le code imprimé dans le code QR est tiré au hasard et suffisamment long pour ne pas pouvoir être deviné ; la page de vérification n'affiche que le minimum nécessaire.
+La figure 3.7 décrit l'émission et la vérification d'un document officiel. L'identifiant contenu dans le code QR est tiré au hasard et suffisamment long pour ne pas pouvoir être deviné ; la page de vérification n'affiche que le minimum nécessaire.
 
 ![Figure 3.7 : Séquence de l'émission et de la vérification d'un document officiel](../conception/figures/sequence-verification.png){largeur=14}
 
@@ -179,7 +179,7 @@ La figure 3.7 décrit l'émission et la vérification d'un document officiel. Le
 
 ### 3.3.4. Diagrammes d'activité et d'états
 
-Le diagramme d'activité de la figure 3.8 suit le parcours d'admission à travers les trois services concernés : le candidat, la caisse et le secrétariat.
+Le diagramme d'activité de la figure 3.8 suit le parcours d'admission à travers les trois acteurs concernés : le candidat, la caisse et le secrétariat.
 
 ![Figure 3.8 : Activité du parcours d'admission en première année](../conception/figures/activite-admission.png){largeur=12}
 
@@ -253,12 +253,14 @@ Le modèle de classes est traduit en un schéma de base de données relationnell
 
 ::source Production personnelle, d'après le schéma de la base de données.
 
+À ces 63 tables s'ajoutent deux tables de liaison créées automatiquement par l'outil d'accès aux données pour des relations simples entre campagnes et filières, et entre offres et filières.
+
 Plusieurs choix de conception protègent l'intégrité des données :
 
 - **des identifiants opaques**, générés aléatoirement, plutôt que des numéros séquentiels qui révéleraient le nombre d'enregistrements ou permettraient d'en deviner d'autres ;
 - **des contraintes d'unicité** sur les données qui doivent l'être : matricule d'un étudiant, code de vérification d'un document, numéro de dossier, promotion définie par le triplet filière, niveau et année ;
 - **des types décimaux** pour les notes et les montants, afin d'éviter les erreurs d'arrondi des nombres à virgule flottante ;
-- **des copies figées** au format JSON lorsque l'histoire doit être conservée : règlement appliqué à une délibération, détail des notes d'un résultat, données imprimées sur un document officiel ;
+- **des copies figées** au format JSON lorsque l'historique doit être conservé : règlement appliqué à une délibération, détail des notes d'un résultat, données imprimées sur un document officiel ;
 - **des suppressions en cascade** limitées aux données dépendantes (les notes d'une évaluation supprimée), jamais aux documents officiels ni aux paiements ;
 - **des empreintes au lieu des secrets** : les jetons de session, de réinitialisation et de confirmation ne sont stockés que sous forme d'empreinte, de sorte qu'une fuite de la base ne permet pas de les réutiliser.
 
@@ -334,10 +336,10 @@ Les règles WCAG 2.2 ont été appliquées dès la conception plutôt que vérif
 - le collage du mot de passe est autorisé, et une information déjà saisie n'est jamais redemandée ;
 - l'aide est accessible au même endroit dans tous les espaces.
 
-Ces exigences sont vérifiées automatiquement par les tests présentés au chapitre suivant.
+Ces exigences sont vérifiées par les tests automatiques et manuels présentés au chapitre suivant.
 
 ## Conclusion partielle
 
-Ce chapitre a présenté la conception de la plateforme. La démarche itérative et le langage UML ont permis de passer des besoins à un modèle précis : 17 diagrammes décrivent les acteurs, les processus critiques, le cycle de vie des objets, les données, l'architecture et le déploiement. Le modèle de données compte 63 tables, protégées par des contraintes d'intégrité et des copies figées là où l'histoire doit être conservée. La sécurité repose sur un contrôle d'accès basé sur les rôles, vérifié côté serveur jusqu'au niveau de chaque ressource. L'interface, enfin, part de l'identité de l'institut et intègre l'accessibilité dès la conception.
+Ce chapitre a présenté la conception de la plateforme. La démarche itérative et le langage UML ont permis de passer des besoins à un modèle précis : 17 diagrammes décrivent les acteurs, les processus critiques, le cycle de vie des objets, les données, l'architecture et le déploiement. Le modèle de données compte 63 tables principales, protégées par des contraintes d'intégrité et des copies figées là où l'historique doit être conservé. La sécurité repose sur un contrôle d'accès basé sur les rôles, vérifié côté serveur jusqu'au niveau de chaque ressource. L'interface, enfin, part de l'identité de l'institut et intègre l'accessibilité dès la conception.
 
 Le chapitre suivant présente la réalisation de ce modèle, les tests qui en vérifient la conformité et la mise en production de la plateforme.

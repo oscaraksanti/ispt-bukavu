@@ -4,6 +4,7 @@
 | Sigle | Signification |
 |---|---|
 | ADM | Admis sans dette (décision du jury) |
+| AGPL | *GNU Affero General Public License*, licence de logiciel libre |
 | BAC1 à BAC4 | Première à quatrième année d'études à l'ISPT-Bukavu |
 | BTP | Bâtiment et travaux publics |
 | COMP | Admis avec dette de crédits (décision du jury) |
@@ -12,6 +13,7 @@
 | DNS | *Domain Name System*, système de noms de domaine |
 | ERP | *Enterprise Resource Planning*, progiciel de gestion intégré |
 | ESU | Enseignement supérieur et universitaire |
+| FAQ | Foire aux questions |
 | FC | Franc congolais |
 | GPL | *GNU General Public License*, licence de logiciel libre |
 | HTTPS | *Hypertext Transfer Protocol Secure*, protocole de communication web sécurisé |
@@ -34,9 +36,8 @@
 | S3 | *Simple Storage Service*, protocole de stockage d'objets |
 | SNEL | Société nationale d'électricité |
 | SQL | *Structured Query Language*, langage de requête des bases de données |
-| TFC | Travail de fin de cycle |
-| UE | Unité d'enseignement |
 | UML | *Unified Modeling Language*, langage de modélisation unifié |
 | UNESCO | Organisation des Nations unies pour l'éducation, la science et la culture |
+| USB | *Universal Serial Bus* |
 | W3C | *World Wide Web Consortium* |
 | WCAG | *Web Content Accessibility Guidelines*, règles pour l'accessibilité des contenus web |

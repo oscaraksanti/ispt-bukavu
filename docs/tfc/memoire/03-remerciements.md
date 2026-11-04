@@ -4,9 +4,9 @@ Avant tout, nous rendons grâce à l'Éternel Dieu pour son amour immense, qu'il
 
 Nous exprimons notre profonde gratitude à notre directeur, le Professeur SINDANO WA KITWANGA Expédit, Directeur Général de l'ISPT-Bukavu, qui, malgré ses lourdes charges et ses multiples responsabilités, a accepté de diriger ce travail et de nous guider tout au long de sa réalisation.
 
-Nous remercions les autorités académiques de l'ISPT-Bukavu, en particulier le Professeur Albert LUKWISHI, Secrétaire Général Académique, et le Chef de travaux MUSAFIRI MULALI WAZO, Secrétaire Général Administratif, ainsi que l'ensemble du corps professoral, pour la qualité de l'enseignement reçu. Nos remerciements s'adressent particulièrement au Chef de travaux Eric BYUMANINE, pour sa franche collaboration, ses conseils et sa disponibilité dans la transmission des informations nécessaires à ce travail.
+Nous remercions les autorités académiques de l'ISPT-Bukavu, notamment le Professeur Albert LUKWISHI, Secrétaire Général Académique, et le Chef de travaux MUSAFIRI MULALI WAZO, Secrétaire Général Administratif, ainsi que l'ensemble du corps professoral, pour la qualité de l'enseignement reçu. Nous remercions tout spécialement le Chef de travaux Eric BYUMANINE pour sa franche collaboration, ses conseils et sa disponibilité dans la transmission des informations nécessaires à ce travail.
 
-Nous ne saurions oublier l'Ingénieur FORTUNAT BUMBA Petrus, pour ses précieuses contributions, morales comme matérielles, à l'avancement de notre formation universitaire. Que Dieu vous bénisse, cher Ingénieur.
+Nous ne saurions oublier l'Ingénieur FORTUNAT BUMBA Petrus, pour ses précieuses contributions, morales comme matérielles, à l'avancement de notre formation universitaire. Que Dieu le bénisse.
 
 Nos remerciements particuliers vont à notre frère et ami BAHATI BANGOYE Chance ainsi qu'à toute sa famille, pour leur amour, leur soutien et leurs conseils, qui ont contribué à faire de nous la personne que nous sommes aujourd'hui.
 

@@ -10,7 +10,7 @@ Toutes les informations de ce chapitre proviennent des documents remis par l'ins
 
 ### 1.1.1. Historique et statut juridique
 
-L'Institut Supérieur Pédagogique et Technique de Bukavu, en sigle ISPT-Bukavu, est un établissement public d'enseignement supérieur et universitaire. Il a été créé par l'arrêté ministériel n° 219/MINESU/CAB.MIN/MML/KOB/2010 du 8 novembre 2010. Cet arrêté a été entériné par le Professeur Mashako Mamba, et la création de l'institut répond à la demande de Monseigneur François-Xavier Maroyi Rusengo, archevêque de Bukavu. L'institut est opérationnel depuis 2011 [@ispt-depliant].
+L'Institut Supérieur Pédagogique et Technique de Bukavu, en sigle ISPT-Bukavu, est un établissement public d'enseignement supérieur et universitaire. Il a été créé par l'arrêté ministériel n° 219/MINESU/CAB.MIN/MML/KOB/2010 du 8 novembre 2010. Cet arrêté a été entériné par le Professeur MASHAKO MAMBA, et la création de l'institut répond à la demande de Monseigneur François-Xavier Maroyi Rusengo, archevêque de Bukavu. L'institut est opérationnel depuis 2011 [@ispt-depliant].
 
 En tant qu'établissement public, l'ISPT-Bukavu relève du ministère ayant l'enseignement supérieur et universitaire dans ses attributions et applique les textes qui organisent ce secteur : la loi-cadre n° 14/004 du 11 février 2014 de l'enseignement national [@loi14-004], le décret n° 22/39 du 8 décembre 2022 portant organisation et fonctionnement du système Licence-Maîtrise-Doctorat [@decret22-39] et les instructions académiques publiées chaque année par le ministère [@instruction025-2023].
 
@@ -36,7 +36,7 @@ Le dépliant cite trois autorités académiques : le Directeur Général, le Sec
 
 ::source Production personnelle, d'après le dépliant de l'institut [@ispt-depliant].
 
-Pour la plateforme, l'institut a désigné deux personnes chargées de l'administration : le Directeur Général, qui détient le niveau le plus élevé de droits, et le CT Eric Byumanine, qui assure aussi le support technique aux étudiants, la formation du personnel à l'outil et le suivi des incidents. Ce sont également les deux personnes autorisées à enregistrer les paiements [@ispt-donnees2026].
+Pour la plateforme, l'institut a désigné deux personnes chargées de l'administration : le Directeur Général, qui détient le niveau le plus élevé de droits, et le CT Eric BYUMANINE, qui assure aussi le support technique aux étudiants, la formation du personnel à l'outil et le suivi des incidents. Ce sont également les deux personnes autorisées à enregistrer les paiements [@ispt-donnees2026].
 
 ### 1.1.5. Offre de formation
 
@@ -129,7 +129,7 @@ Les registres d'étudiants sont tenus sous forme de tableaux comportant le numé
 
 ### 1.2.4. Horaires, notes et délibérations
 
-**Horaires.** L'horaire est préparé chaque semaine dans un traitement de texte. La figure 1.4 en reproduit un extrait.
+**Horaires.** L'horaire est préparé chaque semaine avec un traitement de texte. La figure 1.4 en reproduit un extrait.
 
 ![Figure 1.4 : Extrait de l'horaire hebdomadaire du 2 au 7 novembre 2026](figures/ch1-horaire.png){largeur=15.5}
 
@@ -152,7 +152,7 @@ L'horaire comporte une ligne par promotion et une colonne par jour, du lundi au 
 
 ::source Production personnelle, d'après le classeur de bulletins de l'institut [@ispt-bulletins].
 
-Le jury prend l'une de trois décisions : admis (ADM), admis avec dette de crédits (COMP) ou renvoyé au rattrapage. En comparant les décisions inscrites dans le classeur aux notes, nous avons dégagé une règle qui les reproduit toutes pour les seize étudiants de la promotion : l'étudiant est admis s'il n'a aucun crédit non validé ; sinon, il est admis avec dette si sa moyenne annuelle atteint 10 ; dans le cas contraire, il passe au rattrapage. Un cours non présenté compte pour zéro.
+Le jury prend l'une des trois décisions suivantes : admis sans dette (ADM), admis avec dette de crédits (COMP) ou renvoyé au rattrapage. En comparant les décisions inscrites dans le classeur aux notes, nous avons dégagé une règle qui les reproduit toutes pour les seize étudiants de la promotion : l'étudiant est admis s'il n'a aucun crédit non validé ; sinon, il est admis avec dette si sa moyenne annuelle atteint 10 ; dans le cas contraire, il passe au rattrapage. Un cours non présenté compte pour zéro.
 
 L'examen du classeur révèle aussi une fragilité. La moyenne d'un étudiant y est calculée à plusieurs endroits, selon trois formules différentes ; pour douze des seize étudiants, la moyenne du procès-verbal ne coïncide pas avec celle du bulletin. Ces écarts ne sont pas des erreurs de saisie : ils viennent de la structure même du classeur, où chaque document recalcule la moyenne à sa manière. Ils montrent qu'une règle de calcul doit être écrite une seule fois, testée, puis réutilisée par tous les documents qui en dépendent. Les règles exactes d'évaluation fixées par l'arrêté ministériel en vigueur restent à confirmer auprès du Secrétariat Général Académique.
 
@@ -173,7 +173,7 @@ Les relevés de cotes, attestations et autres documents académiques sont déliv
 L'analyse fait apparaître plusieurs atouts sur lesquels la plateforme pourra s'appuyer :
 
 - **des documents de référence clairs** : le dépliant, le dossier de candidature et l'horaire suivent des formats stables, faciles à reprendre dans un outil numérique ;
-- **des règles d'évaluation cohérentes** : les décisions du jury observées obéissent à une règle constante, qu'il est possible de formaliser et de tester ;
+- **des décisions de jury cohérentes** : les décisions observées obéissent à une règle constante, qu'il est possible de formaliser et de tester ;
 - **des responsabilités identifiées** : l'institut a désigné nommément les personnes chargées de l'administration, des paiements, du support et des incidents ;
 - **une exigence de sauvegarde exprimée** : l'institut demande une sauvegarde au minimum hebdomadaire et une conservation de longue durée des données des anciens étudiants [@ispt-donnees2026] ;
 - **une volonté de changement** : l'institut a demandé un lancement simultané de tous les espaces dès que la plateforme serait disponible [@ispt-donnees2026].
@@ -226,6 +226,6 @@ Cette plateforme ne se substitue pas aux obligations ministérielles. Elle se po
 
 ## Conclusion partielle
 
-Ce chapitre a présenté l'ISPT-Bukavu, établissement public créé en 2010 et organisé en quatre sections, puis analysé cinq de ses processus. Il en ressort un fonctionnement fondé sur le papier, la présence physique et des fichiers isolés : l'information n'atteint pas tous ses destinataires, les documents ne sont pas vérifiables à distance et certaines règles de calcul ne sont pas appliquées de manière uniforme. L'institut dispose néanmoins de documents de référence clairs et de responsables désignés, sur lesquels un outil numérique peut s'appuyer.
+Ce chapitre a présenté l'ISPT-Bukavu, établissement public créé en 2010 et organisé en quatre sections, puis analysé cinq de ses processus. Il en ressort un fonctionnement fondé sur le papier, la présence physique et des fichiers isolés : l'information n'atteint pas tous ses destinataires, les documents ne sont pas vérifiables à distance et certaines moyennes sont calculées différemment d'un document à l'autre. L'institut dispose néanmoins de documents de référence clairs et de responsables désignés, sur lesquels un outil numérique peut s'appuyer.
 
 Les besoins identifiés conduisent à proposer une plateforme web intégrée, complémentaire des outils ministériels. Avant de la concevoir, il convient de préciser les concepts qu'elle mobilise et de situer ce projet par rapport aux solutions existantes et au cadre réglementaire : c'est l'objet du chapitre suivant.

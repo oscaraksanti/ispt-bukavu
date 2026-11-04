@@ -4,11 +4,11 @@
 
 Ce dernier chapitre présente la plateforme telle qu'elle a été réalisée. Il décrit d'abord l'environnement de développement, puis les principaux écrans, organisés selon les espaces des utilisateurs. Il expose ensuite les tests qui vérifient la conformité de la plateforme aux exigences du chapitre 3, puis sa mise en production et son exploitation. Il se termine par la confrontation des résultats aux hypothèses de départ et par les limites du travail.
 
-Les captures d'écran de ce chapitre ont été réalisées sur une instance de démonstration qui ne contient que des données fictives : les noms d'étudiants, les notes, les paiements et les communiqués qui y figurent ont été générés pour l'illustration et ne concernent aucune personne réelle.
+Les captures d'écran de ce chapitre ont été réalisées sur une instance de démonstration ou sur la base de test, qui ne contiennent que des données fictives : les noms d'étudiants, les notes, les paiements et les communiqués qui y figurent ont été générés pour l'illustration et ne concernent aucune personne réelle.
 
 ## 4.1. Environnement de développement
 
-Le code de la plateforme est conservé dans un dépôt Git hébergé sur GitHub. Chaque modification fait l'objet d'un enregistrement (*commit*) décrit selon une convention commune, ce qui permet de retracer l'histoire de chaque fonction. L'application est développée avec Node.js 22 et une base PostgreSQL locale ; les données de développement et de test sont séparées de celles de la production.
+Le code de la plateforme est conservé dans un dépôt Git hébergé sur GitHub. Chaque modification fait l'objet d'un enregistrement (*commit*) décrit selon une convention commune, ce qui permet de retracer l'historique de chaque fonction. L'application est développée avec Node.js 22 et une base PostgreSQL locale ; les données de développement et de test sont séparées de celles de la production.
 
 La qualité du code est contrôlée par des outils automatiques : un formateur impose une présentation uniforme, un analyseur statique signale les erreurs courantes, et le compilateur TypeScript, en mode strict, vérifie la cohérence des types [@typescript-handbook]. À chaque envoi de code sur GitHub, un processus d'intégration continue enchaîne ces contrôles, les tests unitaires, la préparation d'une base de données éphémère, la compilation de l'application et les tests de bout en bout dans un navigateur. Une modification qui fait échouer l'une de ces étapes est immédiatement signalée.
 
@@ -150,7 +150,7 @@ Une revue de sécurité de l'ensemble du code a complété ces tests. Elle a rel
 
 ### 4.3.4. Accessibilité
 
-L'outil axe-core a analysé 74 pages (site public, espaces étudiant et enseignant, administration, documents imprimables), sur ordinateur et sur un écran de téléphone [@axe-core]. L'analyse initiale a relevé 6 violations sur ordinateur et 41 sur téléphone, dues notamment à un contraste insuffisant de la couleur d'attention et à des tableaux défilants inaccessibles au clavier. Après correction, l'analyse ne relève plus aucune violation des règles WCAG 2.2 de niveau AA. Les dix-sept écrans capturés pour ce chapitre ont été analysés à nouveau sur l'instance de démonstration, sans violation.
+L'outil axe-core a analysé 74 pages (site public, espaces étudiant et enseignant, administration, documents imprimables), sur ordinateur et sur un écran de téléphone [@axe-core]. L'analyse initiale a relevé 6 violations sur ordinateur et 41 sur téléphone, dues notamment à un contraste insuffisant de la couleur d'attention et à des tableaux défilants inaccessibles au clavier. Après correction, l'analyse ne relève plus aucune violation des règles WCAG 2.2 de niveau AA. Les dix-sept écrans capturés lors de la préparation de ce chapitre ont été analysés à nouveau sur l'instance de démonstration, sans violation.
 
 Une vérification manuelle au clavier a complété l'analyse automatique : un lien d'évitement est proposé à la première tabulation, le focus reste visible sur chaque élément parcouru, et le menu mobile s'ouvre au clavier et se ferme par la touche Échap. Une analyse automatique ne détecte qu'une partie des problèmes d'accessibilité ; un test avec des utilisateurs de lecteurs d'écran reste souhaitable.
 
@@ -171,7 +171,7 @@ Les pages publiques ont été mesurées sur le site en ligne avec un profil de r
 
 ::source Production personnelle, mesures réalisées le 4 novembre 2026.
 
-La première visite comprend les polices et le code commun, téléchargés une seule fois. La page d'accueil la plus lourde pèse 602 Ko, soit environ quatre fois moins que la page d'accueil mobile médiane du web, qui atteignait 2 559 Ko en 2025 [@httparchive2025]. Les visites suivantes ne transfèrent que quelques kilo-octets. Le contenu principal s'affiche en moins de trois secondes sur toutes les pages mesurées ; la page des admissions, la plus lente, dépasse toutefois de peu le seuil de 2,5 secondes souvent retenu comme bon. Enfin, les pages des espaces personnels déjà consultées restent lisibles sans connexion grâce au *service worker*.
+La première visite comprend les polices et le code commun, téléchargés une seule fois. La page la plus lourde, l'accueil, pèse 602 Ko, soit environ quatre fois moins que la page d'accueil mobile médiane du web, qui atteignait 2 559 Ko en 2025 [@httparchive2025]. Les visites suivantes ne transfèrent que quelques kilo-octets. Le contenu principal s'affiche en moins de trois secondes sur toutes les pages mesurées ; la page des admissions, la plus lente, dépasse toutefois de peu 2,5 secondes. Enfin, les pages des espaces personnels déjà consultées restent lisibles sans connexion grâce au *service worker*.
 
 ## 4.4. Déploiement et exploitation
 
@@ -187,13 +187,13 @@ La plateforme est accessible à l'adresse www.isptbukavu.org, en HTTPS. Les cour
 
 ### 4.4.3. Sauvegardes et restauration
 
-Une tâche planifiée sur GitHub est configurée pour sauvegarder chaque nuit la totalité de la base de données et des fichiers déposés. La sauvegarde est chiffrée avant de quitter la machine qui la produit, puis conservée trente jours. Cette fréquence dépasse l'exigence minimale exprimée par l'institut, qui est d'une sauvegarde hebdomadaire.
+Une tâche planifiée sur GitHub est configurée pour sauvegarder chaque nuit la totalité de la base de données et des fichiers déposés. La sauvegarde est chiffrée avant de quitter la machine qui la produit, puis conservée trente jours. La fréquence prévue dépasse l'exigence minimale exprimée par l'institut, qui est d'une sauvegarde hebdomadaire.
 
 La restauration a été testée : une sauvegarde complète a été restaurée dans une base neuve, puis comparée ligne par ligne à l'originale au moyen d'une empreinte de chaque ligne. La comparaison n'a révélé aucune différence, et les fichiers restaurés étaient identiques octet pour octet. Une seconde restauration sur une base non vide a été refusée, comme prévu, pour éviter d'écraser des données par erreur. À la date de rédaction, la tâche nocturne attend encore la saisie de ses paramètres secrets par l'administrateur pour s'exécuter en production.
 
 ### 4.4.4. Coûts d'exploitation
 
-L'exploitation repose sur des offres gratuites, suffisantes pour le trafic d'un institut, et sur des logiciels libres. Le tableau 4.3 en fait la synthèse.
+L'exploitation repose essentiellement sur des offres gratuites, suffisantes pour le trafic d'un institut, et sur des logiciels libres. Le tableau 4.3 en fait la synthèse.
 
 ::tableau Tableau 4.3 : Coûts d'exploitation
 | Poste | Fournisseur | Offre retenue |
@@ -232,11 +232,11 @@ Ce travail présente plusieurs limites, qu'il convient d'énoncer clairement :
 - **les données officielles en attente** : les montants des frais, le programme officiel des cours, les règles d'évaluation fixées par l'arrêté en vigueur et les textes juridiques de la plateforme doivent être fournis par l'institut ; les règles de délibération reprennent la pratique observée dans un classeur de bulletins, en attendant leur confirmation ;
 - **l'interopérabilité avec la plateforme ministérielle**, limitée à des exports tabulaires, sans échange automatique ;
 - **le paiement par monnaie mobile**, non intégré : les paiements sont enregistrés par la caisse ;
-- **la surveillance de la disponibilité et des erreurs**, prévue dans le plan mais pas encore installée ;
+- **la surveillance de la disponibilité et des erreurs**, prévue dès la conception mais pas encore installée ;
 - **une politique de sécurité du contenu** qui autorise les scripts intégrés aux pages, compromis nécessaire au fonctionnement du cadre d'application et au maintien du cache.
 
 ## Conclusion partielle
 
-Ce chapitre a présenté la plateforme réalisée : un site institutionnel administrable, des admissions en ligne de bout en bout, une valve numérique ciblée, des espaces pour les candidats, les étudiants et les enseignants, la gestion des notes, des délibérations, des examens et des frais, des documents vérifiables par code QR et une administration complète. Les tests automatisés, la revue de sécurité, l'analyse d'accessibilité et les mesures de performance montrent que la plateforme répond aux exigences fixées au chapitre 3. Elle est en ligne à l'adresse www.isptbukavu.org et n'attend plus que les données officielles de l'institut pour entrer pleinement en service.
+Ce chapitre a présenté la plateforme réalisée : un site institutionnel administrable, des admissions en ligne de bout en bout, une valve numérique ciblée, des espaces pour les candidats, les étudiants et les enseignants, la gestion des notes, des délibérations, des examens et des frais, des documents vérifiables par code QR et une administration complète. Les tests automatisés, la revue de sécurité, l'analyse d'accessibilité et les mesures de performance montrent que la plateforme répond pour l'essentiel aux exigences fixées au chapitre 3. Elle est en ligne à l'adresse www.isptbukavu.org ; pour entrer pleinement en service, elle attend les données officielles de l'institut, ainsi que l'activation des sauvegardes et de la surveillance.
 
 Les deux premières hypothèses sont vérifiées sur le plan technique, la troisième partiellement. Les limites relevées, en particulier l'absence d'évaluation par les usagers et l'hébergement hors de la RDC, ouvrent les perspectives présentées dans la conclusion générale.

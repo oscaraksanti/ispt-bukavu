@@ -1,6 +1,6 @@
 # ANNEXES
 
-Les annexes réunissent les outils préparés pour l'évaluation de la plateforme, les paramètres de référence de la gestion des droits et des délibérations, et le guide d'utilisation remis aux usagers.
+Les annexes réunissent les outils préparés pour l'évaluation de la plateforme, les paramètres de référence de la gestion des droits et des délibérations, le guide d'utilisation remis aux usagers et les adresses d'accès à la plateforme.
 
 - Annexe 1 : Questionnaire d'évaluation destiné aux étudiants et aux enseignants
 - Annexe 2 : Guide d'entretien avec les services de l'institut
@@ -20,17 +20,17 @@ Ce questionnaire a été préparé pour mesurer l'accès à l'information offici
 |---|---|
 | Objectif | Mesurer l'accès actuel à l'information officielle, les difficultés liées aux démarches et les attentes vis-à-vis d'une plateforme web |
 | Population | Étudiants inscrits pour l'année en cours (toutes filières, toutes promotions) ; enseignants permanents et visiteurs |
-| Échantillonnage | Volontaire, diffusion par lien et QR code (valves, délégués de promotion, groupes officiels) ; objectif indicatif : 100 étudiants minimum, au moins 15 par filière, et 15 enseignants |
+| Échantillonnage | Volontaire, diffusion par lien et code QR (valves, délégués de promotion, groupes officiels) ; objectif indicatif : 100 étudiants minimum, au moins 15 par filière, et 15 enseignants |
 | Période | Deux semaines de collecte, relance au milieu |
 | Outil | Formulaire en ligne (Google Forms ou équivalent), consultable sur téléphone |
-| Anonymat | Aucun nom, matricule, téléphone ni email demandé |
+| Anonymat | Aucun nom, matricule, téléphone ni adresse électronique demandé |
 | Analyse | Fréquences et pourcentages par question, croisements par filière et promotion, synthèse des réponses ouvertes par thèmes |
 
 ::source Production personnelle.
 
 ### Notice affichée en tête du formulaire
 
-> Ce questionnaire est réalisé dans le cadre d'un Travail de Fin de Cycle en Génie Informatique à l'ISPT-Bukavu. Il porte sur l'accès à l'information et aux services de l'institut. Il est **anonyme** : aucune information permettant de vous identifier n'est demandée. Les réponses servent uniquement à l'analyse statistique du travail et ne sont pas transmises à des tiers. La participation est volontaire ; vous pouvez arrêter à tout moment. Durée : environ 5 minutes.
+> Ce questionnaire est réalisé dans le cadre d'un Travail de fin de cycle en Génie Informatique à l'ISPT-Bukavu. Il porte sur l'accès à l'information et aux services de l'institut. Il est **anonyme** : aucune information permettant de vous identifier n'est demandée. Les réponses servent uniquement à l'analyse statistique du travail et ne sont pas transmises à des tiers. La participation est volontaire ; vous pouvez arrêter à tout moment. Durée : environ 5 minutes.
 
 Case à cocher : « J'ai lu cette notice et j'accepte de participer. »
 
@@ -84,7 +84,7 @@ Q19. **Savez-vous à tout moment combien il vous reste à payer en frais académ
 
 **E. Attentes**
 
-Q20. **Utilité perçue de chaque service** (1 = inutile, 5 = indispensable) communiqués officiels ciblés par promotion ; horaire de la semaine consultable en ligne ; résultats et relevés de notes en ligne ; situation des frais et reçus ; supports de cours téléchargeables ; préinscription en ligne pour les nouveaux candidats ; demande d'attestation en ligne ; notifications par email
+Q20. **Utilité perçue de chaque service** (1 = inutile, 5 = indispensable) communiqués officiels ciblés par promotion ; horaire de la semaine consultable en ligne ; résultats et relevés de notes en ligne ; situation des frais et reçus ; supports de cours téléchargeables ; préinscription en ligne pour les nouveaux candidats ; demande d'attestation en ligne ; notifications par courrier électronique
 
 Q21. **Accepteriez-vous de consulter une plateforme officielle plutôt que les groupes WhatsApp pour les communiqués ?** oui · peut-être · non
 
@@ -100,7 +100,7 @@ Q2. **Filière(s) où vous enseignez** : Électromécanique · Génie Informatiq
 
 Q3. **Appareil principal** : smartphone · ordinateur portable · les deux
 
-Q4. **Comment transmettez-vous aujourd'hui une information à vos étudiants ?** (plusieurs choix) valve · délégué · groupe WhatsApp · en classe · email · autre
+Q4. **Comment transmettez-vous aujourd'hui une information à vos étudiants ?** (plusieurs choix) valve · délégué · groupe WhatsApp · en classe · courrier électronique · autre
 
 Q5. **Comment remettez-vous les supports de cours ?** polycopié · fichiers partagés par messagerie · clé USB · aucun support · autre
 
@@ -120,7 +120,7 @@ Q11. **Question ouverte** : quelle fonctionnalité vous ferait gagner le plus de
 
 ## Annexe 2. Guide d'entretien avec les services de l'institut
 
-Ce guide a été préparé pour des entretiens avec les services de l'institut ; comme le questionnaire, il servira à l'évaluation de la plateforme après sa mise en service.
+Ce guide a été préparé pour des entretiens avec les services de l'institut, afin de compléter l'analyse de l'existant. Il n'a pas été mis en œuvre dans le temps de ce travail ; il pourra servir, comme le questionnaire, à l'évaluation de la plateforme après sa mise en service.
 
 Entretiens semi-directifs de 20 à 30 minutes, avec prise de notes (enregistrement seulement avec accord explicite). Objectif : décrire les processus réels, leurs étapes, les documents utilisés, les délais et les difficultés, afin de compléter l'analyse de l'existant et de valider les besoins.
 
@@ -147,7 +147,7 @@ Entretiens semi-directifs de 20 à 30 minutes, avec prise de notes (enregistreme
 4. Qui intervient, et à quel moment l'information passe-t-elle d'un service à l'autre ?
 5. Combien de temps prend le processus ? Quelles périodes de l'année sont les plus chargées ?
 6. Quelles erreurs ou quels blocages reviennent le plus souvent ?
-7. Quels outils numériques utilisez-vous déjà (Excel, WhatsApp, email, OptSolution ou autre plateforme ministérielle) ? Pour quoi exactement ?
+7. Quels outils numériques utilisez-vous déjà (Excel, WhatsApp, courrier électronique, OptSolution ou autre plateforme ministérielle) ? Pour quoi exactement ?
 8. Quelles données sont confidentielles et qui doit y avoir accès ?
 9. Si une plateforme prenait en charge une partie de ce travail, qu'attendriez-vous d'elle en priorité ? Qu'est-ce qui doit rester sur papier ?
 10. Qui devrait valider une information avant sa publication (communiqué, résultat, horaire) ?
@@ -165,7 +165,7 @@ Entretiens semi-directifs de 20 à 30 minutes, avec prise de notes (enregistreme
 - Comment un étudiant est-il informé d'un changement de dernière minute ?
 
 **Caisse.**
-- Comment les frais sont-ils payés (banque, mobile money, guichet) et comment le paiement est-il prouvé ?
+- Comment les frais sont-ils payés (banque, monnaie mobile, guichet) et comment le paiement est-il prouvé ?
 - Comment un étudiant connaît-il son solde ?
 - Les frais sont-ils exprimés en dollars, en francs congolais, ou les deux ?
 
@@ -182,7 +182,7 @@ Chaque entretien donne une fiche (fonction, date, processus décrits, difficult�
 
 ## Annexe 3. Rôles par défaut et permissions
 
-La plateforme définit 21 permissions élémentaires, regroupées dans des rôles calqués sur l'organigramme de l'institut. Les rôles du personnel restent modifiables dans l'administration ; un rôle ne peut être attribué que par une personne qui détient déjà toutes ses permissions.
+La plateforme définit 21 permissions élémentaires, regroupées dans des rôles calqués sur l'organigramme de l'institut. Les rôles du personnel restent modifiables dans l'administration ; un rôle ne peut être attribué que par une personne qui détient déjà toutes ses permissions. Conformément aux indications de l'institut, le niveau le plus élevé, celui d'administrateur technique, est destiné au Directeur Général ; c'est ce qui lui permet notamment d'enregistrer les paiements.
 
 ::tableau Tableau A.3 : Rôles par défaut et permissions associées
 | Rôle | Mission | Permissions |
@@ -214,7 +214,7 @@ Le règlement de délibération est paramétrable pour chaque année académique
 | Seuil de validation d'un cours | 10 sur 20 |
 | Niveau de validation | Le cours |
 | Calcul de la moyenne | Moyenne pondérée par les crédits |
-| Arrondi | Au demi-point, règle du jury : partie décimale inférieure à 0,35 arrondie à l'entier, inférieure à 0,75 arrondie au demi-point, sinon à l'entier supérieur |
+| Arrondi | Au demi-point, règle du jury : partie décimale inférieure à 0,35 arrondie à l'entier inférieur, inférieure à 0,75 arrondie au demi-point, sinon à l'entier supérieur |
 | Cours non présenté | Compté zéro |
 | Admission avec dette de crédits | Moyenne annuelle d'au moins 10 sur 20 |
 | Plafond de crédits en dette | Aucun |
@@ -248,15 +248,15 @@ Le guide d'utilisation est intégré à la plateforme, dans le centre d'aide acc
 *Pour : Étudiants inscrits.* Activer son compte, consulter la valve, l'horaire, les notes, les résultats et les frais, demander un document.
 
 **Activer son compte (première fois).**
-1. Le secrétariat vous remet une fiche avec votre matricule et un code d'activation (ou vous l'envoie par email).
-2. Ouvrez la page « Activer mon compte » (adresse indiquée sur la fiche, ou scannez le QR code).
+1. Le secrétariat vous remet une fiche avec votre matricule et un code d'activation (ou vous l'envoie par courrier électronique).
+2. Ouvrez la page « Activer mon compte » (adresse indiquée sur la fiche, ou scannez le code QR).
 3. Saisissez votre matricule, le code, puis choisissez un mot de passe d'au moins 10 caractères, avec des lettres et des chiffres.
 4. Vous êtes connecté. Les fois suivantes, utilisez « Connexion » avec votre matricule et ce mot de passe.
 
 *Conseil :* Le code ne sert qu'une fois et expire après 30 jours. S'il est perdu ou expiré, demandez-en un nouveau au secrétariat.
 
 **Mot de passe oublié.**
-1. Si une adresse email est enregistrée sur votre compte : page « Connexion » › « Mot de passe oublié », puis suivez le lien reçu.
+1. Si une adresse électronique est enregistrée sur votre compte : page « Connexion » › « Mot de passe oublié », puis suivez le lien reçu.
 2. Sinon, demandez un nouveau code d'activation au secrétariat de votre section.
 
 **La valve numérique.**
@@ -271,7 +271,7 @@ Les communiqués qui vous concernent (institut, filière, promotion, cours) appa
 L'onglet « Examens » affiche vos épreuves jour par jour : heure, cours, modalité et salle, avec les consignes de la session. Une épreuve déplacée porte la mention « Modifiée » et vous recevez une notification. « Ajouter à mon agenda » télécharge un fichier à ouvrir sur votre téléphone : chaque épreuve y apparaît avec un rappel la veille.
 
 **Notes et résultats.**
-« Notes » montre les évaluations publiées par vos enseignants, cours par cours. « Résultats » présente les décisions du jury une fois proclamées, avec votre bulletin, téléchargeable et vérifiable par QR code.
+« Notes » montre les évaluations publiées par vos enseignants, cours par cours. « Résultats » présente les décisions du jury une fois proclamées, avec votre bulletin, téléchargeable et vérifiable par code QR.
 
 *Conseil :* Une note n'apparaît qu'après validation et publication par le secrétariat académique.
 
@@ -281,7 +281,7 @@ L'onglet « Examens » affiche vos épreuves jour par jour : heure, cours, modal
 **Documents officiels.**
 1. Onglet « Documents » › « Demander un document » : choisissez l'attestation ou le relevé souhaité.
 2. Le secrétariat traite la demande ; vous êtes notifié quand le document est émis.
-3. Le document s'imprime depuis votre espace. Son QR code permet à quiconque de vérifier son authenticité.
+3. Le document s'imprime depuis votre espace. Son code QR permet à quiconque de vérifier son authenticité.
 
 **Stages et emplois.**
 Les offres de stage, d'emploi, de bourse ou de formation relayées par l'institut sont publiées sur la page « Stages et emplois » du site. Celles qui concernent votre filière vous sont signalées par une notification.
@@ -294,9 +294,9 @@ La plateforme s'installe sur l'écran d'accueil du téléphone depuis le navigat
 *Pour : Enseignants.* Accepter l'invitation, gérer ses cours : évaluations et notes, supports, devoirs, présences, communiqués et stages.
 
 **Premier accès.**
-1. Vous recevez un email « Votre accès à la plateforme de l'ISPT-Bukavu ».
+1. Vous recevez un courrier électronique « Votre accès à la plateforme de l'ISPT-Bukavu ».
 2. Ouvrez le lien (valable 72 heures) et choisissez votre mot de passe.
-3. Connectez-vous ensuite avec votre adresse email et ce mot de passe.
+3. Connectez-vous ensuite avec votre adresse électronique et ce mot de passe.
 
 *Conseil :* Lien expiré ? Demandez au secrétariat de renvoyer l'invitation depuis la gestion des comptes.
 
@@ -330,10 +330,10 @@ L'onglet « Examens » liste les épreuves de vos cours et celles que vous surve
 
 **Créer son compte.**
 1. Ouvrez « Candidater » depuis le site, lorsqu'une campagne d'admission est ouverte.
-2. Indiquez votre nom, votre adresse email et choisissez un mot de passe.
-3. Ouvrez le lien de confirmation reçu par email, puis « Confirmer mon adresse » : votre dossier s'ouvre.
+2. Indiquez votre nom, votre adresse électronique et choisissez un mot de passe.
+3. Ouvrez le lien de confirmation reçu par courrier électronique, puis « Confirmer mon adresse » : votre dossier s'ouvre.
 
-*Conseil :* Pas d'email ? Regardez dans les courriers indésirables, ou connectez-vous et cliquez sur « Renvoyer le lien ». Le dossier ne peut être déposé qu'une fois l'adresse confirmée.
+*Conseil :* Pas de courrier électronique ? Regardez dans les courriers indésirables, ou connectez-vous et cliquez sur « Renvoyer le lien ». Le dossier ne peut être déposé qu'une fois l'adresse confirmée.
 
 **Constituer le dossier.**
 1. Étape 1 : complétez vos informations (identité, coordonnées, études antérieures, filière souhaitée) et, si la campagne fixe des frais de dossier, le mode et la référence du paiement.
@@ -343,7 +343,7 @@ L'onglet « Examens » liste les épreuves de vos cours et celles que vous surve
 *Conseil :* Les pièces exigées et les frais sont affichés dans votre dossier pour la campagne en cours.
 
 **Suivre sa candidature.**
-Le suivi indique chaque étape de l'instruction. La caisse vérifie votre paiement : votre reçu apparaît alors dans votre espace ; si la référence n'est pas reconnue, vous pouvez la corriger. Si une pièce est refusée, vous êtes prévenu avec le motif. La décision vous est notifiée dans votre espace et par email ; une fois inscrit, vous vous connectez avec le même mot de passe à votre espace étudiant.
+Le suivi indique chaque étape de l'instruction. La caisse vérifie votre paiement : votre reçu apparaît alors dans votre espace ; si la référence n'est pas reconnue, vous pouvez la corriger. Si une pièce est refusée, vous êtes prévenu avec le motif. La décision vous est notifiée dans votre espace et par courrier électronique ; une fois inscrit, vous vous connectez avec le même mot de passe à votre espace étudiant.
 
 ### Guide de l'administration
 
@@ -364,7 +364,7 @@ La page « Mise en service » liste ce qui reste à saisir et renvoie à l'écra
 
 **Étudiants (appariteur, secrétariat).**
 1. « Étudiants » : importez le registre de la promotion (CSV) ou ajoutez les étudiants un à un.
-2. Générez les codes d'activation : imprimez les fiches à découper ou envoyez-les par email.
+2. Générez les codes d'activation : imprimez les fiches à découper ou envoyez-les par courrier électronique.
 3. Les candidats admis s'inscrivent depuis « Admissions » : un matricule leur est attribué.
 
 **Notes et délibérations.**

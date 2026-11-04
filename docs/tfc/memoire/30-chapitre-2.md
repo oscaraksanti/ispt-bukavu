@@ -44,7 +44,7 @@ L'état de l'art présenté ici repose sur la consultation, en novembre 2026, de
 
 Moodle est la plateforme d'apprentissage libre la plus diffusée : son site de statistiques recense plus de 145 000 sites enregistrés dans 235 pays [@moodle-stats]. Il est distribué sous licence GPL version 3 [@moodle-licence]. Canvas et Open edX sont également libres, le second étant orienté vers les cours en ligne à grande échelle [@canvas-lms; @openedx].
 
-Ces plateformes couvrent bien la dimension pédagogique (cours, supports, devoirs, forums), mais pas l'administration académique : elles ne gèrent ni les admissions, ni les frais, ni la délibération, ni la communication officielle ciblée. Le tableau 2.1 résume cette comparaison.
+Ces plateformes couvrent bien la dimension pédagogique (cours, supports, devoirs, forums), mais pas l'administration académique : elles ne gèrent ni les admissions, ni les frais, ni la délibération, ni la communication officielle ciblée. Le tableau 2.1 résume la comparaison de ces familles de solutions.
 
 ::tableau Tableau 2.1 : Comparaison des familles de solutions existantes
 | Solution | Nature | Licence | Couverture | Limite pour l'ISPT-Bukavu |
@@ -68,7 +68,7 @@ Pour situer l'ISPT-Bukavu dans son environnement, nous avons examiné le 3 novem
 | Université Catholique de Bukavu | Non trouvée | Oui (évaluations, frais) | Inaccessible | Sous-domaine d'enseignement en ligne en erreur |
 | Université Officielle de Bukavu | Inaccessible | Inaccessible | Non trouvé | Préinscription annoncée, portail refusant l'accès |
 | Institut Supérieur Pédagogique de Bukavu | Inaccessible | Partiel | Oui (Moodle) | Erreur technique exposée ; témoignages non modérés |
-| Institut Supérieur des Techniques Appliquées | Non trouvée | Non trouvé | Non trouvé | Site inaccessible |
+| Institut Supérieur des Techniques Appliquées (Kinshasa) | Non trouvée | Non trouvé | Non trouvé | Site inaccessible |
 | Institut Supérieur Pédagogique Technique de Kinshasa | Partielle | Non trouvé | Non trouvé | Dossier envoyé par courrier électronique ; contenus de gabarit |
 | Université de Lubumbashi | Partielle (OptSolution) | Oui (OptSolution) | Oui (Moodle) | Trois adresses d'inscription aux messages contradictoires |
 | Université Libre des Pays des Grands Lacs | Partielle | Partiel (suivi des travaux de fin d'études) | Non trouvé | Page vide sans JavaScript |
@@ -104,7 +104,7 @@ Nous retenons donc une application web conçue pour l'institut, construite sur d
 - l'inscription peut se faire en présentiel ou en ligne, et la qualité d'étudiant s'acquiert par le paiement des frais d'études ;
 - les établissements doivent numériser le dossier de scolarité de chaque étudiant, le système manuel coexistant avec le système numérique ;
 - les établissements publics ont l'obligation d'utiliser la solution OptSolution pour leur gestion financière, académique et administrative, et un étudiant absent de la base de données du ministère ne peut obtenir l'homologation de son diplôme ;
-- les frais sont fixés en dollars et payés en francs congolais, et aucun frais non prévu par l'instruction ne peut être perçu ;
+- les frais sont fixés en dollars et payés en francs congolais, et il est interdit de percevoir des frais non prévus par l'instruction ;
 - les résultats des finalistes doivent être transmis par voie électronique dans les soixante-douze heures qui suivent la proclamation, et la proclamation de fin d'année se fait par affichage aux valves.
 
 Les règles d'évaluation et de progression sont fixées par un arrêté ministériel du 28 août 2023 auquel l'instruction renvoie ; son texte n'a pas pu être consulté. Pour cette raison, la plateforme ne fige aucune règle de notation : le seuil de validation, l'arrondi, les mentions et les règles de décision sont des paramètres que l'institut peut ajuster.
@@ -146,7 +146,7 @@ Sur le plan international, la stratégie de l'Union africaine pour l'éducation 
 
 Les constats précédents conduisent à six critères de choix :
 
-1. **la sobriété** : des pages légères, rendues côté serveur, utilisables en 3G sur un téléphone d'entrée de gamme ;
+1. **la sobriété** : des pages légères, rendues côté serveur, utilisables sur une connexion mobile lente et un téléphone d'entrée de gamme ;
 2. **la fiabilité** : un mode dégradé sans écran blanc, des tests automatisés et un déploiement contrôlé ;
 3. **la sécurité** : un contrôle d'accès vérifié côté serveur, des mots de passe hachés selon l'état de l'art et des en-têtes de sécurité ;
 4. **la portabilité** : des standards ouverts permettant de changer d'hébergeur, en particulier pour rapatrier les données en RDC ;
