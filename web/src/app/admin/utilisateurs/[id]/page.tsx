@@ -11,7 +11,8 @@ import {
   modifierRolesCompte,
   renvoyerInvitation,
 } from "@/features/comptes/actions";
-import { LIBELLES_STATUT, rolesAttribuables } from "@/features/comptes/regles";
+import { rolesAttribuablesPar } from "@/features/comptes/catalogue";
+import { compteModifiable, LIBELLES_STATUT } from "@/features/comptes/regles";
 import { db } from "@/lib/db";
 
 /** Page authentifiée : rendue à chaque requête, sans coquille statique. */
@@ -28,17 +29,15 @@ const formatDate = new Intl.DateTimeFormat("fr-FR", {
 export default async function Compte({ params }: PageProps<"/admin/utilisateurs/[id]">) {
   const auteur = await exigerPermission("utilisateurs.gerer");
   const { id } = await params;
+  const attribuables = await rolesAttribuablesPar(auteur);
   const [c, roles] = await Promise.all([
     db.utilisateur.findUnique({ where: { id }, include: { roles: { include: { role: true } } } }),
-    db.role.findMany({
-      where: { code: { in: rolesAttribuables(auteur.roles) } },
-      orderBy: { libelle: "asc" },
-    }),
+    db.role.findMany({ where: { code: { in: attribuables } }, orderBy: { libelle: "asc" } }),
   ]);
   if (!c) notFound();
   const actuels = new Set(c.roles.map((r) => r.role.code));
   const nomComplet = [c.prenom, c.nom, c.postnom].filter(Boolean).join(" ");
-  const protege = actuels.has("super_admin") && !auteur.roles.includes("super_admin");
+  const protege = !compteModifiable(auteur, { id: c.id, roles: [...actuels] });
 
   return (
     <>
@@ -82,7 +81,7 @@ export default async function Compte({ params }: PageProps<"/admin/utilisateurs/
           </dl>
           {c.id !== auteur.id && !protege && (
             <div className="mt-6 flex flex-col items-start gap-3 border-t border-pierre-200 pt-5">
-              {c.statut !== "SUSPENDU" && !c.motDePasseHash && (
+              {c.statut === "INVITE" && !c.motDePasseHash && (
                 <BoutonAction action={renvoyerInvitation.bind(null, c.id)}>
                   Renvoyer l&apos;invitation
                 </BoutonAction>
@@ -112,7 +111,9 @@ export default async function Compte({ params }: PageProps<"/admin/utilisateurs/
         >
           {protege ? (
             <p className="text-sm text-pierre-600">
-              Seul un administrateur technique peut modifier ce compte.
+              {c.id === auteur.id
+                ? "Vos propres rôles ne peuvent être changés que par un autre gestionnaire."
+                : "Seul un administrateur technique peut modifier ce compte."}
             </p>
           ) : (
             <FormulaireAction

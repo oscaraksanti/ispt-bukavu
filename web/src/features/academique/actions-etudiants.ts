@@ -227,10 +227,16 @@ export async function activerCompte(_etat: EtatFormulaire, fd: FormData): Promis
   const ip = await ipDuClient();
   const cle = `activation:${matricule}`;
   const depuis = new Date(Date.now() - 15 * 60 * 1000);
-  const echecs = await db.tentativeConnexion.count({
-    where: { email: cle, reussie: false, creeLe: { gte: depuis } },
-  });
-  if (echecs >= 5) return echec("Trop de tentatives. Réessayez dans quinze minutes.");
+  const [echecsIci, echecsTotal] = await Promise.all([
+    db.tentativeConnexion.count({
+      where: { email: cle, ip, reussie: false, creeLe: { gte: depuis } },
+    }),
+    db.tentativeConnexion.count({
+      where: { email: cle, reussie: false, creeLe: { gte: depuis } },
+    }),
+  ]);
+  if (echecsIci >= 5 || echecsTotal >= 50)
+    return echec("Trop de tentatives. Réessayez dans quinze minutes.");
 
   const profil = await db.profilEtudiant.findUnique({
     where: { matricule },
@@ -249,17 +255,21 @@ export async function activerCompte(_etat: EtatFormulaire, fd: FormData): Promis
   await db.tentativeConnexion.create({ data: { email: cle, ip, reussie: valide } });
   if (!valide) return generique;
 
-  await db.$transaction([
-    db.utilisateur.update({
+  const motDePasseHash = await hash(motDePasse);
+  const consomme = await db.$transaction(async (tx) => {
+    // Usage unique, même en cas de double soumission simultanée.
+    const r = await tx.jetonReinitialisation.updateMany({
+      where: { id: jeton.id, utiliseLe: null },
+      data: { utiliseLe: new Date() },
+    });
+    if (r.count !== 1) return false;
+    await tx.utilisateur.update({
       where: { id: profil.utilisateurId },
-      data: {
-        motDePasseHash: await hash(motDePasse),
-        statut: "ACTIF",
-        derniereConnexion: new Date(),
-      },
-    }),
-    db.jetonReinitialisation.update({ where: { id: jeton.id }, data: { utiliseLe: new Date() } }),
-  ]);
+      data: { motDePasseHash, statut: "ACTIF", derniereConnexion: new Date() },
+    });
+    return true;
+  });
+  if (!consomme) return generique;
   await journaliser({
     auteurId: profil.utilisateurId,
     action: "compte_active",

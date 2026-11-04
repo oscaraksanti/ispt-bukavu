@@ -2,12 +2,13 @@ import { describe, expect, it } from "vitest";
 import {
   destinationSure,
   estBloque,
+  MAX_ECHECS_PAR_COMPTE,
   MAX_ECHECS_PAR_EMAIL,
   MAX_ECHECS_PAR_IP,
   normaliserEmail,
   verifierMotDePasse,
 } from "@/features/auth/regles";
-import { rolesAttribuables } from "@/features/comptes/regles";
+import { compteModifiable, rolesAttribuables } from "@/features/comptes/regles";
 import { cleMedia, nomDeFichierSur, tailleLisible } from "@/features/medias/regles";
 import { urlMedia } from "@/features/medias/url";
 import { PERMISSIONS, ROLES_PAR_DEFAUT, ROLES_PERSONNEL } from "@/lib/permissions";
@@ -28,6 +29,12 @@ describe("limitation des tentatives", () => {
     expect(estBloque(MAX_ECHECS_PAR_EMAIL, 0)).toBe(true);
     expect(estBloque(0, MAX_ECHECS_PAR_IP)).toBe(true);
   });
+
+  it("ne laisse pas un tiers bloquer un compte depuis une autre connexion", () => {
+    // Le tiers a épuisé ses essais depuis son adresse : le compte reste ouvert ailleurs.
+    expect(estBloque(0, 0, MAX_ECHECS_PAR_EMAIL * 2)).toBe(false);
+    expect(estBloque(0, 0, MAX_ECHECS_PAR_COMPTE)).toBe(true);
+  });
 });
 
 describe("redirection après connexion", () => {
@@ -37,6 +44,9 @@ describe("redirection après connexion", () => {
     expect(destinationSure("//exemple.com")).toBe("/admin");
     expect(destinationSure("/\\exemple.com")).toBe("/admin");
     expect(destinationSure(null)).toBe("/admin");
+    expect(destinationSure("/\t/exemple.com")).toBe("/admin");
+    expect(destinationSure("/%09/exemple.com")).toBe("/%09/exemple.com");
+    expect(destinationSure("/etudiant/notes?s=1#a")).toBe("/etudiant/notes?s=1#a");
   });
 
   it("normalise les adresses email", () => {
@@ -63,9 +73,39 @@ describe("rôles et permissions", () => {
   });
 
   it("réserve l'attribution du rôle d'administrateur technique", () => {
-    expect(rolesAttribuables(["secretariat_administratif"])).not.toContain("super_admin");
-    expect(rolesAttribuables(["super_admin"])).toContain("super_admin");
-    expect(rolesAttribuables(["super_admin"])).not.toContain("etudiant");
+    const admin = { roles: ["secretariat_administratif"], permissions: ["utilisateurs.gerer"] };
+    const sa = { roles: ["super_admin"], permissions: [] };
+    expect(rolesAttribuables(admin)).not.toContain("super_admin");
+    expect(rolesAttribuables(sa)).toContain("super_admin");
+    expect(rolesAttribuables(sa)).not.toContain("etudiant");
+  });
+
+  it("n'attribue jamais un rôle plus puissant que son auteur", () => {
+    const catalogue = ROLES_PAR_DEFAUT.map((r) => ({
+      code: r.code,
+      permissions: [...r.permissions],
+    }));
+    const admin = ROLES_PAR_DEFAUT.find((r) => r.code === "secretariat_administratif")!;
+    const permis = rolesAttribuables(
+      { roles: [admin.code], permissions: admin.permissions },
+      catalogue,
+    );
+    expect(permis).toContain("secretariat_administratif");
+    expect(permis).not.toContain("direction");
+    expect(permis).not.toContain("secretariat_academique");
+    expect(permis).toContain("enseignant");
+  });
+
+  it("protège son propre compte et celui de l'administrateur technique", () => {
+    const gestionnaire = { id: "a", roles: ["secretariat_administratif"] };
+    expect(compteModifiable(gestionnaire, { id: "a", roles: ["secretariat_administratif"] })).toBe(
+      false,
+    );
+    expect(compteModifiable(gestionnaire, { id: "b", roles: ["super_admin"] })).toBe(false);
+    expect(compteModifiable(gestionnaire, { id: "b", roles: ["enseignant"] })).toBe(true);
+    expect(
+      compteModifiable({ id: "a", roles: ["super_admin"] }, { id: "a", roles: ["super_admin"] }),
+    ).toBe(true);
   });
 });
 

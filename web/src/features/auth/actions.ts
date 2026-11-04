@@ -2,6 +2,7 @@
 
 import { hash, verify } from "@node-rs/argon2";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { espaceParDefaut } from "@/features/admissions/regles";
@@ -12,7 +13,10 @@ import { empreinte, jetonAleatoire } from "@/lib/securite";
 import {
   normaliserIdentifiant,
   DUREE_JETON_REINITIALISATION_MS,
+  FENETRE_DEMANDES_MS,
   FENETRE_TENTATIVES_MS,
+  MAX_DEMANDES_PAR_EMAIL,
+  MAX_DEMANDES_PAR_IP,
   destinationSure,
   estBloque,
   normaliserEmail,
@@ -47,13 +51,16 @@ export async function seConnecter(_: EtatFormulaire, donnees: FormData): Promise
     const email = normaliserIdentifiant(saisie.data.email);
     const ip = await ipDuClient();
     const depuis = new Date(Date.now() - FENETRE_TENTATIVES_MS);
-    const [echecsEmail, echecsIp] = await Promise.all([
-      db.tentativeConnexion.count({ where: { email, reussie: false, creeLe: { gte: depuis } } }),
+    const [echecsEmailIp, echecsIp, echecsCompte] = await Promise.all([
+      db.tentativeConnexion.count({
+        where: { email, ip, reussie: false, creeLe: { gte: depuis } },
+      }),
       ip
         ? db.tentativeConnexion.count({ where: { ip, reussie: false, creeLe: { gte: depuis } } })
         : 0,
+      db.tentativeConnexion.count({ where: { email, reussie: false, creeLe: { gte: depuis } } }),
     ]);
-    if (estBloque(echecsEmail, echecsIp)) {
+    if (estBloque(echecsEmailIp, echecsIp, echecsCompte)) {
       return {
         erreur: "Trop de tentatives. Pour votre sécurité, réessayez dans quinze minutes.",
       };
@@ -120,23 +127,45 @@ export async function demanderReinitialisation(
       "Si un compte correspond à cette adresse, un lien de réinitialisation vient d'être envoyé. Il est valable une heure.",
   };
   if (!z.string().email().safeParse(email).success) return reponse;
+  const ip = await ipDuClient();
 
-  const utilisateur = await db.utilisateur.findUnique({ where: { email } });
-  if (!utilisateur || utilisateur.statut === "SUSPENDU") return reponse;
+  // Le traitement a lieu après l'envoi de la réponse : son temps de réponse ne
+  // révèle donc pas si l'adresse correspond à un compte.
+  after(async () => {
+    try {
+      const depuis = new Date(Date.now() - FENETRE_DEMANDES_MS);
+      const marque = `reinitialisation:${email}`;
+      const [parEmail, parIp] = await Promise.all([
+        db.tentativeConnexion.count({ where: { email: marque, creeLe: { gte: depuis } } }),
+        ip
+          ? db.tentativeConnexion.count({
+              where: { ip, email: { startsWith: "reinitialisation:" }, creeLe: { gte: depuis } },
+            })
+          : 0,
+      ]);
+      // Limite : une boîte mail ne peut pas être inondée de liens.
+      if (parEmail >= MAX_DEMANDES_PAR_EMAIL || parIp >= MAX_DEMANDES_PAR_IP) return;
+      await db.tentativeConnexion.create({ data: { email: marque, ip, reussie: true } });
 
-  const jeton = jetonAleatoire();
-  await db.jetonReinitialisation.create({
-    data: {
-      jetonHash: empreinte(jeton),
-      utilisateurId: utilisateur.id,
-      expireLe: new Date(Date.now() + DUREE_JETON_REINITIALISATION_MS),
-    },
-  });
-  const lien = `${urlSite()}/reinitialiser/${jeton}`;
-  await envoyerEmail({
-    a: email,
-    sujet: "Réinitialisation de votre mot de passe — ISPT-Bukavu",
-    texte: `Bonjour,\n\nPour choisir un nouveau mot de passe, ouvrez ce lien (valable une heure) :\n${lien}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez ce message.\n\nISPT-Bukavu`,
+      const utilisateur = await db.utilisateur.findUnique({ where: { email } });
+      if (!utilisateur || utilisateur.statut === "SUSPENDU") return;
+      const jeton = jetonAleatoire();
+      await db.jetonReinitialisation.create({
+        data: {
+          jetonHash: empreinte(jeton),
+          utilisateurId: utilisateur.id,
+          expireLe: new Date(Date.now() + DUREE_JETON_REINITIALISATION_MS),
+        },
+      });
+      const lien = `${urlSite()}/reinitialiser/${jeton}`;
+      await envoyerEmail({
+        a: email,
+        sujet: "Réinitialisation de votre mot de passe — ISPT-Bukavu",
+        texte: `Bonjour,\n\nPour choisir un nouveau mot de passe, ouvrez ce lien (valable une heure) :\n${lien}\n\nSi vous n'êtes pas à l'origine de cette demande, ignorez ce message.\n\nISPT-Bukavu`,
+      });
+    } catch (erreur) {
+      console.error("[reinitialisation] échec du traitement", erreur);
+    }
   });
   return reponse;
 }
@@ -155,6 +184,9 @@ export async function definirMotDePasse(
   if (motDePasse !== confirmation)
     return { erreur: "Les deux mots de passe ne correspondent pas." };
 
+  // Les codes d'activation (« activation:… ») passent par /activer, avec le matricule.
+  if (!/^[A-Za-z0-9_-]{20,}$/.test(jeton))
+    return { erreur: "Ce lien n'est plus valable. Demandez-en un nouveau." };
   const enregistrement = await db.jetonReinitialisation.findUnique({
     where: { jetonHash: empreinte(jeton) },
   });
@@ -170,24 +202,29 @@ export async function definirMotDePasse(
     return { erreur: "Ce lien n'est plus valable. Demandez-en un nouveau." };
   }
 
-  await db.$transaction([
-    db.utilisateur.update({
+  const motDePasseHash = await hash(motDePasse);
+  const consomme = await db.$transaction(async (tx) => {
+    // Usage unique garanti même si le lien est soumis deux fois en même temps.
+    const r = await tx.jetonReinitialisation.updateMany({
+      where: { id: enregistrement.id, utiliseLe: null },
+      data: { utiliseLe: new Date() },
+    });
+    if (r.count !== 1) return false;
+    await tx.utilisateur.update({
       where: { id: enregistrement.utilisateurId },
       data: {
-        motDePasseHash: await hash(motDePasse),
+        motDePasseHash,
         statut: "ACTIF",
         emailVerifieLe: new Date(),
         doitChangerMotDePasse: false,
         derniereConnexion: new Date(),
       },
-    }),
-    db.jetonReinitialisation.update({
-      where: { id: enregistrement.id },
-      data: { utiliseLe: new Date() },
-    }),
+    });
     // Toute session ouverte avant le changement est fermée.
-    db.session.deleteMany({ where: { utilisateurId: enregistrement.utilisateurId } }),
-  ]);
+    await tx.session.deleteMany({ where: { utilisateurId: enregistrement.utilisateurId } });
+    return true;
+  });
+  if (!consomme) return { erreur: "Ce lien n'est plus valable. Demandez-en un nouveau." };
   await journaliser({
     auteurId: enregistrement.utilisateurId,
     action: "mot_de_passe_defini",

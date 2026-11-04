@@ -1,6 +1,34 @@
 import type { NextConfig } from "next";
 
+/**
+ * Politique de sécurité du contenu. Next.js insère des scripts en ligne (données
+ * de rendu) : sans nonce — qui rendrait chaque page dynamique et désactiverait
+ * le cache — 'unsafe-inline' reste nécessaire pour les scripts. La politique
+ * interdit en revanche tout script, style ou cadre venu d'un autre site,
+ * l'intégration du site dans un cadre et l'envoi de formulaires ailleurs.
+ */
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "frame-src https://www.openstreetmap.org",
+  "worker-src 'self'",
+  "manifest-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "upgrade-insecure-requests",
+].join("; ");
+
 const entetesSecurite = [
+  ...(process.env.NODE_ENV === "production"
+    ? [{ key: "Content-Security-Policy", value: csp }]
+    : []),
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -9,6 +37,7 @@ const entetesSecurite = [
 ];
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   cacheComponents: true,
   partialPrefetching: true,
   experimental: {

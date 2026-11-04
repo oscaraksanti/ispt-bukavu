@@ -10,7 +10,8 @@ import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
 import { PERMISSIONS, ROLES_PERSONNEL } from "@/lib/permissions";
 import { empreinte, jetonAleatoire } from "@/lib/securite";
-import { rolesAttribuables } from "./regles";
+import { rolesAttribuablesPar } from "./catalogue";
+import { compteModifiable } from "./regles";
 
 /** Crée un lien d'invitation à usage unique et l'envoie par email. */
 async function emettreInvitation(utilisateur: {
@@ -67,7 +68,7 @@ export async function inviterCompte(
   });
   if (!r.success) return echec(r.error.issues[0]?.message ?? "Valeurs invalides.");
   const email = normaliserEmail(r.data.email);
-  const permis = rolesAttribuables(auteur.roles);
+  const permis = await rolesAttribuablesPar(auteur);
   if (r.data.roles.some((code) => !permis.includes(code)))
     return echec("Vous ne pouvez pas attribuer l'un des rôles choisis.");
   if (await db.utilisateur.findUnique({ where: { email } }))
@@ -100,9 +101,19 @@ export async function inviterCompte(
 
 export async function renvoyerInvitation(id: string): Promise<EtatFormulaire> {
   const auteur = await exigerPermission("utilisateurs.gerer");
-  const u = await db.utilisateur.findUnique({ where: { id } });
+  const u = await db.utilisateur.findUnique({
+    where: { id },
+    include: { roles: { include: { role: true } } },
+  });
   if (!u) return echec("Ce compte n'existe plus.");
-  if (u.statut === "SUSPENDU") return echec("Réactivez d'abord ce compte.");
+  if (!compteModifiable(auteur, { id: u.id, roles: u.roles.map((r) => r.role.code) }))
+    return echec("Vous ne pouvez pas modifier ce compte.");
+  // Seul un compte qui n'a encore jamais choisi de mot de passe reçoit une invitation :
+  // sinon le lien permettrait de prendre la place de son titulaire.
+  if (u.statut !== "INVITE" || u.motDePasseHash)
+    return echec(
+      "Ce compte est déjà activé : son titulaire peut utiliser « Mot de passe oublié ».",
+    );
   const { lien, envoye } = await emettreInvitation(u);
   await journaliser({
     auteurId: auteur.id,
@@ -127,7 +138,13 @@ export async function modifierRolesCompte(
   });
   if (!cible) return echec("Ce compte n'existe plus.");
   const actuels = cible.roles.map((r) => r.role.code);
-  const permis = rolesAttribuables(auteur.roles);
+  if (!compteModifiable(auteur, { id, roles: actuels }))
+    return echec(
+      id === auteur.id
+        ? "Vos propres rôles ne peuvent être changés que par un autre gestionnaire."
+        : "Seul un administrateur technique peut modifier ce compte.",
+    );
+  const permis = await rolesAttribuablesPar(auteur);
   // Seuls les rôles que l'auteur peut attribuer peuvent changer ; les autres sont conservés.
   const conserves = actuels.filter((c) => !permis.includes(c));
   const nouveaux = [...new Set([...conserves, ...demandes.filter((c) => permis.includes(c))])];
@@ -214,6 +231,13 @@ export async function modifierPermissionsRole(
     .getAll("permissions")
     .map(String)
     .filter((c) => c in PERMISSIONS);
+  if (!auteur.roles.includes("super_admin")) {
+    // On ne modifie pas son propre rôle et on ne distribue que des permissions qu'on détient.
+    if (auteur.roles.includes(role.code))
+      return echec("Vous ne pouvez pas modifier un rôle que vous détenez vous-même.");
+    if (codes.some((c) => !auteur.permissions.has(c)))
+      return echec("Vous ne pouvez pas accorder une permission que vous ne détenez pas.");
+  }
   // Un rôle sans accès à l'administration ne reçoit pas de permission d'administration.
   if (!ROLES_PERSONNEL.includes(role.code) && role.code !== "enseignant" && codes.length > 0)
     return echec("Ce rôle ne donne pas accès à l'administration.");

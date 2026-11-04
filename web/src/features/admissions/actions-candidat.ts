@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import sharp from "sharp";
 import { z } from "zod";
 import { normaliserEmail, verifierMotDePasse } from "@/features/auth/regles";
-import { ouvrirSession } from "@/features/auth/session";
+import { ipDuClient, ouvrirSession } from "@/features/auth/session";
 import { ETIQUETTES } from "@/features/contenu/lecture";
 import { db } from "@/lib/db";
 import { envoyerEmail, urlSite } from "@/lib/email";
@@ -95,6 +95,25 @@ export async function creerCompteCandidat(
   if (!campagne) return echec("Les candidatures en ligne ne sont pas ouvertes actuellement.");
 
   const email = normaliserEmail(r.data.email);
+  // Limite : 5 comptes candidats par heure depuis une même connexion.
+  const ip = await ipDuClient();
+  if (ip) {
+    const recentes = await db.tentativeConnexion.count({
+      where: {
+        ip,
+        email: { startsWith: "inscription:" },
+        creeLe: { gte: new Date(Date.now() - 60 * 60 * 1000) },
+      },
+    });
+    if (recentes >= 5)
+      return {
+        ...echec("Trop de comptes créés depuis cette connexion. Réessayez dans une heure."),
+        valeurs: saisie,
+      };
+  }
+  await db.tentativeConnexion.create({
+    data: { email: `inscription:${email}`, ip, reussie: true },
+  });
   if (await db.utilisateur.findUnique({ where: { email } }))
     return {
       ...echec(

@@ -6,7 +6,8 @@ import { Case, Champ, Saisie } from "@/components/ui/champs";
 import { Etiquette } from "@/components/ui/elements";
 import { exigerPermission } from "@/features/auth/acces";
 import { inviterCompte } from "@/features/comptes/actions";
-import { LIBELLES_STATUT, rolesAttribuables } from "@/features/comptes/regles";
+import { rolesAttribuablesPar } from "@/features/comptes/catalogue";
+import { LIBELLES_STATUT } from "@/features/comptes/regles";
 import { db } from "@/lib/db";
 
 /** Page authentifiée : rendue à chaque requête, sans coquille statique. */
@@ -25,7 +26,7 @@ export default async function Comptes({ searchParams }: PageProps<"/admin/utilis
   const auteur = await exigerPermission("utilisateurs.gerer");
   const { q } = await searchParams;
   const recherche = typeof q === "string" ? q.trim() : "";
-  const attribuables = rolesAttribuables(auteur.roles);
+  const attribuables = await rolesAttribuablesPar(auteur);
 
   const [roles, comptes] = await Promise.all([
     db.role.findMany({ where: { code: { in: attribuables } }, orderBy: { libelle: "asc" } }),

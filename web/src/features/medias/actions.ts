@@ -97,7 +97,8 @@ export async function modifierMedia(
   });
   if (!r.success) return echec(r.error.issues[0]?.message ?? "Valeurs invalides.");
   const avant = await db.media.findUnique({ where: { id } });
-  if (!avant) return echec("Ce média n'existe plus.");
+  // Les fichiers privés (pièces de candidature, rapports, supports) ne relèvent pas de la médiathèque.
+  if (!avant || avant.cle.startsWith("prive/")) return echec("Ce média n'existe plus.");
   await db.media.update({
     where: { id },
     data: { ...r.data, legende: r.data.legende || null },
@@ -144,7 +145,7 @@ async function utilisations(id: string) {
 export async function supprimerMedia(id: string): Promise<EtatFormulaire> {
   const auteur = await exigerPermission("medias.gerer");
   const media = await db.media.findUnique({ where: { id } });
-  if (!media) return echec("Ce média n'existe plus.");
+  if (!media || media.cle.startsWith("prive/")) return echec("Ce média n'existe plus.");
   if (media.cle.startsWith("public/"))
     return echec(
       "Les photographies officielles livrées avec le site ne peuvent pas être supprimées.",

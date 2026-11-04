@@ -142,6 +142,10 @@ export async function enregistrerCommunique(
 export async function validerCommunique(id: string): Promise<EtatFormulaire> {
   const u = await exigerConnexion("/admin/valve");
   if (!u.permissions.has("valve.valider")) return echec("Validation réservée aux autorités.");
+  const c = await db.communique.findUnique({ where: { id }, select: { statut: true } });
+  if (!c) return echec("Ce communiqué n'existe plus.");
+  if (c.statut !== "EN_VALIDATION")
+    return echec("Seul un communiqué transmis pour validation peut être validé.");
   await db.communique.update({
     where: { id },
     data: { statut: "PUBLIE", publieLe: new Date(), validateurId: u.id },
