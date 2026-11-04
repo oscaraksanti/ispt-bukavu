@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useState, useTransition } from "react";
+import { type ReactNode, useEffect, useState, useTransition } from "react";
 import { Bouton } from "@/components/ui/bouton";
 import type { EtatFormulaire } from "@/lib/etat-formulaire";
 import { MessageEtat } from "./message-etat";
@@ -29,6 +29,13 @@ export function BoutonAction({
   const [enCours, demarrer] = useTransition();
   const [aConfirmer, setAConfirmer] = useState(false);
   const [etat, setEtat] = useState<EtatFormulaire>({ statut: null });
+
+  // Un message de réussite s'efface de lui-même ; une erreur reste affichée.
+  useEffect(() => {
+    if (etat.statut !== "succes") return;
+    const minuterie = setTimeout(() => setEtat({ statut: null }), 5000);
+    return () => clearTimeout(minuterie);
+  }, [etat]);
 
   const executer = () =>
     demarrer(async () => {
@@ -64,7 +71,7 @@ export function BoutonAction({
       >
         {children}
       </Bouton>
-      {etat.statut === "erreur" && <MessageEtat etat={etat} />}
+      {etat.statut && <MessageEtat etat={etat} />}
     </span>
   );
 }
