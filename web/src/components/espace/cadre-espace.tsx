@@ -7,6 +7,7 @@ import { IconeMessages } from "@/components/messagerie/icone-messages";
 import { Cloche } from "@/components/notifications/cloche";
 import { BandeauHorsLigne } from "@/components/pwa/bandeau-hors-ligne";
 import { LienEvitement } from "@/components/ui/elements";
+import { BarreMobile } from "./barre-mobile";
 import { NavigationEspace } from "./navigation-espace";
 
 /** Cadre commun des espaces étudiant et enseignant : en-tête, onglets, contenu. */
@@ -73,9 +74,12 @@ export function CadreEspace({
                 <span className="sr-only">Aide</span>
               </Link>
             )}
-            <IconeMessages href={messages.href} nombre={messages.nombre} />
-            <Cloche href={notifications.href} nombre={notifications.nombre} />
-            <form action={seDeconnecter}>
+            {/* Sur téléphone, messages, notifications et déconnexion passent dans la barre du bas. */}
+            <span className="hidden items-center gap-1 md:flex">
+              <IconeMessages href={messages.href} nombre={messages.nombre} />
+              <Cloche href={notifications.href} nombre={notifications.nombre} />
+            </span>
+            <form action={seDeconnecter} className="hidden md:block">
               <button
                 type="submit"
                 className="inline-flex h-10 items-center gap-2 rounded-xs px-3 text-sm text-pierre-700 hover:bg-pierre-100"
@@ -86,11 +90,22 @@ export function CadreEspace({
             </form>
           </div>
         </div>
-        <NavigationEspace liens={liens} />
+        <div className="hidden md:block">
+          <NavigationEspace liens={liens} />
+        </div>
       </header>
-      <main id="contenu" className="conteneur py-8 lg:py-12">
+      <main id="contenu" className="conteneur py-8 max-md:pb-28 lg:py-12">
         {children}
       </main>
+      <BarreMobile
+        liens={liens}
+        messages={messages}
+        notifications={notifications}
+        compte={compte}
+        aide={aide}
+        autresEspaces={autresEspaces}
+        deconnexion={seDeconnecter}
+      />
     </div>
   );
 }

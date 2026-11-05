@@ -35,7 +35,7 @@ function Cadre({
   conversationOuverte: boolean;
 }) {
   return (
-    <div className="-mx-4 grid h-[calc(100svh-9.5rem)] min-h-[28rem] grid-cols-1 overflow-hidden border-y border-pierre-200 bg-white sm:mx-0 sm:h-[calc(100svh-12rem)] sm:rounded-md sm:border lg:grid-cols-[21rem_minmax(0,1fr)]">
+    <div className="-mx-4 grid h-[calc(100svh-11rem)] min-h-[28rem] grid-cols-1 overflow-hidden border-y border-pierre-200 bg-white sm:mx-0 sm:h-[calc(100svh-12rem)] sm:rounded-md sm:border lg:grid-cols-[21rem_minmax(0,1fr)]">
       <div
         className={cn(
           "min-h-0 min-w-0 flex-col border-r border-pierre-200",
