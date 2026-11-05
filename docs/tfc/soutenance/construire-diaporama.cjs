@@ -3,7 +3,8 @@
  *
  *   TFC_RACINE=<chemin de docs/tfc> node construire-diaporama.cjs <dossier de sortie>
  *
- * Dépendances : pptxgenjs, react, react-dom, react-icons, sharp.
+ * Dépendances : pptxgenjs (et jszip), react, react-dom, react-icons, sharp.
+ * Le thème (palette et polices de la charte) est appliqué par appliquer-theme.cjs.
  * Tous les chiffres viennent du mémoire (docs/tfc/memoire) ; ne rien ajouter qui n'y figure pas.
  */
 const path = require("node:path");
@@ -446,7 +447,7 @@ async function icone(nom, couleur, taille = 256) {
     const m = [
       ["site", "Site institutionnel", "Formations, actualités, agenda, galerie, administrés par l’institut"],
       ["admission", "Admissions en ligne", "Du dépôt du dossier à l’inscription de l’admis"],
-      ["valve", "Valve numérique", "Communiqués ciblés avec accusé de lecture"],
+      ["valve", "Valve et messagerie", "Communiqués ciblés, messagerie, Campus modéré, alertes sur le téléphone"],
       ["espaces", "Espaces personnels", "Candidat, étudiant, enseignant ; pages déjà vues lisibles hors connexion"],
       ["notes", "Notes et délibérations", "Saisie, validation, publication ; règlement paramétrable"],
       ["frais", "Frais académiques", "Barèmes, paiements, reçus numérotés, exonérations"],
@@ -469,7 +470,7 @@ async function icone(nom, couleur, taille = 256) {
   /* ================= 11. Conception UML ================= */
   {
     const s = nouvelle("Une conception modélisée en UML", "4 · Conception", "Conception");
-    const chiffres = [["17", "diagrammes UML"], ["63", "tables principales"], ["8", "acteurs"]];
+    const chiffres = [["17", "diagrammes UML"], ["75", "tables principales"], ["8", "acteurs"]];
     chiffres.forEach(([n, l], i) => {
       const y = 1.9 + i * 1.15;
       texte(s, n, { x: MX, y, w: 1.4, h: 0.85, fontFace: "Cambria", fontSize: 44, bold: true, color: BLEU });
@@ -484,7 +485,7 @@ async function icone(nom, couleur, taille = 256) {
     texte(s, "Cas d’utilisation : étudiants et enseignants (fig. 3.2)", { x: 8.9, y: d.y + d.h + 0.08, w: 3.85, h: 0.3, fontSize: 11, color: PIERRE, align: "center" });
     s.addNotes(
       "≈ 1 min. Exemple de la délibération : préparation, clôture, proclamation ; le règlement appliqué est figé au moment de la clôture, " +
-        "ce qui garantit qu’un bulletin émis ne change plus. Préciser : 63 tables principales plus 2 tables de liaison.",
+        "ce qui garantit qu’un bulletin émis ne change plus. Préciser : 75 tables principales plus 2 tables de liaison.",
     );
   }
 
@@ -518,7 +519,7 @@ async function icone(nom, couleur, taille = 256) {
   /* ================= 13. Sécurité ================= */
   {
     const s = nouvelle("La sécurité vérifiée côté serveur, à chaque requête", "4 · Sécurité", "Conception");
-    const chiffres = [["21", "permissions élémentaires"], ["11", "rôles calqués sur l’organigramme"], ["12", "constats de revue : 11 corrigés, 1 vérifié"]];
+    const chiffres = [["22", "permissions élémentaires"], ["11", "rôles calqués sur l’organigramme"], ["21", "constats en deux revues : 20 corrigés, 1 vérifié"]];
     chiffres.forEach(([n, l], i) => {
       const x = MX + i * 4.12;
       carte(s, x, 1.85, 3.85, 1.45, "Chiffre sécurité " + (i + 1), ENCRE);
@@ -593,8 +594,8 @@ async function icone(nom, couleur, taille = 256) {
   {
     const s = nouvelle("Une qualité mesurée, pas déclarée", "6 · Résultats", "Résultats");
     const stats = [
-      ["150", "tests unitaires réussis"],
-      ["95", "tests de bout en bout, dont des accès interdits"],
+      ["198", "tests unitaires réussis"],
+      ["115", "tests de bout en bout, dont des accès interdits"],
       ["0", "violation WCAG 2.2 AA sur 74 pages"],
       ["16/16", "décisions d’un jury réel reproduites"],
     ];
@@ -628,8 +629,8 @@ async function icone(nom, couleur, taille = 256) {
     const s = nouvelle("Vérification des hypothèses", "6 · Résultats", "Résultats");
     const v = [
       ["H1", "Application web progressive", "Pages de 320 à 602 Ko, contenu affiché en moins de 3 s, lecture hors connexion", "Vérifiée en conditions simulées", SUCCES, "ok"],
-      ["H2", "Plateforme unique, droits vérifiés", "Principaux processus réunis ; 245 tests réussis, dont les tentatives d’accès interdites", "Vérifiée sur le plan technique", SUCCES, "ok"],
-      ["H3", "Architecture portable", "Restauration complète sans perte ; exports des candidatures et des délibérations", "Partiellement vérifiée", ATTENTION, "partiel"],
+      ["H2", "Plateforme unique, droits vérifiés", "Principaux processus réunis ; 313 tests réussis, dont les tentatives d’accès interdites", "Vérifiée sur le plan technique", SUCCES, "ok"],
+      ["H3", "Architecture portable", "Restauration complète sans perte ; exports en tableur des inscriptions, notes et résultats", "Partiellement vérifiée", ATTENTION, "partiel"],
     ];
     v.forEach(([n, t, r, c, coul, ic], i) => {
       const y = 1.85 + i * 1.55;
@@ -667,7 +668,7 @@ async function icone(nom, couleur, taille = 256) {
       "Rapatrier l’hébergement en RDC ou obtenir l’autorisation",
       "Exports au format ministériel, puis échange automatique",
       "Paiement par monnaie mobile",
-      "Surveillance, sauvegarde nocturne en production",
+      "Surveillance de la disponibilité ; règles du Campus validées",
       "Interface en swahili et en anglais",
     ];
     carte(s, MX, 1.85, 5.6, 4.7, "Limites");
@@ -713,7 +714,13 @@ async function icone(nom, couleur, taille = 256) {
 
   fs.mkdirSync(SORTIE, { recursive: true });
   await pres.writeFile({ fileName: FICHIER });
-  const { applyTheme } = require(process.env.PPTX_THEME || "apply_theme.js");
-  await applyTheme(FICHIER, THEME);
+  // Thème PowerPoint (polices et couleurs du document) : appliqué si le module est disponible.
+  try {
+    const { applyTheme } = require(process.env.PPTX_THEME || path.join(__dirname, "appliquer-theme.cjs"));
+    await applyTheme(FICHIER, THEME);
+  } catch (e) {
+    if (e.code !== "MODULE_NOT_FOUND") throw e;
+    console.warn("Thème non appliqué (module de thème introuvable) : polices et couleurs restent celles des diapositives.");
+  }
   console.log("Diaporama :", FICHIER);
 })();

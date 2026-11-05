@@ -39,7 +39,7 @@ L'application ne dépend de l'hébergeur que par des composants standard (Postgr
 ## 3. Conception et données
 
 **Combien de tables, et pourquoi autant ?**
-63 tables principales, plus 2 tables de liaison créées automatiquement, réparties en neuf domaines : comptes, contenus, structure académique, évaluation, valve, admissions, finances, documents et stages, insertion (tableau 3.7).
+75 tables principales, plus 2 tables de liaison créées automatiquement, réparties en onze domaines : comptes, contenus, structure académique, évaluation, valve, admissions, finances, documents et stages, insertion, messagerie, Campus et notifications sur le téléphone (tableau 3.7).
 
 **Comment le moteur de délibération a-t-il été validé ?**
 Sur les notes réelles d'une promotion, préalablement anonymisées : il reproduit les seize décisions du jury (ADM, COMP, rattrapage). Le classeur d'origine mélangeait trois calculs de moyenne ; le règlement par défaut retient une moyenne pondérée par les crédits, à confirmer par l'institut (4.3.2, annexe 4 et 4.6).
@@ -69,8 +69,8 @@ C'est un compromis nécessaire au fonctionnement du cadre d'application et au ma
 
 ## 5. Tests et performance
 
-**Que vérifient vos 245 tests ?**
-150 tests unitaires sur les règles métier (moyennes, délibérations, soldes, transitions d'état, conflits d'examens, sécurité) et 95 tests de bout en bout sur les parcours complets et les accès interdits. Ils s'exécutent automatiquement à chaque modification du code (tableau 4.1).
+**Que vérifient vos 313 tests ?**
+198 tests unitaires sur les règles métier (moyennes, délibérations, soldes, transitions d'état, conflits d'examens, droits de la messagerie et du Campus, sécurité) et 115 tests de bout en bout sur les parcours complets et les accès interdits. Ils s'exécutent automatiquement à chaque modification du code (tableau 4.1).
 
 **Vos mesures de performance sont simulées. Sont-elles représentatives ?**
 Elles utilisent un profil de réseau mobile lent (150 ms de latence, 1,6 Mbit/s) et un processeur ralenti quatre fois. Elles donnent un ordre de grandeur : l'accueil pèse 602 Ko, environ quatre fois moins que la médiane du web mobile. Mais elles ne remplacent pas une mesure sur un téléphone à Bukavu, qui est en perspective (4.3.5, 4.6).
@@ -90,7 +90,7 @@ L'article 201 du Code du numérique exige un hébergement en RDC, sauf autorisat
 Le mémoire retient l'organisation communiquée par l'institut (4 ans, BAC1 à BAC4) et signale l'écart. Dans la plateforme, les niveaux sont des données paramétrables, pas des constantes du code.
 
 **Comment respectez-vous les droits des personnes sur leurs données ?**
-Chacun consulte ses propres données dans son espace ; les actions sensibles sont journalisées ; les sauvegardes sont chiffrées. L'export complet des données d'un étudiant, pour le droit d'accès, reste à développer.
+Chacun consulte ses propres données dans son espace et peut en obtenir l'export complet (page « Mes données »), conformément au droit d'accès ; les actions sensibles sont journalisées ; les sauvegardes sont chiffrées ; les rapports d'erreur ne contiennent aucune donnée personnelle.
 
 ## 7. Exploitation et pérennité
 
@@ -107,7 +107,8 @@ Les pages personnelles déjà consultées restent lisibles hors connexion, et un
 
 - **« La plateforme est-elle déjà utilisée par l'institut ? »** Elle est en ligne, mais attend les données officielles (frais, programme des cours, textes juridiques) pour entrer pleinement en service. Ne pas prétendre à des utilisateurs réels.
 - **« Le paiement en ligne fonctionne-t-il ? »** Non : les paiements sont enregistrés par la caisse ; la monnaie mobile est une perspective.
-- **« Les sauvegardes tournent-elles ? »** La sauvegarde et la restauration ont été testées ; la tâche nocturne attend ses paramètres secrets en production. *[Mettre à jour si elle a été activée d'ici la soutenance.]*
+- **« Les sauvegardes tournent-elles ? »** Oui, chaque nuit depuis le 5 novembre 2026 : la première archive de production a été téléchargée et déchiffrée avec succès, et une restauration complète a été testée dans une base neuve.
+- **« Une messagerie ne risque-t-elle pas de dériver ? »** Les annonces officielles restent sur la valve. Le Campus impose des règles acceptées avant la première publication ; un contenu signalé par trois personnes est masqué en attendant la modération, qui ne voit que les contenus signalés. Ces règles sont proposées et doivent être validées par l'institut.
 
 ## 9. Répétition
 
