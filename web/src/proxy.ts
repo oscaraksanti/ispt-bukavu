@@ -26,5 +26,6 @@ export const config = {
     "/examens/:path*",
     "/documents/:path*",
     "/deliberations/:path*",
+    "/compte/:path*",
   ],
 };

@@ -6,7 +6,7 @@
  *   « hors ligne » ;
  * - l'administration, les actions et les fichiers privés ne sont jamais mis en cache.
  */
-const VERSION = "v5";
+const VERSION = "v6";
 const STATIQUE = `ispt-statique-${VERSION}`;
 const PAGES = `ispt-pages-${VERSION}`;
 const ESPACES = "ispt-espaces";
@@ -31,6 +31,7 @@ const JAMAIS = [
   /^\/mot-de-passe-oublie/,
   // « Mon compte » (appareils connectés) n'est jamais conservé sur l'appareil.
   /^\/(etudiant|enseignant)\/compte/,
+  /^\/compte\//,
   /^\/candidat/,
   /^\/confirmer-email/,
   /^\/affiche/,

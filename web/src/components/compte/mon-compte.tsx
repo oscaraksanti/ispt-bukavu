@@ -1,4 +1,4 @@
-import { KeyRound, MonitorSmartphone, ShieldCheck } from "lucide-react";
+import { Download, KeyRound, MonitorSmartphone, ShieldCheck } from "lucide-react";
 import { BoutonAction } from "@/components/admin/bouton-action";
 import { Panneau } from "@/components/admin/entete-admin";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
@@ -137,6 +137,24 @@ export async function MonCompte({
         <p className="mt-4 text-detail text-pierre-500">
           Un appareil que vous ne reconnaissez pas ? Déconnectez les autres appareils, puis changez
           votre mot de passe.
+        </p>
+      </Panneau>
+
+      <Panneau
+        titre="Vos données personnelles"
+        description="Une copie de tout ce que la plateforme conserve à votre sujet : identité, scolarité, notes publiées, paiements, documents, notifications."
+      >
+        <a
+          href="/compte/donnees"
+          download
+          className="inline-flex h-10 items-center gap-2 rounded-xs border border-pierre-300 px-4 text-sm font-medium text-encre hover:border-encre"
+        >
+          <Download aria-hidden className="size-4" />
+          Télécharger mes données
+        </a>
+        <p className="mt-3 text-detail text-pierre-500">
+          Fichier JSON, lisible par un tableur ou un éditeur de texte. Pour faire corriger une
+          information, adressez-vous au secrétariat de l&apos;institut.
         </p>
       </Panneau>
     </div>

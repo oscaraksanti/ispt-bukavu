@@ -100,6 +100,13 @@ export default async function Compte({ params }: PageProps<"/admin/utilisateurs/
                   Suspendre le compte
                 </BoutonAction>
               )}
+              <a
+                href={`/admin/utilisateurs/${c.id}/donnees`}
+                download
+                className="inline-flex h-9 items-center rounded-xs px-3 text-sm text-ispt-600 underline hover:no-underline"
+              >
+                Exporter ses données personnelles
+              </a>
             </div>
           )}
         </Panneau>
