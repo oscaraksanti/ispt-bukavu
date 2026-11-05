@@ -505,6 +505,14 @@
   margin: 12mm;
 }
 @media print {
+  /* Le nom de page doit être porté par un bloc dans le flux : l'horaire est positionné. */
+  body:has(.horaire-imprimable) {
+    page: paysage;
+  }
+  body:has(.horaire-imprimable),
+  body:has(.horaire-imprimable) .bg-papier {
+    background: white !important;
+  }
   .horaire-imprimable {
     page: paysage;
   }
@@ -522,20 +530,36 @@
   }
 }
 
-/* Documents officiels : A4 portrait, sans marges du navigateur. */
-@page document {
+/* Documents académiques (components/documents/papier.tsx) : A4 sans marges du
+   navigateur ; chaque feuille gère ses propres marges, répétées sur chaque page. */
+@page feuille-portrait {
   size: A4 portrait;
   margin: 0;
 }
-@media print {
-  .document-a4 {
-    page: document;
-  }
+@page feuille-paysage {
+  size: A4 landscape;
+  margin: 0;
 }
-
 @media print {
-  .pv-a4 {
-    page: paysage;
+  .feuille {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    break-after: page;
+  }
+  .feuille:last-of-type {
+    break-after: auto;
+  }
+  .feuille-portrait {
+    page: feuille-portrait;
+  }
+  .feuille-paysage {
+    page: feuille-paysage;
+  }
+  .feuille thead {
+    display: table-header-group;
+  }
+  .feuille tr {
+    break-inside: avoid;
   }
 }
 

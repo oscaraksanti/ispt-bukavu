@@ -111,3 +111,25 @@ Français clair et institutionnel, phrases courtes, vouvoiement. On écrit « D�
 ## 10. Blason
 
 Fichiers vectoriels dans [`brand/svg/`](../../brand/svg) : couleur, monochrome, blanc, avec ou sans devise. Zone de protection autour du blason : au moins la largeur de l'étoile. Taille minimale : 32 px de haut sans devise, 72 px avec devise. Ne jamais déformer, recolorer partiellement ou placer sur une photo chargée sans fond.
+
+## Documents imprimés
+
+Tous les documents académiques (attestations, relevés, bulletins, procès-verbaux,
+reçus, calendriers d'examens, horaire) partagent la papeterie de
+`web/src/components/documents/papier.tsx` :
+
+- **Format** : A4 sans marges du navigateur ; la feuille porte ses marges
+  (17 mm en portrait, 13 mm en paysage), répétées sur chaque page.
+- **En-tête officiel** : blason, pays et tutelle (réglage « Paramètres des
+  documents »), nom de l'institut en Newsreader, sigle espacé, coordonnées sur
+  une ligne, double filet encre avec un trait or centré.
+- **Titre** : Newsreader en capitales espacées ; numéro du document en Plex Mono
+  entre deux filets.
+- **Tableaux** : filets fins (pas de grille), en-têtes en petites capitales,
+  chiffres tabulaires alignés à droite, notes toujours à deux décimales.
+- **Synthèse** : une case par indicateur, la valeur principale sur fond encre.
+- **Sécurité** : fond guilloché très léger, filigrane du blason, micro-texte
+  portant la référence en haut et en bas de page, QR code de vérification.
+- **Validation** : « Fait à », signataires, emplacement du sceau.
+- **États** : tampon « Révoqué », « Annulé », « Brouillon » ou « Document de
+  travail » en travers de la page.

@@ -46,7 +46,7 @@ async function Affiche({ params }: { params: PageProps<"/affiche/[id]">["params"
         </p>
         <BoutonImprimer libelle="Imprimer l'affiche" />
       </div>
-      <article className="document-a4 mx-auto flex min-h-[297mm] w-full max-w-[210mm] flex-col bg-white shadow-lg print:shadow-none">
+      <article className="feuille feuille-portrait mx-auto flex min-h-[297mm] w-full max-w-[210mm] flex-col bg-white shadow-lg print:shadow-none">
         <header className="trame-claire flex items-center gap-6 bg-encre px-[16mm] py-[12mm] text-white">
           <Blason variante="blanc" hauteur={96} decoratif />
           <div>

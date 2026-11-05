@@ -5,13 +5,14 @@ import { BoutonAction } from "@/components/admin/bouton-action";
 import { EnteteAdmin } from "@/components/admin/entete-admin";
 import { BoutonImprimer } from "@/components/horaires/bouton-imprimer";
 import { CelluleHoraire } from "@/components/horaires/cellule-horaire";
-import { Blason } from "@/components/marque/blason";
+import { EnteteOfficiel, TitreDocument } from "@/components/documents/papier";
 import { Liste } from "@/components/ui/champs";
 import { EtatVide } from "@/components/ui/elements";
 import { semestresDuNiveau } from "@/features/academique/regles";
 import { formatJour } from "@/features/actualites/dates";
 import { exigerPermission } from "@/features/auth/acces";
 import { lireInstitut } from "@/features/contenu/lecture";
+import { lireParametresDocuments } from "@/features/documents/parametres";
 import { copierSemainePrecedente, definirCreneau } from "@/features/horaires/actions";
 import {
   ajouterJours,
@@ -34,10 +35,11 @@ export const metadata: Metadata = { title: "Horaires" };
 export default async function Horaires({ searchParams }: PageProps<"/admin/horaires">) {
   await exigerPermission("academique.horaires");
   const { niveau: n, semaine: sm, semestre: se } = await searchParams;
-  const [niveaux, annee, institut] = await Promise.all([
+  const [niveaux, annee, institut, parametres] = await Promise.all([
     db.niveau.findMany({ orderBy: { ordre: "asc" } }),
     db.anneeAcademique.findFirst({ where: { courante: true } }),
     lireInstitut(),
+    lireParametresDocuments(),
   ]);
   const niveau = niveaux.find((x) => x.id === n) ?? niveaux[0];
   const lundi =
@@ -159,22 +161,13 @@ export default async function Horaires({ searchParams }: PageProps<"/admin/horai
       ) : (
         <div className="horaire-imprimable mt-6">
           {/* En-tête du document affiché aux valves, visible à l'impression */}
-          <div className="hidden items-center gap-6 pb-4 print:flex">
-            <Blason hauteur={84} decoratif />
-            <div className="flex-1 text-center leading-tight">
-              <p className="font-sans text-base font-bold uppercase">
-                Enseignement supérieur et universitaire
-              </p>
-              <p className="font-sans text-base font-bold">{institut.nom}</p>
-              <p className="font-sans text-sm font-bold">{institut.sigle.toUpperCase()}</p>
-              {institut.boitePostale && (
-                <p className="font-sans text-sm font-bold">{institut.boitePostale.toUpperCase()}</p>
-              )}
-              <p className="mt-1 font-sans text-sm font-bold uppercase underline">
-                Horaire de la semaine {libelleSemaine(lundi)} / {libelleSemestre(semestre)}{" "}
-                {annee?.libelle}
-              </p>
-            </div>
+          <div className="hidden pb-4 [print-color-adjust:exact] print:block">
+            <EnteteOfficiel institut={institut} tutelle={parametres.entete} compact />
+            <TitreDocument
+              className="mt-3"
+              titre="Horaire de la semaine"
+              sousTitre={`${libelleSemaine(lundi)} · ${libelleSemestre(semestre)} · ${annee?.libelle ?? ""}`}
+            />
           </div>
           <div
             className="overflow-x-auto rounded-md border border-pierre-300 bg-white print:overflow-visible print:rounded-none print:border-black"

@@ -1,15 +1,25 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { BoutonImprimer } from "@/components/horaires/bouton-imprimer";
-import { Blason } from "@/components/marque/blason";
+import {
+  Apercu,
+  EnteteOfficiel,
+  Feuille,
+  PiedFeuille,
+  Rubrique,
+  Signatures,
+  T,
+  TitreDocument,
+} from "@/components/documents/papier";
 import { libellePromotion } from "@/features/academique/regles";
 import { formatHeure, formatJour } from "@/features/actualites/dates";
 import { utilisateurConnecte } from "@/features/auth/acces";
 import { lireInstitut } from "@/features/contenu/lecture";
+import { lireParametresDocuments } from "@/features/documents/parametres";
 import { enHeureBukavu, MODALITES, TYPES_SESSION } from "@/features/examens/regles";
 import { nomComplet, sessionDetaillee } from "@/features/examens/requetes";
 import { libelleJour } from "@/features/horaires/regles";
+import { cn } from "@/lib/cn";
 
 export const instant = false;
 
@@ -23,7 +33,7 @@ async function Calendrier({ params }: { params: PageProps<"/examens/[id]/imprime
   if (!u.permissions.has("academique.horaires")) notFound();
   const s = await sessionDetaillee(id);
   if (!s) notFound();
-  const institut = await lireInstitut();
+  const [institut, parametres] = await Promise.all([lireInstitut(), lireParametresDocuments()]);
   const promotions = new Map<string, { libelle: string; epreuves: typeof s.epreuves }>();
   for (const e of s.epreuves) {
     const p = e.coursOffert.promotion;
@@ -34,78 +44,96 @@ async function Calendrier({ params }: { params: PageProps<"/examens/[id]/imprime
   const liste = [...promotions.values()].sort((a, b) => a.libelle.localeCompare(b.libelle, "fr"));
 
   return (
-    <main className="min-h-svh bg-pierre-100 py-8 print:bg-white print:py-0">
-      <div className="mx-auto mb-6 flex max-w-[210mm] justify-between gap-4 px-4 print:hidden">
-        <p className="text-sm text-pierre-700">
+    <Apercu
+      libelleImprimer="Imprimer"
+      informations={
+        <>
           {liste.length} promotion{liste.length > 1 ? "s" : ""} · une page par promotion.
           {s.statut !== "PUBLIEE" && " Brouillon : non encore publié."}
-        </p>
-        <BoutonImprimer libelle="Imprimer" />
-      </div>
-      {liste.map((p) => (
-        <article
-          key={p.libelle}
-          className="document-a4 mx-auto mb-8 flex min-h-[297mm] w-full max-w-[210mm] break-after-page flex-col bg-white px-[16mm] py-[14mm] text-black shadow-lg print:mb-0 print:shadow-none"
-        >
-          <header className="flex items-center gap-5 border-b-2 border-encre pb-4">
-            <Blason hauteur={72} decoratif />
-            <div className="flex-1 leading-tight">
-              <p className="font-sans text-[11pt] font-bold">{institut.nom}</p>
-              <p className="text-[9pt]">
-                {institut.rue}, {institut.ville}
-              </p>
-            </div>
-          </header>
-          <h1 className="mt-6 text-center font-sans text-[15pt] font-bold uppercase">
-            Calendrier des examens · {p.libelle}
-          </h1>
-          <p className="text-center text-[10.5pt]">
-            {s.libelle} ({TYPES_SESSION[s.type].toLowerCase()}) · année académique {s.annee.libelle}
-          </p>
-          <table className="mt-6 w-full border-collapse text-[10pt]">
-            <thead>
-              <tr className="bg-pierre-100">
-                {["Jour", "Heures", "Cours", "Modalité", "Salle", "Surveillance"].map((t) => (
-                  <th key={t} className="border border-black px-2 py-1.5 text-left">
-                    {t}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {p.epreuves.map((e) => (
-                <tr key={e.id}>
-                  <td className="border border-black px-2 py-1.5 first-letter:uppercase">
-                    {libelleJour(enHeureBukavu(e.debut).jour)}
-                  </td>
-                  <td className="border border-black px-2 py-1.5 whitespace-nowrap">
-                    {formatHeure.format(e.debut)}–{formatHeure.format(e.fin)}
-                  </td>
-                  <td className="border border-black px-2 py-1.5">
-                    {e.coursOffert.cours.intitule}
-                  </td>
-                  <td className="border border-black px-2 py-1.5">{MODALITES[e.modalite]}</td>
-                  <td className="border border-black px-2 py-1.5">{e.salle ?? "—"}</td>
-                  <td className="border border-black px-2 py-1.5 text-[9pt]">
-                    {e.surveillants.map((x) => nomComplet(x.enseignant.utilisateur)).join(", ") ||
-                      "—"}
-                  </td>
+        </>
+      }
+    >
+      {liste.map((p) => {
+        const securite = `${institut.sigle} ${s.libelle} ${p.libelle}`;
+        const jours = [...Map.groupBy(p.epreuves, (e) => enHeureBukavu(e.debut).jour).entries()];
+        return (
+          <Feuille
+            key={p.libelle}
+            securite={securite}
+            tampon={s.statut !== "PUBLIEE" ? { texte: "Brouillon", ton: "attention" } : null}
+          >
+            <EnteteOfficiel institut={institut} tutelle={parametres.entete} />
+            <TitreDocument
+              titre="Calendrier des examens"
+              sousTitre={
+                <>
+                  <strong className="font-semibold text-encre">{p.libelle}</strong> · {s.libelle} (
+                  {TYPES_SESSION[s.type].toLowerCase()}) · année académique {s.annee.libelle}
+                </>
+              }
+            />
+            <table className={cn(T.tableau, "mt-7 text-[9pt]")}>
+              <thead>
+                <tr>
+                  <th className={cn(T.th, "w-[32mm]")}>Jour</th>
+                  <th className={cn(T.th, "w-[24mm]")}>Heures</th>
+                  <th className={T.th}>Cours</th>
+                  <th className={cn(T.th, "w-[22mm]")}>Modalité</th>
+                  <th className={cn(T.th, "w-[22mm]")}>Salle</th>
+                  <th className={cn(T.th, "w-[38mm]")}>Surveillance</th>
                 </tr>
+              </thead>
+              {jours.map(([jour, epreuves]) => (
+                <tbody key={jour} className="break-inside-avoid">
+                  {epreuves.map((e, i) => (
+                    <tr key={e.id}>
+                      {i === 0 && (
+                        <td
+                          rowSpan={epreuves.length}
+                          className={cn(T.td, "font-semibold text-encre first-letter:uppercase")}
+                        >
+                          {libelleJour(jour)}
+                        </td>
+                      )}
+                      <td className={cn(T.td, "font-mono text-[8pt] whitespace-nowrap")}>
+                        {formatHeure.format(e.debut)}–{formatHeure.format(e.fin)}
+                      </td>
+                      <td className={cn(T.td, "font-medium text-encre")}>
+                        {e.coursOffert.cours.intitule}
+                      </td>
+                      <td className={T.td}>{MODALITES[e.modalite]}</td>
+                      <td className={T.td}>{e.salle ?? "—"}</td>
+                      <td className={cn(T.td, "text-[8pt] text-pierre-700")}>
+                        {e.surveillants
+                          .map((x) => nomComplet(x.enseignant.utilisateur))
+                          .join(", ") || "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
               ))}
-            </tbody>
-          </table>
-          {s.consignes && (
-            <div className="mt-6 text-[10pt]">
-              <p className="font-bold">Consignes</p>
-              <p className="mt-1 whitespace-pre-line">{s.consignes}</p>
-            </div>
-          )}
-          <p className="mt-auto pt-8 text-right text-[9pt]">
-            {institut.ville}, le {formatJour.format(s.publieeLe ?? new Date(s.creeLe))}
-          </p>
-        </article>
-      ))}
-    </main>
+            </table>
+            {s.consignes && (
+              <section className="mt-7 break-inside-avoid">
+                <Rubrique titre="Consignes" />
+                <p className="mt-2 text-[9pt] leading-relaxed whitespace-pre-line">{s.consignes}</p>
+              </section>
+            )}
+            <Signatures
+              className="mt-auto pt-10"
+              lieu={institut.ville}
+              date={formatJour.format(s.publieeLe ?? new Date(s.creeLe))}
+              signataires={[{ fonction: "Le secrétariat académique", nom: null }]}
+            />
+            <PiedFeuille
+              securite={securite}
+              gauche={`${institut.statut} · ${institut.acteCreation}`}
+              droite={`${p.epreuves.length} épreuve${p.epreuves.length > 1 ? "s" : ""}`}
+            />
+          </Feuille>
+        );
+      })}
+    </Apercu>
   );
 }
 

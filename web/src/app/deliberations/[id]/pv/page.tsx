@@ -1,17 +1,30 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { BoutonImprimer } from "@/components/horaires/bouton-imprimer";
-import { Blason } from "@/components/marque/blason";
+import {
+  Apercu,
+  EnteteOfficiel,
+  Feuille,
+  Fiche,
+  nombre,
+  note,
+  PiedFeuille,
+  Signatures,
+  Synthese,
+  T,
+  TitreDocument,
+} from "@/components/documents/papier";
 import { formatJour } from "@/features/actualites/dates";
 import { utilisateurConnecte } from "@/features/auth/acces";
 import { lireInstitut } from "@/features/contenu/lecture";
+import { lireParametresDocuments } from "@/features/documents/parametres";
 import {
   INCLURE_DELIBERATION,
   reglementDe,
   titreDeliberation,
 } from "@/features/deliberations/donnees";
 import { decisionFinale, LIBELLES_ARRONDI, LIBELLES_STATUT } from "@/features/deliberations/regles";
+import { cn } from "@/lib/cn";
 import { db } from "@/lib/db";
 
 export const instant = false;
@@ -20,11 +33,6 @@ export const metadata: Metadata = {
   title: "Procès-verbal de délibération",
   robots: { index: false },
 };
-
-const fr = (v: unknown) =>
-  v === null || v === undefined
-    ? "—"
-    : Number(v).toLocaleString("fr-FR", { maximumFractionDigits: 2 });
 
 async function Contenu({ params }: { params: PageProps<"/deliberations/[id]/pv">["params"] }) {
   const u = await utilisateurConnecte();
@@ -39,7 +47,11 @@ async function Contenu({ params }: { params: PageProps<"/deliberations/[id]/pv">
     },
   });
   if (!d) notFound();
-  const [institut, reglement] = await Promise.all([lireInstitut(), reglementDe(d)]);
+  const [institut, reglement, parametres] = await Promise.all([
+    lireInstitut(),
+    reglementDe(d),
+    lireParametresDocuments(),
+  ]);
   const annuelle = d.periode === "ANNUELLE";
   const nom = (r: (typeof d.resultats)[number]) =>
     [r.etudiant.utilisateur.nom, r.etudiant.utilisateur.postnom, r.etudiant.utilisateur.prenom]
@@ -50,81 +62,103 @@ async function Contenu({ params }: { params: PageProps<"/deliberations/[id]/pv">
   const compte = (c: string) => finales.filter((x) => x === c).length;
   const brouillon = d.statut === "PREPARATION";
 
+  const effectif = lignes.length;
+  const admis = compte("ADM") + compte("COMP");
+  const moyennes = lignes.map((r) => (r.moyenne === null ? null : Number(r.moyenne)));
+  const notees = moyennes.filter((m): m is number => m !== null);
+  const moyennePromo = notees.length ? notees.reduce((t, m) => t + m, 0) / notees.length : null;
+  const securite = `${institut.sigle} PV ${titreDeliberation(d)}`;
+
   return (
-    <main className="min-h-svh bg-pierre-100 py-8 print:bg-white print:py-0">
-      <div className="mx-auto mb-6 flex max-w-[297mm] items-center justify-between px-4 print:hidden">
-        <p className="text-sm text-pierre-700">Statut : {LIBELLES_STATUT[d.statut]}</p>
-        <BoutonImprimer libelle="Imprimer ou enregistrer en PDF" />
-      </div>
-      <article className="pv-a4 relative mx-auto w-full max-w-[297mm] bg-white px-[12mm] py-[10mm] text-[9.5pt] text-black shadow-lg print:shadow-none">
-        {brouillon && (
-          <p className="mb-3 border-2 border-attention py-1 text-center text-xs font-bold text-attention uppercase">
-            Document de travail : jury non clôturé
-          </p>
-        )}
-        <header className="flex items-center gap-4 border-b-2 border-encre pb-3">
-          <Blason hauteur={64} decoratif />
-          <div className="flex-1 text-center leading-tight">
-            <p className="font-sans text-[9pt] font-bold uppercase">
-              Enseignement supérieur et universitaire
-            </p>
-            <p className="font-sans text-[11pt] font-bold">{institut.nom}</p>
-            <p className="mt-2 font-sans text-[13pt] font-bold tracking-wide uppercase">
-              Procès-verbal de délibération
-            </p>
-            <p className="text-[10pt]">{titreDeliberation(d)}</p>
-          </div>
-          <div className="w-[64px]" />
-        </header>
-        <table className="mt-4 w-full border-collapse text-[8.5pt]">
+    <Apercu
+      informations={
+        <>
+          Statut : <strong className="text-encre">{LIBELLES_STATUT[d.statut]}</strong>
+        </>
+      }
+    >
+      <Feuille
+        orientation="paysage"
+        securite={securite}
+        tampon={brouillon ? { texte: "Document de travail", ton: "attention" } : null}
+      >
+        <EnteteOfficiel institut={institut} tutelle={parametres.entete} compact />
+        <TitreDocument
+          titre="Procès-verbal de délibération"
+          sousTitre={titreDeliberation(d)}
+          className="mt-4"
+        />
+        <Fiche
+          className="mt-4"
+          colonnes={4}
+          elements={[
+            {
+              libelle: "Promotion",
+              valeur: `${d.promotion.niveau.libelle} · ${d.promotion.filiere.nom}`,
+            },
+            { libelle: "Période", valeur: annuelle ? "Résultat annuel" : `Semestre ${d.semestre}` },
+            { libelle: "Année académique", valeur: d.promotion.annee.libelle },
+            {
+              libelle: "Date du jury",
+              valeur: d.dateJury ? formatJour.format(d.dateJury) : "—",
+            },
+          ]}
+        />
+        <table className={cn(T.tableau, "mt-4 text-[8pt]")}>
           <thead>
-            <tr className="bg-pierre-100">
-              {[
-                "N°",
-                "Matricule",
-                "Nom, post-nom et prénom",
-                "Moyenne /20",
-                "Total points",
-                "Crédits validés",
-                "Mention",
-                "Rang",
-                ...(annuelle ? ["Décision"] : []),
-                "Observations",
-              ].map((h) => (
-                <th key={h} className="border border-black px-1.5 py-1 font-semibold">
-                  {h}
-                </th>
-              ))}
+            <tr>
+              <th className={cn(T.th, "w-8")}>N°</th>
+              <th className={cn(T.th, "w-[24mm]")}>Matricule</th>
+              <th className={T.th}>Nom, post-nom et prénom</th>
+              <th className={cn(T.th, T.droite, "w-[19mm]")}>Moyenne /20</th>
+              <th className={cn(T.th, T.droite, "w-[19mm]")}>Total</th>
+              <th className={cn(T.th, T.centre, "w-[19mm]")}>Crédits</th>
+              <th className={cn(T.th, T.centre, "w-[15mm]")}>Mention</th>
+              <th className={cn(T.th, T.centre, "w-[12mm]")}>Rang</th>
+              {annuelle && <th className={cn(T.th, T.centre, "w-[24mm]")}>Décision</th>}
+              <th className={cn(T.th, "w-[62mm]")}>Observations</th>
             </tr>
           </thead>
           <tbody>
             {lignes.map((r, i) => (
-              <tr key={r.id}>
-                <td className="border border-black px-1.5 py-0.5 text-center">{i + 1}</td>
-                <td className="border border-black px-1.5 py-0.5 text-center font-mono">
-                  {r.etudiant.matricule}
+              <tr key={r.id} className={i % 2 ? "bg-pierre-50/70" : undefined}>
+                <td className={cn(T.td, "text-pierre-500")}>{i + 1}</td>
+                <td className={cn(T.td, "font-mono text-[7.5pt]")}>{r.etudiant.matricule}</td>
+                <td className={cn(T.td, "font-medium text-encre")}>{nom(r)}</td>
+                <td className={cn(T.td, T.droite, "font-semibold text-encre")}>
+                  {note(r.moyenne === null ? null : Number(r.moyenne))}
                 </td>
-                <td className="border border-black px-1.5 py-0.5">{nom(r)}</td>
-                <td className="border border-black px-1.5 py-0.5 text-center font-semibold">
-                  {fr(r.moyenne)}
-                </td>
-                <td className="border border-black px-1.5 py-0.5 text-center">{fr(r.total)}</td>
-                <td className="border border-black px-1.5 py-0.5 text-center">
+                <td className={cn(T.td, T.droite)}>{note(Number(r.total))}</td>
+                <td className={cn(T.td, T.centre)}>
                   {r.creditsValides}/{r.creditsTotal}
                 </td>
-                <td className="border border-black px-1.5 py-0.5 text-center">
-                  {r.mention ?? "—"}
-                </td>
-                <td className="border border-black px-1.5 py-0.5 text-center">{r.rang ?? "—"}</td>
+                <td className={cn(T.td, T.centre, "font-semibold")}>{r.mention ?? "—"}</td>
+                <td className={cn(T.td, T.centre)}>{r.rang ?? "—"}</td>
                 {annuelle && (
-                  <td className="border border-black px-1.5 py-0.5 text-center font-semibold">
-                    {finales[i]}
+                  <td className={cn(T.td, T.centre)}>
+                    <span
+                      className={cn(
+                        "inline-block min-w-[16mm] border-[0.5pt] px-1 py-px text-[7pt] font-semibold tracking-[0.06em]",
+                        finales[i] === "ADM"
+                          ? "border-encre bg-encre text-white"
+                          : finales[i] === "COMP"
+                            ? "border-encre text-encre"
+                            : "border-pierre-400 text-pierre-700",
+                      )}
+                    >
+                      {finales[i] ?? "—"}
+                    </span>
                   </td>
                 )}
-                <td className="border border-black px-1.5 py-0.5 text-[7.5pt]">
-                  {r.decisionJury
-                    ? `Décision du jury (proposée : ${r.decisionProposee}) : ${r.motifJury}`
-                    : ""}
+                <td className={cn(T.td, "text-[7pt] leading-snug text-pierre-700")}>
+                  {r.decisionJury && (
+                    <>
+                      <strong className="font-semibold text-encre">
+                        Décision du jury (proposée : {r.decisionProposee})
+                      </strong>{" "}
+                      : {r.motifJury}
+                    </>
+                  )}
                   {r.coursNonPresentes
                     ? `${r.decisionJury ? " · " : ""}${r.coursNonPresentes} cours non présenté(s)`
                     : ""}
@@ -133,55 +167,61 @@ async function Contenu({ params }: { params: PageProps<"/deliberations/[id]/pv">
             ))}
           </tbody>
         </table>
-        <div className="mt-4 grid grid-cols-[1fr_1fr] gap-6 text-[8.5pt]">
+
+        <div className="mt-5 grid break-inside-avoid grid-cols-[1fr_1.25fr] items-start gap-8">
           <div>
-            <p className="font-semibold">Synthèse</p>
-            <p>
-              Effectif : {lignes.length}
-              {annuelle && (
-                <>
-                  {" "}
-                  · ADM : {compte("ADM")} · COMP : {compte("COMP")} · RATTRAPAGE :{" "}
-                  {compte("RATTRAPAGE")}
-                </>
-              )}
-            </p>
-            <p className="mt-1 text-pierre-700">
-              Règles appliquées : validation à {reglement.seuilValidation}/20 (
+            <Synthese
+              elements={[
+                { libelle: "Effectif", valeur: effectif },
+                ...(annuelle
+                  ? [
+                      { libelle: "ADM", valeur: compte("ADM"), detail: reglement.decisions.ADM },
+                      { libelle: "COMP", valeur: compte("COMP"), detail: reglement.decisions.COMP },
+                      {
+                        libelle: "Rattrapage",
+                        valeur: compte("RATTRAPAGE"),
+                        detail: reglement.decisions.RATTRAPAGE,
+                      },
+                      {
+                        libelle: "Admis",
+                        valeur: effectif ? `${Math.round((admis / effectif) * 100)} %` : "—",
+                        accent: true,
+                      },
+                    ]
+                  : [
+                      {
+                        libelle: "Moyenne de la promotion",
+                        valeur: note(moyennePromo),
+                        accent: true,
+                      },
+                    ]),
+              ]}
+            />
+            <p className="mt-2.5 text-[7pt] leading-snug text-pierre-600">
+              Règles appliquées : validation à {nombre(reglement.seuilValidation)}/20 (
               {reglement.niveauValidation === "UE" ? "par UE" : "par cours"}) ;{" "}
               {reglement.calculMoyenne === "PONDEREE"
                 ? "moyennes pondérées par les crédits"
                 : "moyennes simples"}{" "}
               ; arrondi : {LIBELLES_ARRONDI[reglement.arrondi].toLowerCase()}.
             </p>
-            {annuelle && (
-              <p className="mt-1 text-pierre-700">
-                ADM : {reglement.decisions.ADM} · COMP : {reglement.decisions.COMP} · RATTRAPAGE :{" "}
-                {reglement.decisions.RATTRAPAGE}
-              </p>
-            )}
           </div>
-          <div className="text-right">
-            <p>
-              Fait à {institut.ville}, le{" "}
-              {formatJour.format(d.dateJury ?? d.clotureLe ?? new Date())}
-            </p>
-          </div>
+          <Signatures
+            lieu={institut.ville}
+            date={formatJour.format(d.dateJury ?? d.clotureLe ?? new Date())}
+            signataires={[
+              { fonction: "Le Secrétaire du jury", nom: d.secretaireJury },
+              { fonction: "Le Président du jury", nom: d.presidentJury },
+            ]}
+          />
         </div>
-        <footer className="mt-6 grid grid-cols-2 text-[9.5pt]">
-          <div>
-            <p className="font-semibold">Le Secrétaire du jury</p>
-            <div className="h-[18mm]" />
-            <p className="font-semibold">{d.secretaireJury ?? ""}</p>
-          </div>
-          <div className="text-right">
-            <p className="font-semibold">Le Président du jury</p>
-            <div className="h-[18mm]" />
-            <p className="font-semibold">{d.presidentJury ?? ""}</p>
-          </div>
-        </footer>
-      </article>
-    </main>
+        <PiedFeuille
+          securite={securite}
+          gauche={`Procès-verbal établi par la plateforme de l'${institut.sigle} à partir des notes publiées et des décisions du jury.`}
+          droite={LIBELLES_STATUT[d.statut]}
+        />
+      </Feuille>
+    </Apercu>
   );
 }
 

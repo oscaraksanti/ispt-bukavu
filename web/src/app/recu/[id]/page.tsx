@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
-import { BoutonImprimer } from "@/components/horaires/bouton-imprimer";
-import { Blason } from "@/components/marque/blason";
+import { Apercu } from "@/components/documents/papier";
+import { RecuImprimable } from "@/components/documents/recu";
 import { libellePromotion } from "@/features/academique/regles";
 import { formatJour } from "@/features/actualites/dates";
 import { utilisateurConnecte } from "@/features/auth/acces";
 import { lireInstitut } from "@/features/contenu/lecture";
+import { lireParametresDocuments } from "@/features/documents/parametres";
 import { formatMontant, MODES_PAIEMENT } from "@/features/finances/regles";
 import { db } from "@/lib/db";
 
@@ -33,7 +34,7 @@ async function Recu({ params }: { params: PageProps<"/recu/[id]">["params"] }) {
   });
   if (!p || (p.etudiant.utilisateurId !== u.id && !u.permissions.has("finances.consulter")))
     notFound();
-  const institut = await lireInstitut();
+  const [institut, parametres] = await Promise.all([lireInstitut(), lireParametresDocuments()]);
   const inscription = p.etudiant.inscriptions.find((i) => i.promotion.anneeId === p.anneeId);
   const nom = [
     p.etudiant.utilisateur.nom,
@@ -42,56 +43,50 @@ async function Recu({ params }: { params: PageProps<"/recu/[id]">["params"] }) {
   ]
     .filter(Boolean)
     .join(" ");
-  const lignes: [string, string][] = [
-    ["Reçu de", nom],
-    ["Matricule", p.etudiant.matricule],
-    ["Promotion", inscription ? libellePromotion(inscription.promotion) : "—"],
-    ["Année académique", p.annee.libelle],
-    ["Montant", formatMontant(Number(p.montant), p.devise)],
-    ["Mode de paiement", MODES_PAIEMENT[p.mode]],
-    ["Référence", p.reference],
-    ["Date du paiement", formatJour.format(p.payeLe)],
-    ["Enregistré par", [p.enregistrePar.prenom, p.enregistrePar.nom].filter(Boolean).join(" ")],
-  ];
-
+  const caissier = [p.enregistrePar.prenom, p.enregistrePar.nom].filter(Boolean).join(" ");
   return (
-    <main className="min-h-svh bg-pierre-100 py-10 print:bg-white print:py-0">
-      <div className="mx-auto mb-6 flex max-w-2xl justify-end px-4 print:hidden">
-        <BoutonImprimer libelle="Imprimer le reçu" />
-      </div>
-      <article className="mx-auto max-w-2xl border border-pierre-300 bg-white p-8 sm:p-12 print:border-0">
-        <header className="flex items-center gap-5 border-b border-pierre-300 pb-6">
-          <Blason hauteur={72} decoratif />
-          <div>
-            <p className="font-serif text-xl text-encre">{institut.nom}</p>
-            <p className="text-sm text-pierre-600">
-              {institut.rue}, {institut.ville} · {institut.boitePostale}
-            </p>
-          </div>
-        </header>
-        <div className="mt-8 flex flex-wrap items-baseline justify-between gap-2">
-          <h1 className="text-3xl">Reçu de paiement</h1>
-          <p className="font-mono text-lg text-encre">N° {p.numeroRecu}</p>
-        </div>
-        {p.annuleLe && (
-          <p className="mt-4 border border-erreur px-3 py-2 text-sm font-semibold text-erreur uppercase">
-            Paiement annulé le {formatJour.format(p.annuleLe)} : {p.motifAnnulation}
-          </p>
-        )}
-        <dl className="mt-8 divide-y divide-pierre-200 border-y border-pierre-200">
-          {lignes.map(([k, v]) => (
-            <div key={k} className="grid grid-cols-[11rem_1fr] gap-4 py-2.5 text-sm">
-              <dt className="text-pierre-600">{k}</dt>
-              <dd className="text-pierre-900">{v}</dd>
-            </div>
-          ))}
-        </dl>
-        <p className="mt-8 text-xs leading-relaxed text-pierre-500">
-          Reçu émis par la plateforme de l&apos;{institut.sigle} à partir du paiement enregistré par
-          la caisse. Conservez également le bordereau de la banque ou de l&apos;opérateur.
-        </p>
-      </article>
-    </main>
+    <Apercu
+      libelleImprimer="Imprimer le reçu"
+      informations={
+        <>
+          Reçu N° <span className="font-mono">{p.numeroRecu}</span>
+        </>
+      }
+    >
+      <RecuImprimable
+        institut={institut}
+        tutelle={parametres.entete}
+        titre="Reçu de paiement"
+        numero={p.numeroRecu}
+        synthese={[
+          {
+            libelle: "Montant reçu",
+            valeur: formatMontant(Number(p.montant), p.devise),
+            accent: true,
+          },
+          { libelle: "Mode de paiement", valeur: MODES_PAIEMENT[p.mode] },
+          { libelle: "Date du paiement", valeur: formatJour.format(p.payeLe) },
+        ]}
+        details={[
+          { libelle: "Reçu de", valeur: nom, large: true },
+          { libelle: "Matricule", valeur: p.etudiant.matricule, mono: true },
+          {
+            libelle: "Promotion",
+            valeur: inscription ? libellePromotion(inscription.promotion) : "—",
+          },
+          { libelle: "Année académique", valeur: p.annee.libelle },
+          { libelle: "Référence du paiement", valeur: p.reference, mono: true },
+        ]}
+        mention={`Reçu émis par la plateforme de l'${institut.sigle} à partir du paiement enregistré par la caisse. Conservez également le bordereau de la banque ou de l'opérateur.`}
+        caissier={caissier || null}
+        date={formatJour.format(p.creeLe)}
+        annulation={
+          p.annuleLe
+            ? `Paiement annulé le ${formatJour.format(p.annuleLe)} : ${p.motifAnnulation}`
+            : null
+        }
+      />
+    </Apercu>
   );
 }
 

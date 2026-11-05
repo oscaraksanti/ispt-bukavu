@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { DocumentOfficiel } from "@/components/documents/document-officiel";
-import { BoutonImprimer } from "@/components/horaires/bouton-imprimer";
+import { Apercu } from "@/components/documents/papier";
 import { utilisateurConnecte } from "@/features/auth/acces";
 import { lireInstitut } from "@/features/contenu/lecture";
 import { lireParametresDocuments, signataireDocuments } from "@/features/documents/parametres";
 import { qrSvg } from "@/features/documents/qr";
-import type { DonneesDocument } from "@/features/documents/regles";
+import { type DonneesDocument, LIBELLES_DOCUMENT } from "@/features/documents/regles";
 import { db } from "@/lib/db";
 import { urlSite } from "@/lib/email";
 
@@ -26,25 +26,27 @@ async function Contenu({ params }: { params: PageProps<"/documents/[id]">["param
   const signataire = await signataireDocuments(parametres);
   const url = `${urlSite()}/verifier/${doc.code}`;
   return (
-    <main className="min-h-svh bg-pierre-100 py-8 print:bg-white print:py-0">
-      <div className="mx-auto mb-6 flex max-w-[210mm] justify-end px-4 print:hidden">
-        <BoutonImprimer libelle="Imprimer ou enregistrer en PDF" />
-      </div>
-      <div className="shadow-lg print:shadow-none">
-        <DocumentOfficiel
-          type={doc.type}
-          donnees={doc.donnees as DonneesDocument}
-          code={doc.code}
-          emisLe={doc.emisLe}
-          institut={institut}
-          signataire={signataire}
-          parametres={parametres}
-          qr={await qrSvg(url)}
-          urlVerification={url.replace(/^https?:\/\//, "")}
-          revoque={doc.revoqueLe ? (doc.motifRevocation ?? "révoqué") : null}
-        />
-      </div>
-    </main>
+    <Apercu
+      informations={
+        <>
+          {LIBELLES_DOCUMENT[doc.type]} · N° <span className="font-mono">{doc.code}</span>
+          {doc.revoqueLe && <strong className="ml-2 text-erreur">Révoqué</strong>}
+        </>
+      }
+    >
+      <DocumentOfficiel
+        type={doc.type}
+        donnees={doc.donnees as DonneesDocument}
+        code={doc.code}
+        emisLe={doc.emisLe}
+        institut={institut}
+        signataire={signataire}
+        parametres={parametres}
+        qr={await qrSvg(url)}
+        urlVerification={url.replace(/^https?:\/\//, "")}
+        revoque={doc.revoqueLe ? (doc.motifRevocation ?? "révoqué") : null}
+      />
+    </Apercu>
   );
 }
 
