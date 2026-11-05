@@ -20,6 +20,7 @@ import {
   LONGUEUR_COMMENTAIRE,
   LONGUEUR_PUBLICATION,
   lireMentions,
+  MENTIONS_MAX,
   mentionsRetenues,
   peutVoir,
   PHOTOS_MAX,
@@ -60,6 +61,41 @@ async function visible(id: string, l: ReturnType<typeof lecteurDe>) {
 }
 
 const lien = (base: string, id: string) => `${base}/${id}`;
+
+/** Nom tel qu'il est inséré après « @ » par la liste de suggestions. */
+const nomMention = (c: { prenom: string | null; nom: string; postnom: string | null }) =>
+  [c.prenom, c.nom, c.postnom].filter(Boolean).join(" ");
+
+/**
+ * Mentions vérifiées côté serveur : comptes actifs, nom tiré de la base (et non
+ * du navigateur), jamais une personne qui a bloqué l'auteur ou qu'il a bloquée.
+ */
+async function mentionsVerifiees(contenu: string, brut: unknown, auteurId: string) {
+  const ids = [...new Set(lireMentions(brut).map((m) => m.id))]
+    .filter((id) => id !== auteurId)
+    .slice(0, MENTIONS_MAX * 2);
+  if (!ids.length) return [];
+  const [comptes, blocages] = await Promise.all([
+    db.utilisateur.findMany({
+      where: { id: { in: ids }, statut: "ACTIF" },
+      select: { id: true, prenom: true, nom: true, postnom: true },
+    }),
+    db.blocage.findMany({
+      where: {
+        OR: [
+          { bloqueurId: { in: ids }, bloqueId: auteurId },
+          { bloqueurId: auteurId, bloqueId: { in: ids } },
+        ],
+      },
+      select: { bloqueurId: true, bloqueId: true },
+    }),
+  ]);
+  const exclus = new Set(blocages.flatMap((b) => [b.bloqueurId, b.bloqueId]));
+  return mentionsRetenues(
+    contenu,
+    comptes.filter((c) => !exclus.has(c.id)).map((c) => ({ id: c.id, nom: nomMention(c) })),
+  );
+}
 /** Espace d'où l'auteur d'un contenu le consultera (pour le lien des notifications). */
 async function baseDe(utilisateurId: string) {
   const roles = (
@@ -155,7 +191,7 @@ export async function publier(_e: EtatFormulaire, fd: FormData): Promise<EtatFor
   // Validation préalable : s'applique aux étudiants ; le personnel et les enseignants publient directement.
   const enAttente = validationPrealable && !profil.personnel && !profil.enseignant;
 
-  const mentions = mentionsRetenues(contenu, lireMentions(fd.get("mentions")));
+  const mentions = await mentionsVerifiees(contenu, fd.get("mentions"), u.id);
   const p = await db.publication.create({
     data: {
       auteurId: u.id,
@@ -227,9 +263,16 @@ export async function modifierPublication(
   _e: EtatFormulaire,
   fd: FormData,
 ): Promise<EtatFormulaire> {
-  const { u } = await lecteur();
+  const { u, profil } = await lecteur();
   const p = await db.publication.findUnique({ where: { id } });
   if (!p || p.auteurId !== u.id || p.supprimeLe) return echec("Publication introuvable.");
+  // Un contenu masqué ou en cours d'examen ne peut pas être réécrit (sinon la
+  // modération jugerait un texte différent de celui qui a été signalé).
+  const enExamen = await db.signalementCampus.count({
+    where: { publicationId: id, traiteLe: null },
+  });
+  if (p.masqueLe || enExamen)
+    return echec("Cette publication est en cours d'examen par la modération.");
   const contenu = String(fd.get("contenu") ?? "").trim();
   const avecPhotos = (await db.publicationMedia.count({ where: { publicationId: id } })) > 0;
   const probleme = verifierTexte(contenu, LONGUEUR_PUBLICATION, avecPhotos);
@@ -237,17 +280,41 @@ export async function modifierPublication(
   // Les mentions déjà notifiées restent valables si leur nom figure encore dans le texte.
   const restantes = await db.utilisateur.findMany({
     where: { id: { in: p.mentions } },
-    select: { id: true, prenom: true, nom: true },
+    select: { id: true, prenom: true, nom: true, postnom: true },
   });
   const mentions = restantes
-    .filter((m) => contenu.includes(`@${[m.prenom, m.nom].filter(Boolean).join(" ")}`))
+    .filter(
+      (m) =>
+        contenu.includes(`@${nomMention(m)}`) ||
+        contenu.includes(`@${[m.prenom, m.nom].filter(Boolean).join(" ")}`),
+    )
     .map((m) => m.id);
+  // Validation préalable : une publication modifiée par un étudiant repasse par la modération.
+  const { validationPrealable } = await lireReglagesCampus();
+  const aRevalider =
+    validationPrealable && !profil.personnel && !profil.enseignant && p.statut === "PUBLIEE";
   await db.publication.update({
     where: { id },
-    data: { contenu, modifieLe: new Date(), mentions },
+    data: {
+      contenu,
+      modifieLe: new Date(),
+      mentions,
+      ...(aRevalider ? { statut: "EN_ATTENTE" as const } : {}),
+    },
   });
+  if (aRevalider)
+    await notifier(await moderateurs(), {
+      type: "MODERATION",
+      titre: "Publication modifiée à valider sur le Campus",
+      message: contenu.slice(0, 120) || "Publication avec photos",
+      lien: "/admin/messagerie/signalements#campus-a-valider",
+    });
   refresh();
-  return succes("Publication modifiée.");
+  return succes(
+    aRevalider
+      ? "Publication modifiée : elle reparaîtra après validation par la modération."
+      : "Publication modifiée.",
+  );
 }
 
 export async function supprimerPublication(id: string): Promise<EtatFormulaire> {
@@ -333,7 +400,7 @@ export async function commenter(
     parentId = parent.parentId ?? parent.id;
     parentAuteur = parent.auteurId;
   }
-  const mentions = mentionsRetenues(contenu, lireMentions(fd.get("mentions")));
+  const mentions = await mentionsVerifiees(contenu, fd.get("mentions"), u.id);
   await db.commentaire.create({
     data: { publicationId, auteurId: u.id, contenu, parentId, mentions: mentions.map((m) => m.id) },
   });
@@ -418,16 +485,20 @@ export async function signalerContenu(
   if (!(motif in MOTIFS_SIGNALEMENT)) return echec("Choisissez un motif.");
   let publicationId: string;
   let auteurId: string | null;
+  let extrait: string | null;
   if (type === "publication") {
     const p = await visible(id, l);
     if (!p) return echec("Publication introuvable.");
     publicationId = p.id;
     auteurId = p.auteurId;
+    extrait = p.contenu.slice(0, 2000) || null;
   } else {
     const c = await db.commentaire.findUnique({ where: { id } });
-    if (!c || !(await visible(c.publicationId, l))) return echec("Commentaire introuvable.");
+    if (!c || c.supprimeLe || !(await visible(c.publicationId, l)))
+      return echec("Commentaire introuvable.");
     publicationId = c.publicationId;
     auteurId = c.auteurId;
+    extrait = c.contenu.slice(0, 2000) || null;
   }
   if (auteurId === u.id) return echec("Vous ne pouvez pas signaler votre propre contenu.");
   const cible = `${type}:${id}`;
@@ -440,6 +511,7 @@ export async function signalerContenu(
       cible,
       auteurId: u.id,
       motif,
+      extrait,
       ...(type === "publication" ? { publicationId } : { commentaireId: id }),
     },
   });

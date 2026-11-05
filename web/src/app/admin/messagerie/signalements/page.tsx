@@ -153,7 +153,10 @@ export default async function Signalements() {
                 }
               >
                 <blockquote className="border-l-2 border-pierre-300 pl-4 whitespace-pre-wrap text-pierre-900">
-                  {c?.contenu || "(contenu supprimé par son auteur ou photos seulement)"}
+                  {c?.contenu ||
+                    (liste.find((s) => s.extrait)?.extrait
+                      ? `Contenu supprimé par son auteur. Copie conservée au signalement :\n${liste.find((s) => s.extrait)?.extrait}`
+                      : "(contenu supprimé par son auteur ou photos seulement)")}
                 </blockquote>
                 <ul className="mt-4 flex flex-wrap gap-2 text-detail">
                   {liste.map((s) => (
@@ -197,7 +200,9 @@ export default async function Signalements() {
           >
             <blockquote className="border-l-2 border-pierre-300 pl-4 whitespace-pre-wrap text-pierre-900">
               {m.supprimeLe
-                ? "(message supprimé par son auteur)"
+                ? m.signalements.find((s) => s.extrait)?.extrait
+                  ? `Message supprimé par son auteur. Copie conservée au signalement :\n${m.signalements.find((s) => s.extrait)?.extrait}`
+                  : "(message supprimé par son auteur)"
                 : m.contenu || (m.media ? `Pièce jointe : ${m.media.nomFichier}` : "")}
             </blockquote>
             <ul className="mt-4 flex flex-wrap gap-2 text-detail">
@@ -229,7 +234,7 @@ export default async function Signalements() {
             {traites.map((s) => (
               <li key={s.id} className="flex items-center gap-4 px-5 py-3">
                 <span className="min-w-0 flex-1 truncate text-pierre-700">
-                  {s.message.contenu || "(pièce jointe ou message retiré)"}
+                  {s.message.contenu || s.extrait || "(pièce jointe ou message retiré)"}
                 </span>
                 <span className="shrink-0 text-detail text-pierre-500">
                   {s.decision === "MASQUE" ? "Masqué" : "Classé"} · {formatJour.format(s.traiteLe!)}

@@ -115,6 +115,7 @@ model Session {
   creeLe        DateTime    @default(now())
   ip            String?
   agent         String?
+  abonnementsPush AbonnementPush[]
 
   @@index([utilisateurId])
 }
@@ -1324,6 +1325,8 @@ model SignalementMessage {
   auteurId    String
   auteur      Utilisateur @relation("SignalementsAuteur", fields: [auteurId], references: [id], onDelete: Cascade)
   motif       String
+  /// Copie du contenu au moment du signalement (preuve conservée si l'auteur le supprime).
+  extrait     String?
   creeLe      DateTime    @default(now())
   traiteLe    DateTime?
   traiteParId String?
@@ -1458,6 +1461,8 @@ model SignalementCampus {
   auteurId      String
   auteur        Utilisateur  @relation("SignalementsCampusAuteur", fields: [auteurId], references: [id], onDelete: Cascade)
   motif         String
+  /// Copie du contenu au moment du signalement (preuve conservée si l'auteur le supprime).
+  extrait       String?
   creeLe        DateTime     @default(now())
   traiteLe      DateTime?
   traiteParId   String?
@@ -1477,8 +1482,13 @@ model AbonnementPush {
   p256dh         String
   auth           String
   agent          String?
+  /// Session qui a activé l'abonnement : sa fermeture (déconnexion, changement de
+  /// mot de passe, suspension, expiration) supprime l'abonnement.
+  sessionId      String?
+  session        Session?    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   creeLe         DateTime    @default(now())
   dernierEnvoiLe DateTime?
 
   @@index([utilisateurId])
+  @@index([sessionId])
 }

@@ -75,3 +75,48 @@ test("la purge planifiée refuse tout appel sans le secret", async ({ request })
     expect([401, 503]).toContain(r.status());
   }
 });
+
+test("la déconnexion supprime l'abonnement aux notifications de l'appareil", async ({
+  browser,
+}) => {
+  const url = process.env.DIRECT_URL ?? process.env.DATABASE_URL ?? "";
+  if (!url || /supabase|neon\.tech/.test(url)) throw new Error("Base de test requise.");
+  const { Client } = await import("pg");
+  const { createHash, randomBytes } = await import("node:crypto");
+  const contexte = await browser.newContext();
+  const page = await contexte.newPage();
+  await seConnecter(page, D.comptes.etudiantA);
+  const jeton = (await contexte.cookies()).find((c) => c.name === "ispt_session")?.value;
+  expect(jeton).toBeTruthy();
+  const endpoint = `https://fcm.googleapis.com/fcm/send/e2e-${randomBytes(6).toString("hex")}`;
+  const c = new Client({ connectionString: url });
+  await c.connect();
+  try {
+    // Abonnement de cet appareil, tel que l'enregistre la page « Mon compte ».
+    await c.query(
+      `INSERT INTO "AbonnementPush" (id, "utilisateurId", "sessionId", endpoint, p256dh, auth)
+       SELECT $1, s."utilisateurId", s.id, $2, $3, $4 FROM "Session" s WHERE s."jetonHash" = $5`,
+      [
+        `e2e${randomBytes(8).toString("hex")}`,
+        endpoint,
+        "B".repeat(60),
+        "a".repeat(16),
+        createHash("sha256").update(jeton!).digest("hex"),
+      ],
+    );
+    const compter = async () =>
+      Number(
+        (await c.query(`SELECT count(*) FROM "AbonnementPush" WHERE endpoint = $1`, [endpoint]))
+          .rows[0].count,
+      );
+    expect(await compter()).toBe(1);
+    await page.goto("/etudiant");
+    await page.waitForLoadState("networkidle");
+    await page.getByRole("button", { name: "Se déconnecter" }).first().click();
+    await page.waitForURL(/\/connexion/);
+    expect(await compter()).toBe(0);
+  } finally {
+    await c.end();
+    await contexte.close();
+  }
+});

@@ -59,3 +59,22 @@ describe("relaisSentry", () => {
     expect(relaisSentry(enveloppe("https://k@h/abc"), "https://k@h/abc")).toBeNull();
   });
 });
+
+describe("nettoyerTransaction", () => {
+  it("masque les jetons dans les mesures de performance", async () => {
+    const { nettoyerTransaction } = await import("@/lib/surveillance");
+    const t = nettoyerTransaction({
+      transaction: "GET /reinitialiser/abc",
+      user: { id: "u" },
+      request: { url: "https://x.org/anciens/retrait/tok?a=1", cookies: { s: "1" } },
+      spans: [{ description: "GET /confirmer-email/zz", data: { "http.url": "/activer/c1" } }],
+    });
+    expect(t.transaction).toBe("GET /reinitialiser/[jeton]");
+    expect(t.user).toBeUndefined();
+    expect(t.request).toEqual({ url: "https://x.org/anciens/retrait/[jeton]" });
+    expect(t.spans?.[0]).toEqual({
+      description: "GET /confirmer-email/[jeton]",
+      data: { "http.url": "/activer/[jeton]" },
+    });
+  });
+});

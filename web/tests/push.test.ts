@@ -46,3 +46,34 @@ describe("notifications sur le téléphone", () => {
     expect(abonnementPerime(500)).toBe(false);
   });
 });
+
+describe("services de notification autorisés", () => {
+  it("accepte les services des navigateurs", async () => {
+    const { serviceAutorise } = await import("@/features/push/regles");
+    for (const u of [
+      "https://fcm.googleapis.com/fcm/send/abc",
+      "https://updates.push.services.mozilla.com/wpush/v2/abc",
+      "https://web.push.apple.com/QGx",
+      "https://wns2-par02p.notify.windows.com/w/?token=x",
+    ])
+      expect(serviceAutorise(u)).toBe(true);
+  });
+  it("refuse toute autre adresse (relais vers un site tiers ou interne)", async () => {
+    const { serviceAutorise, lireAbonnement } = await import("@/features/push/regles");
+    for (const u of [
+      "https://exemple.org/push/abc",
+      "https://fcm.googleapis.com.exemple.org/x",
+      "https://fcm.googleapis.com:8443/x",
+      "https://user@fcm.googleapis.com/x",
+      "http://fcm.googleapis.com/x",
+      "https://169.254.169.254/latest",
+    ])
+      expect(serviceAutorise(u)).toBe(false);
+    expect(
+      lireAbonnement({
+        endpoint: "https://exemple.org/push/abcdefghijkl",
+        keys: { p256dh: "a".repeat(40), auth: "b".repeat(16) },
+      }),
+    ).toBeNull();
+  });
+});

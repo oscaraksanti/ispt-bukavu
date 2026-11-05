@@ -21,6 +21,32 @@ export type ProfilMessagerie = {
 export const LONGUEUR_MAX = 4000;
 /** Au-delà, l'envoi est refusé pendant une minute (protection contre les envois en rafale). */
 export const ENVOIS_PAR_MINUTE = 20;
+/** Pièces jointes au plus par compte et par 24 heures (protège l'espace de stockage). */
+export const PIECES_PAR_JOUR = 20;
+
+/**
+ * Membre actuel d'une conversation de groupe, d'après ses inscriptions et ses
+ * affectations (et non d'après la liste des participants, qui peut être en retard).
+ */
+export function membreDuGroupe(
+  profil: { promotions: string[]; coursSuivis: string[]; coursEnseignes: string[] },
+  conversation: { type: string; promotionId: string | null; coursOffertId: string | null },
+) {
+  if (conversation.type === "PROMOTION")
+    return !!conversation.promotionId && profil.promotions.includes(conversation.promotionId);
+  if (conversation.type === "COURS" && conversation.coursOffertId)
+    return (
+      profil.coursEnseignes.includes(conversation.coursOffertId) ||
+      profil.coursSuivis.includes(conversation.coursOffertId)
+    );
+  return false;
+}
+
+/** Extrait conservé pour la modération lors d'un signalement. */
+export function extraitSignale(contenu: string, piece?: string | null) {
+  const texte = contenu.trim().slice(0, 2000);
+  return [texte, piece ? `[Pièce jointe : ${piece}]` : ""].filter(Boolean).join("\n") || null;
+}
 
 export function aAccesMessagerie(
   p: Pick<ProfilMessagerie, "personnel" | "enseignant" | "etudiant">,

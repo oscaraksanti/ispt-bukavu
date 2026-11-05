@@ -27,8 +27,13 @@ export async function envoyerPush(utilisateurIds: Iterable<string>, contenu: Con
   if (!pushActive || !ids.length) return 0;
   configurer();
   try {
+    // Comptes actifs seulement, et appareils dont la session est encore ouverte.
     const abonnements = await db.abonnementPush.findMany({
-      where: { utilisateurId: { in: ids } },
+      where: {
+        utilisateurId: { in: ids },
+        utilisateur: { statut: "ACTIF" },
+        session: { expireLe: { gt: new Date() } },
+      },
     });
     const charge = chargeUtile(contenu);
     const resultats = await Promise.allSettled(

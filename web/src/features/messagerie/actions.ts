@@ -19,9 +19,12 @@ import { messageClient } from "./requetes";
 import {
   clePrivee,
   ENVOIS_PAR_MINUTE,
+  extraitSignale,
+  membreDuGroupe,
   MOTIFS_SIGNALEMENT,
   normaliserContenu,
   peutEcrireA,
+  PIECES_PAR_JOUR,
   peutPublier,
   verifierContenu,
 } from "./regles";
@@ -117,6 +120,18 @@ export async function envoyerMessage(conversationId: string, fd: FormData): Prom
 
   let mediaId: string | null = null;
   if (avecPiece) {
+    const pieces = await db.message.count({
+      where: {
+        auteurId: profil.id,
+        mediaId: { not: null },
+        creeLe: { gte: new Date(Date.now() - 86_400_000) },
+      },
+    });
+    if (pieces >= PIECES_PAR_JOUR)
+      return {
+        ok: false,
+        erreur: `${PIECES_PAR_JOUR} pièces jointes par jour au plus. Envoyez du texte ou réessayez demain.`,
+      };
     const r = await enregistrerPiece(fichier as File, conversationId, profil.id);
     if (!r.media) return { ok: false, erreur: r.erreur ?? "Pièce jointe refusée." };
     mediaId = r.media.id;
@@ -140,7 +155,7 @@ export async function envoyerMessage(conversationId: string, fd: FormData): Prom
   // Notification sur le téléphone des autres participants (hors sourdine), après la réponse.
   const auteurNom = [u.prenom, u.nom].filter(Boolean).join(" ");
   after(async () => {
-    const destinataires = await db.participantConversation.findMany({
+    const participants = await db.participantConversation.findMany({
       where: {
         conversationId,
         quitteLe: null,
@@ -149,8 +164,14 @@ export async function envoyerMessage(conversationId: string, fd: FormData): Prom
       },
       select: { utilisateurId: true },
     });
+    // Appartenance recalculée (comptes actifs, inscriptions et affectations du
+    // moment) : un ancien membre qui ne se reconnecte plus ne reçoit plus rien.
+    const profils = await profilsMessagerie(participants.map((d) => d.utilisateurId));
+    const destinataires = [...profils.values()].filter(
+      (p) => conversation.type === "PRIVEE" || membreDuGroupe(p, conversation),
+    );
     await envoyerPush(
-      destinataires.map((d) => d.utilisateurId),
+      destinataires.map((d) => d.id),
       {
         titre:
           conversation.type === "PRIVEE"
@@ -206,8 +227,11 @@ export async function supprimerMessage(messageId: string): Promise<EtatFormulair
 export async function signalerMessage(messageId: string, motif: string): Promise<EtatFormulaire> {
   const { profil } = await exigerMessagerie("/");
   if (!(motif in MOTIFS_SIGNALEMENT)) return echec("Choisissez un motif.");
-  const m = await db.message.findUnique({ where: { id: messageId } });
-  if (!m || !(await accesConversation(profil, m.conversationId)))
+  const m = await db.message.findUnique({
+    where: { id: messageId },
+    include: { media: { select: { nomFichier: true } } },
+  });
+  if (!m || m.supprimeLe || !(await accesConversation(profil, m.conversationId)))
     return echec("Message introuvable.");
   if (m.auteurId === profil.id) return echec("Vous ne pouvez pas signaler votre propre message.");
   const existant = await db.signalementMessage.findUnique({
@@ -215,7 +239,12 @@ export async function signalerMessage(messageId: string, motif: string): Promise
   });
   if (existant) return succes("Vous avez déjà signalé ce message. La modération l'examine.");
   const s = await db.signalementMessage.create({
-    data: { messageId, auteurId: profil.id, motif },
+    data: {
+      messageId,
+      auteurId: profil.id,
+      motif,
+      extrait: extraitSignale(m.contenu, m.media?.nomFichier),
+    },
   });
   await journaliser({
     auteurId: profil.id,

@@ -26,11 +26,41 @@ export function abonnementPerime(statut: number | undefined) {
   return statut === 404 || statut === 410;
 }
 
+/** Appareils abonnés au plus par compte (les plus anciens sont remplacés). */
+export const ABONNEMENTS_MAX = 5;
+
+/**
+ * Services de notification des navigateurs (Chrome, Edge, Firefox, Safari) :
+ * le serveur n'envoie jamais de requête vers une autre adresse.
+ */
+const SERVICES_PUSH = [
+  /^fcm\.googleapis\.com$/,
+  /^android\.googleapis\.com$/,
+  /^[a-z0-9-]+\.push\.services\.mozilla\.com$/,
+  /^[a-z0-9.-]+\.push\.apple\.com$/,
+  /^[a-z0-9.-]+\.notify\.windows\.com$/,
+];
+
+export function serviceAutorise(endpoint: string) {
+  try {
+    const u = new URL(endpoint);
+    return (
+      u.protocol === "https:" &&
+      !u.port &&
+      !u.username &&
+      SERVICES_PUSH.some((r) => r.test(u.hostname))
+    );
+  } catch {
+    return false;
+  }
+}
+
 /** Données envoyées par le navigateur lors de l'abonnement, vérifiées. */
 export function lireAbonnement(v: unknown) {
   if (!v || typeof v !== "object") return null;
   const a = v as { endpoint?: unknown; keys?: { p256dh?: unknown; auth?: unknown } };
   if (typeof a.endpoint !== "string" || !/^https:\/\/[^\s]{10,1000}$/.test(a.endpoint)) return null;
+  if (!serviceAutorise(a.endpoint)) return null;
   const p256dh = a.keys?.p256dh;
   const auth = a.keys?.auth;
   if (typeof p256dh !== "string" || typeof auth !== "string") return null;

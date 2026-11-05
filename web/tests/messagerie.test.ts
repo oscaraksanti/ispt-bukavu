@@ -109,3 +109,27 @@ describe("contenu", () => {
     expect(quandCourt(new Date("2026-10-01T08:30:00Z"), maintenant)).toBe("1 oct.");
   });
 });
+
+describe("sécurité de la messagerie", () => {
+  it("l'appartenance à un groupe suit les inscriptions et affectations du moment", async () => {
+    const { membreDuGroupe } = await import("@/features/messagerie/regles");
+    const etudiant = { promotions: ["p1"], coursSuivis: ["c1"], coursEnseignes: [] };
+    const ancien = { promotions: [], coursSuivis: [], coursEnseignes: [] };
+    const groupeP = { type: "PROMOTION", promotionId: "p1", coursOffertId: null };
+    const groupeC = { type: "COURS", promotionId: null, coursOffertId: "c1" };
+    expect(membreDuGroupe(etudiant, groupeP)).toBe(true);
+    expect(membreDuGroupe(etudiant, groupeC)).toBe(true);
+    expect(membreDuGroupe(ancien, groupeP)).toBe(false);
+    expect(membreDuGroupe({ ...ancien, coursEnseignes: ["c1"] }, groupeC)).toBe(true);
+    expect(
+      membreDuGroupe(etudiant, { type: "PRIVEE", promotionId: null, coursOffertId: null }),
+    ).toBe(false);
+  });
+  it("le signalement garde une copie du contenu", async () => {
+    const { extraitSignale } = await import("@/features/messagerie/regles");
+    expect(extraitSignale("  Texte  ")).toBe("Texte");
+    expect(extraitSignale("", "copie.pdf")).toBe("[Pièce jointe : copie.pdf]");
+    expect(extraitSignale("")).toBeNull();
+    expect(extraitSignale("x".repeat(3000))?.length).toBe(2000);
+  });
+});

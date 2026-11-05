@@ -48,6 +48,36 @@ export function nettoyerEvenement(evenement: ErrorEvent): ErrorEvent {
   return evenement;
 }
 
+/**
+ * Mesures de performance (transactions) : `beforeSend` ne s'y applique pas, on
+ * masque donc aussi leurs adresses et celles de leurs étapes.
+ */
+export function nettoyerTransaction<T extends TransactionNettoyable>(transaction: T): T {
+  if (transaction.transaction) transaction.transaction = masquerAdresse(transaction.transaction);
+  delete transaction.user;
+  if (transaction.request) {
+    if (transaction.request.url) transaction.request.url = masquerAdresse(transaction.request.url);
+    delete transaction.request.cookies;
+    delete transaction.request.data;
+    delete transaction.request.query_string;
+  }
+  for (const etape of transaction.spans ?? []) {
+    if (etape.description) etape.description = masquerAdresse(etape.description);
+    for (const cle of ["url", "http.url", "url.full", "http.target", "url.path"]) {
+      const v = etape.data?.[cle];
+      if (typeof v === "string") etape.data![cle] = masquerAdresse(v);
+    }
+  }
+  return transaction;
+}
+
+type TransactionNettoyable = {
+  transaction?: string;
+  user?: unknown;
+  request?: { url?: string; cookies?: unknown; data?: unknown; query_string?: unknown };
+  spans?: { description?: string; data?: Record<string, unknown> }[];
+};
+
 export const COLLECTE_MINIMALE = {
   userInfo: false,
   cookies: false,

@@ -32,7 +32,13 @@ export function NotificationsTelephone() {
       else if (Notification.permission === "denied") suivant = "refusee";
       else {
         const r = await navigator.serviceWorker.getRegistration();
-        suivant = (await r?.pushManager.getSubscription()) ? "active" : "inactive";
+        const abonnement = await r?.pushManager.getSubscription();
+        // Rattache l'abonnement de l'appareil à la session en cours (il est
+        // supprimé côté serveur à chaque fermeture de session).
+        const ok = abonnement
+          ? (await enregistrerAbonnement(abonnement.toJSON(), navigator.userAgent)).ok
+          : false;
+        suivant = ok ? "active" : "inactive";
       }
       if (actif) setEtat(suivant);
     })().catch(() => actif && setEtat("indisponible"));
