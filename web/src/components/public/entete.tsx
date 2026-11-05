@@ -19,7 +19,7 @@ export async function Entete() {
       style={{ viewTransitionName: "entete-site" }}
     >
       <div className="barre-utilitaire hidden border-b border-pierre-200 bg-encre text-white/75 lg:block">
-        <div className="conteneur flex h-9 items-center justify-between font-mono text-[0.6875rem] tracking-wide uppercase">
+        <div className="conteneur flex h-9 items-center justify-between font-mono text-legende tracking-wide uppercase">
           <p>{institut.statut}</p>
           <ul className="flex items-center gap-6">
             {liensUtilitaires.map((l) => (
@@ -68,7 +68,7 @@ export async function Entete() {
               Connexion
             </LienBouton>
           )}
-          <LienBouton href={lienCandidature} taille="sm" className="hidden h-10 sm:inline-flex">
+          <LienBouton href={lienCandidature} taille="sm" className="h-10 px-3 sm:px-4">
             Candidater
           </LienBouton>
           <MenuMobile />

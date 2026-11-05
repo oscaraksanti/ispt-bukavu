@@ -3,13 +3,39 @@ import Link from "next/link";
 import { Blason } from "@/components/marque/blason";
 import { majuscule } from "@/lib/cn";
 import { lireFilieres, lireInstitut } from "@/features/contenu/lecture";
-import { liensLegaux, liensUtilitaires, navigationPrincipale } from "./navigation";
+import {
+  espacesDisponibles,
+  lienCandidature,
+  liensLegaux,
+  liensUtilitaires,
+  navigationPrincipale,
+} from "./navigation";
 
 export async function PiedDePage() {
   "use cache";
   cacheLife("days");
   const annee = new Date().getFullYear();
   const [institut, filieres] = await Promise.all([lireInstitut(), lireFilieres()]);
+  const colonnes = [
+    { titre: "Institut", liens: navigationPrincipale },
+    { titre: "Ressources", liens: liensUtilitaires },
+    {
+      titre: "Formations",
+      liens: filieres.map((f) => ({ libelle: f.nomCourt, href: `/formations/${f.slug}` })),
+    },
+    {
+      titre: "Espaces",
+      liens: [
+        { libelle: "Candidater", href: lienCandidature },
+        ...(espacesDisponibles
+          ? [
+              { libelle: "Connexion", href: "/connexion" },
+              { libelle: "Activer mon compte étudiant", href: "/activer" },
+            ]
+          : []),
+      ],
+    },
+  ];
   return (
     <footer className="trame-claire mt-auto bg-encre text-white/70">
       <div className="conteneur grid gap-12 py-16 lg:grid-cols-12">
@@ -17,68 +43,52 @@ export async function PiedDePage() {
           <Blason variante="blanc" devise hauteur={112} />
           <p className="mt-6 max-w-xs font-serif text-xl leading-snug text-white">{institut.nom}</p>
           <p className="mt-3 text-sm">{institut.statut}.</p>
-        </div>
-
-        <div className="grid gap-10 sm:grid-cols-3 lg:col-span-8">
-          <div>
-            <h2 className="surtitre !font-mono text-chantier">Institut</h2>
-            <ul className="mt-4 space-y-2.5 text-sm">
-              {navigationPrincipale.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="inline-block py-0.5 hover:text-white">
-                    {l.libelle}
-                  </Link>
-                </li>
-              ))}
-              {liensUtilitaires.map((l) => (
-                <li key={l.href}>
-                  <Link href={l.href} className="inline-block py-0.5 hover:text-white">
-                    {l.libelle}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h2 className="surtitre !font-mono text-chantier">Formations</h2>
-            <ul className="mt-4 space-y-2.5 text-sm">
-              {filieres.map((f) => (
-                <li key={f.slug}>
-                  <Link
-                    href={`/formations/${f.slug}`}
-                    className="inline-block py-0.5 hover:text-white"
-                  >
-                    {f.nomCourt}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h2 className="surtitre !font-mono text-chantier">Nous trouver</h2>
-            <address className="mt-4 space-y-2.5 text-sm not-italic">
-              <p>
-                {institut.rue}
-                <br />
-                {majuscule(institut.quartier)}, {institut.commune}
-                <br />
-                {institut.ville}, {institut.province}
-              </p>
-              <p>
-                <a href={institut.telephoneLien} className="inline-block py-1 hover:text-white">
-                  {institut.telephone}
-                </a>
+          <address className="mt-8 space-y-1 text-sm not-italic">
+            <p>
+              {institut.rue}, {majuscule(institut.quartier)}
+              <br />
+              {institut.commune} · {institut.ville}, {institut.province}
+            </p>
+            {institut.telephone && (
+              <a href={institut.telephoneLien} className="inline-block py-1 hover:text-white">
+                {institut.telephone}
+              </a>
+            )}
+            {institut.email && (
+              <>
                 <br />
                 <a href={`mailto:${institut.email}`} className="inline-block py-1 hover:text-white">
                   {institut.email}
                 </a>
-              </p>
-            </address>
-          </div>
+              </>
+            )}
+          </address>
+          {institut.coordonnees && (
+            <p className="mt-4 font-mono text-legende tracking-wide text-white/50 uppercase">
+              {institut.coordonnees}
+            </p>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-10 md:grid-cols-4 lg:col-span-8">
+          {colonnes.map((c) => (
+            <div key={c.titre}>
+              <h2 className="surtitre !font-mono text-chantier">{c.titre}</h2>
+              <ul className="mt-4 space-y-1 text-sm">
+                {c.liens.map((l) => (
+                  <li key={l.href}>
+                    <Link href={l.href} className="inline-block py-1.5 hover:text-white">
+                      {l.libelle}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="conteneur flex flex-col gap-2 py-6 font-mono text-[0.6875rem] tracking-wide text-white/65 uppercase sm:flex-row sm:items-center sm:justify-between">
+        <div className="conteneur flex flex-col gap-2 py-6 font-mono text-legende tracking-wide text-white/65 uppercase sm:flex-row sm:items-center sm:justify-between">
           <p>
             © {annee} {institut.sigle} · {institut.acteCreation}
           </p>

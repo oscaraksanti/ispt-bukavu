@@ -38,7 +38,7 @@ export function MenuMobile() {
         aria-expanded={ouvert}
         aria-controls="menu-mobile"
         onClick={() => setOuvert((o) => !o)}
-        className="inline-flex size-10 items-center justify-center rounded-xs text-encre hover:bg-pierre-100"
+        className="inline-flex size-11 items-center justify-center rounded-xs text-encre hover:bg-pierre-100"
       >
         {ouvert ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
         <span className="sr-only">{ouvert ? "Fermer le menu" : "Ouvrir le menu"}</span>

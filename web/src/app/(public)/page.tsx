@@ -143,7 +143,7 @@ function Accroche({ bloc, institut }: { bloc: LecteurBloc; institut: DonneesInst
               );
             })}
           </div>
-          <p className="mt-4 text-right font-mono text-[0.6875rem] tracking-wide text-pierre-500 uppercase">
+          <p className="mt-4 text-right font-mono text-legende tracking-wide text-pierre-500 uppercase">
             {institut.coordonnees}
           </p>
         </div>
@@ -152,7 +152,15 @@ function Accroche({ bloc, institut }: { bloc: LecteurBloc; institut: DonneesInst
   );
 }
 
-function Institut({ bloc, institut }: { bloc: LecteurBloc; institut: DonneesInstitut }) {
+function Institut({
+  bloc,
+  institut,
+  numero,
+}: {
+  bloc: LecteurBloc;
+  institut: DonneesInstitut;
+  numero: string;
+}) {
   const fiche = [
     ["Statut", institut.statut],
     ["Création", institut.dateCreation],
@@ -166,7 +174,7 @@ function Institut({ bloc, institut }: { bloc: LecteurBloc; institut: DonneesInst
     <section className="conteneur py-20 lg:py-28">
       <div className="grid gap-14 lg:grid-cols-12">
         <div className="min-w-0 self-start lg:sticky lg:top-36 lg:col-span-6">
-          <EnteteSection numero="01" surtitre="L'institut" titre={bloc.texte("titre")} />
+          <EnteteSection numero={numero} surtitre="L'institut" titre={bloc.texte("titre")} />
           <p className="mt-8 text-lg leading-relaxed text-pierre-700">{institut.mission}</p>
           <div className="mt-8">
             <LienFleche href="/institut">Présentation de l&apos;institut</LienFleche>
@@ -188,7 +196,7 @@ function Institut({ bloc, institut }: { bloc: LecteurBloc; institut: DonneesInst
             {fiche.map(([cle, valeur]) => (
               <div
                 key={cle}
-                className="grid grid-cols-[7.5rem_1fr] gap-4 border-t border-pierre-200 py-2.5 text-[0.9375rem]"
+                className="grid grid-cols-[7.5rem_1fr] gap-4 border-t border-pierre-200 py-2.5 text-corps"
               >
                 <dt className="font-mono text-xs leading-6 tracking-wide text-pierre-500 uppercase">
                   {cle}
@@ -226,12 +234,20 @@ function EnImages({ bloc }: { bloc: LecteurBloc }) {
   );
 }
 
-function Formations({ bloc, filieres }: { bloc: LecteurBloc; filieres: FilierePublique[] }) {
+function Formations({
+  bloc,
+  filieres,
+  numero,
+}: {
+  bloc: LecteurBloc;
+  filieres: FilierePublique[];
+  numero: string;
+}) {
   return (
     <section className="border-y border-pierre-200 bg-white">
       <div className="conteneur py-20 lg:py-28">
         <EnteteSection
-          numero="02"
+          numero={numero}
           surtitre="Formations"
           titre={bloc.texte("titre")}
           intro={bloc.texte("intro")}
@@ -259,7 +275,7 @@ function Formations({ bloc, filieres }: { bloc: LecteurBloc; filieres: FilierePu
                     {String(i + 1).padStart(2, "0")}
                   </p>
                   <h3 className="mt-2 text-2xl">{f.nomCourt}</h3>
-                  <p className="mt-3 flex-1 text-[0.9375rem] leading-relaxed text-pierre-600">
+                  <p className="mt-3 flex-1 text-corps leading-relaxed text-pierre-600">
                     {f.accroche}
                   </p>
                   <p className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-ispt-600">
@@ -283,10 +299,12 @@ function Stages({
   bloc,
   textes,
   partenaires,
+  numero,
 }: {
   bloc: LecteurBloc;
   textes: LecteurBloc;
   partenaires: Partenaires;
+  numero: string;
 }) {
   const blocs = [
     {
@@ -306,7 +324,7 @@ function Stages({
         <div className="lg:col-span-5">
           <EnteteSection
             clair
-            numero="03"
+            numero={numero}
             surtitre="Sur le terrain"
             titre={bloc.texte("titre")}
             intro={bloc.texte("intro")}
@@ -322,13 +340,10 @@ function Stages({
               <h3 className="revele-titre ligne-masquee text-3xl text-white">
                 <span>{b.titre}</span>
               </h3>
-              <p className="revele mt-3 max-w-md text-white/70">{b.description}</p>
-              <ul
-                className="revele mt-6 grid gap-x-6 gap-y-3 sm:grid-cols-2"
-                style={{ "--i": 1 } as Style}
-              >
+              <p className="mt-3 max-w-md text-white/70">{b.description}</p>
+              <ul className="mt-6 grid gap-x-6 gap-y-3 sm:grid-cols-2">
                 {b.lieux.map((l) => (
-                  <li key={l} className="flex items-start gap-3 text-[0.9375rem]">
+                  <li key={l} className="flex items-start gap-3 text-corps">
                     <span aria-hidden className="mt-2 h-2 w-2 shrink-0 bg-chantier" />
                     {l}
                   </li>
@@ -342,11 +357,19 @@ function Stages({
   );
 }
 
-function Admissions({ bloc, pieces }: { bloc: LecteurBloc; pieces: LecteurBloc }) {
+function Admissions({
+  bloc,
+  pieces,
+  numero,
+}: {
+  bloc: LecteurBloc;
+  pieces: LecteurBloc;
+  numero: string;
+}) {
   return (
     <section className="conteneur py-20 lg:py-28">
       <EnteteSection
-        numero="04"
+        numero={numero}
         surtitre="Admissions"
         titre={bloc.texte("titre")}
         intro={bloc.texte("intro")}
@@ -358,23 +381,20 @@ function Admissions({ bloc, pieces }: { bloc: LecteurBloc; pieces: LecteurBloc }
               <div className="revele" style={{ "--i": i } as Style}>
                 <span className="font-mono text-xs text-ispt-600">Étape {i + 1}</span>
                 <p className="mt-3 font-serif text-xl text-encre">{e.texte("titre")}</p>
-                <p className="mt-2 text-[0.9375rem] leading-relaxed text-pierre-600">
+                <p className="mt-2 text-corps leading-relaxed text-pierre-600">
                   {e.texte("texte")}
                 </p>
               </div>
             </li>
           ))}
         </ol>
-        <div className="revele lg:col-span-5">
+        <div className="lg:col-span-5">
           <h3 className="font-sans text-sm font-medium tracking-wide text-pierre-500 uppercase">
             Pièces du dossier
           </h3>
           <ul className="mt-4 divide-y divide-pierre-200 border-y border-pierre-200">
             {pieces.liste("liste").map((p, i) => (
-              <li
-                key={i}
-                className="flex items-start gap-3 py-2.5 text-[0.9375rem] text-pierre-800"
-              >
+              <li key={i} className="flex items-start gap-3 py-2.5 text-corps text-pierre-800">
                 <Check aria-hidden className="mt-0.5 size-4 shrink-0 text-ispt-600" />
                 {p.texte("libelle")}
               </li>
@@ -392,7 +412,15 @@ function Admissions({ bloc, pieces }: { bloc: LecteurBloc; pieces: LecteurBloc }
   );
 }
 
-function Anciens({ bloc, partenaires }: { bloc: LecteurBloc; partenaires: Partenaires }) {
+function Anciens({
+  bloc,
+  partenaires,
+  numero,
+}: {
+  bloc: LecteurBloc;
+  partenaires: Partenaires;
+  numero: string;
+}) {
   const colonnes = [
     { titre: "Parcours professionnel", liste: partenaires.employeurs },
     { titre: "Parcours pédagogique", liste: partenaires.institutionnels },
@@ -402,7 +430,7 @@ function Anciens({ bloc, partenaires }: { bloc: LecteurBloc; partenaires: Parten
       <div className="conteneur grid gap-14 py-20 lg:grid-cols-12 lg:py-28">
         <div className="lg:col-span-5">
           <EnteteSection
-            numero="05"
+            numero={numero}
             surtitre="Débouchés"
             titre={bloc.texte("titre")}
             intro={bloc.texte("intro")}
@@ -412,7 +440,7 @@ function Anciens({ bloc, partenaires }: { bloc: LecteurBloc; partenaires: Parten
             <Legende>{bloc.texte("legende")}</Legende>
           </figure>
         </div>
-        <div className="revele grid gap-12 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
+        <div className="grid gap-12 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
           {colonnes.map((c) => (
             <div key={c.titre}>
               <h3 className="surtitre !font-mono">{c.titre}</h3>
@@ -434,12 +462,11 @@ function Anciens({ bloc, partenaires }: { bloc: LecteurBloc; partenaires: Parten
   );
 }
 
-function Actualites({ actualites }: { actualites: ActualiteResume[] }) {
-  if (actualites.length === 0) return null;
+function Actualites({ actualites, numero }: { actualites: ActualiteResume[]; numero: string }) {
   return (
     <section className="conteneur py-20 lg:py-28">
       <EnteteSection
-        numero="06"
+        numero={numero}
         surtitre="Actualités"
         titre="Dernières nouvelles de l'institut"
         action={<LienFleche href="/actualites">Toutes les actualités</LienFleche>}
@@ -454,7 +481,6 @@ function Actualites({ actualites }: { actualites: ActualiteResume[] }) {
 }
 
 function Autorites({ autorites, numero }: { autorites: AutoritePublique[]; numero: string }) {
-  if (autorites.length === 0) return null;
   return (
     <section className="conteneur py-20 lg:py-28">
       <EnteteSection numero={numero} surtitre="Gouvernance" titre="Autorités académiques" />
@@ -504,6 +530,44 @@ function Contact({ institut }: { institut: DonneesInstitut }) {
   );
 }
 
+/** Données structurées (schema.org) : fiche de l'établissement pour les moteurs de recherche. */
+function DonneesStructurees({ institut }: { institut: DonneesInstitut }) {
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.isptbukavu.org";
+  const donnees = {
+    "@context": "https://schema.org",
+    "@type": "CollegeOrUniversity",
+    name: institut.nom,
+    alternateName: institut.sigle,
+    url: site,
+    logo: `${site}/brand/blason-couleur.svg`,
+    ...(institut.telephone ? { telephone: institut.telephone } : {}),
+    ...(institut.email ? { email: institut.email } : {}),
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: institut.rue,
+      addressLocality: institut.ville,
+      addressRegion: institut.province,
+      addressCountry: "CD",
+    },
+    ...(institut.latitudeNombre && institut.longitudeNombre
+      ? {
+          geo: {
+            "@type": "GeoCoordinates",
+            latitude: institut.latitudeNombre,
+            longitude: institut.longitudeNombre,
+          },
+        }
+      : {}),
+  };
+  return (
+    <script
+      type="application/ld+json"
+      // JSON sérialisé, « < » échappé : aucune balise ne peut s'y glisser.
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(donnees).replace(/</g, "\\u003c") }}
+    />
+  );
+}
+
 export default async function Accueil() {
   const [page, pageInstitut, institut, filieres, autorites, partenaires, actualites] =
     await Promise.all([
@@ -518,24 +582,38 @@ export default async function Accueil() {
   const bloc = (cle: string) => lecteur(page[cle]);
   const visible = (cle: string) => bloc(cle).visible;
   const pieces = lecteur((await lirePage("admissions")).pieces);
+  const dernieres = actualites.actualites.slice(0, 3);
+  // Numérotation continue des sections affichées (une section masquée ne laisse pas de trou).
+  let rang = 0;
+  const numero = () => String(++rang).padStart(2, "0");
 
   return (
     <TransitionPage>
+      <DonneesStructurees institut={institut} />
       {visible("accroche") && <Accroche bloc={bloc("accroche")} institut={institut} />}
-      {visible("institut") && <Institut bloc={bloc("institut")} institut={institut} />}
-      {visible("formations") && <Formations bloc={bloc("formations")} filieres={filieres} />}
+      {visible("institut") && (
+        <Institut bloc={bloc("institut")} institut={institut} numero={numero()} />
+      )}
+      {visible("formations") && (
+        <Formations bloc={bloc("formations")} filieres={filieres} numero={numero()} />
+      )}
       {visible("stages") && (
         <Stages
           bloc={bloc("stages")}
           textes={lecteur(pageInstitut.stages)}
           partenaires={partenaires}
+          numero={numero()}
         />
       )}
-      {visible("admissions") && <Admissions bloc={bloc("admissions")} pieces={pieces} />}
+      {visible("admissions") && (
+        <Admissions bloc={bloc("admissions")} pieces={pieces} numero={numero()} />
+      )}
       {visible("images") && <EnImages bloc={bloc("images")} />}
-      {visible("debouches") && <Anciens bloc={bloc("debouches")} partenaires={partenaires} />}
-      <Actualites actualites={actualites.actualites.slice(0, 3)} />
-      <Autorites autorites={autorites} numero={actualites.actualites.length > 0 ? "07" : "06"} />
+      {visible("debouches") && (
+        <Anciens bloc={bloc("debouches")} partenaires={partenaires} numero={numero()} />
+      )}
+      {dernieres.length > 0 && <Actualites actualites={dernieres} numero={numero()} />}
+      {autorites.length > 0 && <Autorites autorites={autorites} numero={numero()} />}
       <Contact institut={institut} />
     </TransitionPage>
   );

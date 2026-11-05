@@ -35,6 +35,13 @@ export const metadata: Metadata = {
   description:
     "Établissement public d'enseignement supérieur à Bukavu. Formation d'ingénieurs en Électromécanique, Génie Informatique, Électronique et Télécommunications, et Génie Civil.",
   applicationName: "ISPT-Bukavu",
+  // Aperçu des liens partagés (WhatsApp, Facebook…) ; l'image vient de opengraph-image.tsx.
+  openGraph: {
+    type: "website",
+    locale: "fr_CD",
+    siteName: "ISPT-Bukavu",
+  },
+  twitter: { card: "summary_large_image" },
   ...(MODE_DEMO ? { robots: { index: false, follow: false } } : {}),
 };
 
