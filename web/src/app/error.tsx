@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { Blason } from "@/components/marque/blason";
 import { Bouton, LienBouton } from "@/components/ui/bouton";
+import { signalerErreur } from "@/lib/surveillance-client";
 
 /** Empreinte fournie par Next pour retrouver l'erreur dans les journaux du serveur. */
 function referenceIncident(erreur: unknown) {
@@ -19,6 +20,7 @@ function referenceIncident(erreur: unknown) {
 export default function ErreurPage({ error, retry }: { error: unknown; retry: () => void }) {
   useEffect(() => {
     console.error(error);
+    signalerErreur(error);
   }, [error]);
   const reference = referenceIncident(error);
 

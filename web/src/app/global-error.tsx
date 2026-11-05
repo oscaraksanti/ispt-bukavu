@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
+import { signalerErreur } from "@/lib/surveillance-client";
 import "./globals.css";
 
 /**
  * Dernier recours : erreur dans le cadre commun du site. Cette page remplace
  * tout le document ; elle reste sobre et sans dépendance (ni police ni image).
  */
-export default function ErreurGlobale({ retry }: { error: unknown; retry: () => void }) {
+export default function ErreurGlobale({ error, retry }: { error: unknown; retry: () => void }) {
+  useEffect(() => signalerErreur(error), [error]);
   return (
     <html lang="fr">
       <body className="trame flex min-h-svh flex-col items-center justify-center bg-papier px-6 text-center font-sans">

@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 /**
  * Politique de sécurité du contenu. Next.js insère des scripts en ligne (données
@@ -86,4 +87,18 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+/**
+ * Sentry : l'envoi des sources (piles d'appels lisibles) n'a lieu que si un
+ * jeton est fourni à la compilation ; sinon la configuration reste inchangée.
+ */
+export default process.env.SENTRY_AUTH_TOKEN
+  ? withSentryConfig(nextConfig, {
+      org: process.env.SENTRY_ORG ?? "datalendo",
+      project: process.env.SENTRY_PROJECT ?? "ispt-bukavu",
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      widenClientFileUpload: true,
+      sourcemaps: { deleteSourcemapsAfterUpload: true },
+      telemetry: false,
+      silent: !process.env.CI,
+    })
+  : nextConfig;
