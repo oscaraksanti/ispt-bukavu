@@ -53,7 +53,7 @@ export default async function NotesEtudiant() {
   return (
     <div className="mx-auto max-w-4xl space-y-10">
       <header>
-        <h1 className="text-[2.25rem] leading-tight">Notes</h1>
+        <h1 className="text-titre-page leading-tight">Notes</h1>
         <p className="mt-2 text-pierre-600">
           Notes publiées par le secrétariat académique, sur 20. Un cours est validé à partir de{" "}
           {fmt(seuil)}/20.

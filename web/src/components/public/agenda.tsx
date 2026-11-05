@@ -20,7 +20,7 @@ export function Agenda({ evenements }: { evenements: EvenementPublic[] }) {
               className="flex w-14 shrink-0 flex-col items-center rounded-xs border border-pierre-300 bg-white py-2 leading-none"
             >
               <span className="font-serif text-2xl text-encre">{jour}</span>
-              <span className="mt-1 font-mono text-[0.6875rem] text-pierre-600 uppercase">
+              <span className="mt-1 font-mono text-legende text-pierre-600 uppercase">
                 {mois?.replace(".", "")}
               </span>
             </time>
@@ -39,9 +39,7 @@ export function Agenda({ evenements }: { evenements: EvenementPublic[] }) {
                 )}
               </p>
               {e.description && (
-                <p className="mt-2 text-[0.9375rem] leading-relaxed text-pierre-700">
-                  {e.description}
-                </p>
+                <p className="mt-2 text-corps leading-relaxed text-pierre-700">{e.description}</p>
               )}
             </div>
           </li>

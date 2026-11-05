@@ -19,7 +19,7 @@ export default async function NouveauCommuniqueEnseignant() {
   const options = await optionsCibles(auteur);
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="text-[2.25rem] leading-tight">Nouveau communiqué</h1>
+      <h1 className="text-titre-page leading-tight">Nouveau communiqué</h1>
       <div className="mt-8 rounded-md border border-pierre-200 bg-white p-6">
         {cibles.length === 0 ? (
           <EtatVide

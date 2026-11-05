@@ -26,8 +26,8 @@ function reveler(el: HTMLElement, immediat: boolean) {
   });
   if (el.classList.contains("revele-image")) {
     const delai = decalage(el, 100);
-    el.animate([{ opacity: 0 }, { opacity: 1 }], options(900, delai));
-    el.querySelector("img")?.animate([{ scale: "1.08" }, { scale: "1" }], options(1800, delai));
+    el.animate([{ opacity: 0 }, { opacity: 1 }], options(700, delai));
+    el.querySelector("img")?.animate([{ scale: "1.08" }, { scale: "1" }], options(1200, delai));
   } else if (el.classList.contains("revele-titre")) {
     const ligne = el.firstElementChild;
     ligne?.animate(
@@ -35,17 +35,17 @@ function reveler(el: HTMLElement, immediat: boolean) {
         { opacity: 0, translate: "0 0.6em" },
         { opacity: 1, translate: "0 0" },
       ],
-      options(1000, decalage(el, 80)),
+      options(700, decalage(el, 70)),
     );
   } else if (el.classList.contains("revele-trait")) {
-    el.animate([{ scale: "0 1" }, { scale: "1 1" }], options(900, 150));
+    el.animate([{ scale: "0 1" }, { scale: "1 1" }], options(600, 120));
   } else {
     el.animate(
       [
         { opacity: 0, translate: "0 16px" },
         { opacity: 1, translate: "0 0" },
       ],
-      options(900, decalage(el, 80)),
+      options(600, decalage(el, 70)),
     );
   }
 }

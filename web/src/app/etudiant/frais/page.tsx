@@ -14,7 +14,7 @@ export default async function FraisEtudiant() {
   const s = await situationEtudiant(profil.id);
   return (
     <div className="mx-auto max-w-3xl">
-      <h1 className="text-[2.25rem] leading-tight">Frais académiques</h1>
+      <h1 className="text-titre-page leading-tight">Frais académiques</h1>
       <p className="mt-2 text-pierre-600">
         Paiements enregistrés par la caisse de l&apos;institut. Conservez vos bordereaux : la
         référence figure sur chaque reçu.

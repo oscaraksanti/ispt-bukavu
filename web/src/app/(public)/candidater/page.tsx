@@ -122,7 +122,7 @@ export default async function Candidater() {
             </h2>
             <ul className="mt-3 space-y-2">
               {campagne.pieces.map((p) => (
-                <li key={p.id} className="flex items-start gap-3 text-[0.9375rem] text-pierre-800">
+                <li key={p.id} className="flex items-start gap-3 text-corps text-pierre-800">
                   <Check aria-hidden className="mt-1 size-4 shrink-0 text-ispt-600" />
                   <span>
                     {p.libelle}

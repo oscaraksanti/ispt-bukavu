@@ -22,7 +22,7 @@ export default async function ValveEnseignant() {
     <div className="mx-auto max-w-3xl">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-[2.25rem] leading-tight">Mes communiqués</h1>
+          <h1 className="text-titre-page leading-tight">Mes communiqués</h1>
           <p className="mt-2 text-pierre-600">Messages adressés aux étudiants de vos cours.</p>
         </div>
         <LienBouton href="/enseignant/valve/nouveau" variante="institutionnel">

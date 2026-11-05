@@ -28,7 +28,7 @@ export default async function AccueilEtudiant() {
         <p className="surtitre">
           {inscription ? `Année ${inscription.promotion.annee.libelle}` : "Espace étudiant"}
         </p>
-        <h1 className="mt-3 text-[2.25rem] leading-tight sm:text-5xl">
+        <h1 className="mt-3 text-titre-page leading-tight sm:text-5xl">
           Bonjour, {u.prenom ?? u.nom}
         </h1>
         {inscription ? (

@@ -44,7 +44,7 @@ export function CalendrierEpreuves({
         <p className="text-sm text-pierre-700">{sessions.map((s) => s.libelle).join(" · ")}</p>
         <a
           href={lienAgenda}
-          className="inline-flex h-9 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-4 text-sm font-medium text-encre hover:border-encre"
+          className="inline-flex h-10 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-4 text-sm font-medium text-encre hover:border-encre"
         >
           <CalendarPlus aria-hidden className="size-4" /> Ajouter à mon agenda
         </a>

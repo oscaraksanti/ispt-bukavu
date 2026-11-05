@@ -32,7 +32,7 @@ export function Cloche({
       {nombre > 0 && (
         <span
           aria-hidden
-          className="absolute top-1 right-1 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-chantier px-1 font-mono text-[0.6875rem] leading-none font-medium text-encre"
+          className="absolute top-1 right-1 flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-chantier px-1 font-mono text-legende leading-none font-medium text-encre"
         >
           {libelleCompteur(nombre)}
         </span>

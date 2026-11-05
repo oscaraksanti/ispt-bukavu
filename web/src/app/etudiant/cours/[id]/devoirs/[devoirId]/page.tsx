@@ -1,11 +1,10 @@
 import { FileText } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
 import { TexteArticle } from "@/components/public/texte-article";
 import { Champ, Saisie } from "@/components/ui/champs";
-import { Etiquette } from "@/components/ui/elements";
+import { Etiquette, LienRetour } from "@/components/ui/elements";
 import { formatHeure, formatJour } from "@/features/actualites/dates";
 import { deposerRemise } from "@/features/devoirs/actions";
 import { depotOuvert, etatRemise, LIBELLES_ETAT } from "@/features/devoirs/regles";
@@ -45,14 +44,9 @@ export default async function DevoirEtudiant({
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link
-        href={`/etudiant/cours/${id}`}
-        className="text-sm text-ispt-600 underline hover:no-underline"
-      >
-        ← {devoir.coursOffert.cours.intitule}
-      </Link>
+      <LienRetour href={`/etudiant/cours/${id}`}>{devoir.coursOffert.cours.intitule}</LienRetour>
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <h1 className="text-[2.25rem] leading-tight">{devoir.titre}</h1>
+        <h1 className="text-titre-page leading-tight">{devoir.titre}</h1>
         <Etiquette ton={etat === "corrige" ? "succes" : etat === "non_rendu" ? "erreur" : "ispt"}>
           {LIBELLES_ETAT[etat]}
         </Etiquette>

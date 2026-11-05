@@ -1,6 +1,5 @@
 import { FileText } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BoutonAction } from "@/components/admin/bouton-action";
 import { Panneau } from "@/components/admin/entete-admin";
@@ -8,7 +7,7 @@ import { FormulaireAction } from "@/components/admin/formulaire-action";
 import { EnteteCours } from "@/components/cours/entete-cours";
 import { TexteArticle } from "@/components/public/texte-article";
 import { Champ, Saisie, ZoneTexte } from "@/components/ui/champs";
-import { Etiquette } from "@/components/ui/elements";
+import { Etiquette, LienRetour } from "@/components/ui/elements";
 import { libellePromotion } from "@/features/academique/regles";
 import { formatHeure, formatJour } from "@/features/actualites/dates";
 import { coursDeLEnseignant } from "@/features/devoirs/acces";
@@ -79,12 +78,7 @@ export default async function DevoirEnseignant({
             </a>
           )}
           <div className="mt-6 flex flex-wrap gap-3 border-t border-pierre-200 pt-4">
-            <Link
-              href={`/enseignant/cours/${id}/devoirs`}
-              className="text-sm text-ispt-600 underline hover:no-underline"
-            >
-              ← Tous les devoirs
-            </Link>
+            <LienRetour href={`/enseignant/cours/${id}/devoirs`}>Tous les devoirs</LienRetour>
             {devoir.remises.length === 0 && (
               <BoutonAction
                 action={supprimerDevoir.bind(null, devoir.id)}

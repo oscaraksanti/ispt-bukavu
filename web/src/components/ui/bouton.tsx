@@ -17,7 +17,7 @@ export const styleBouton = cva(
       },
       taille: {
         sm: "h-8 px-3 text-sm",
-        md: "h-11 px-5 text-[0.9375rem]",
+        md: "h-11 px-5 text-corps",
         lg: "h-13 px-7 text-base",
       },
     },

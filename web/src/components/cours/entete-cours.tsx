@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LienRetour } from "@/components/ui/elements";
 import { cn } from "@/lib/cn";
 
 /** En-tête commun des pages d'un cours dans l'espace enseignant, avec ses onglets. */
@@ -23,11 +24,9 @@ export function EnteteCours({
   ] as const;
   return (
     <header>
-      <Link href="/enseignant" className="text-sm text-ispt-600 underline hover:no-underline">
-        ← Mes cours
-      </Link>
+      <LienRetour href="/enseignant">Mes cours</LienRetour>
       <p className="mt-4 font-mono text-xs text-ispt-600">{code}</p>
-      <h1 className="mt-2 text-[2.25rem] leading-tight">{intitule}</h1>
+      <h1 className="mt-2 text-titre-page leading-tight">{intitule}</h1>
       <p className="mt-2 text-pierre-700">{promotion}</p>
       <nav aria-label="Sections du cours" className="mt-6 flex gap-6 border-b border-pierre-200">
         {onglets.map((o) => (

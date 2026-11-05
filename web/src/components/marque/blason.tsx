@@ -60,7 +60,7 @@ export function Signature({
         {!compacte && (
           <span
             className={cn(
-              "mt-1 font-mono text-[0.625rem] tracking-[0.12em] uppercase",
+              "mt-1 font-mono text-legende tracking-[0.12em] uppercase",
               clair ? "text-white/70" : "text-pierre-500",
             )}
           >

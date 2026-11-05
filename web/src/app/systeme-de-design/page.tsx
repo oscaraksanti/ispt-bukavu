@@ -103,13 +103,13 @@ export default function SystemeDeDesign() {
           {nuances.map((n, i) => (
             <div key={n} className="text-center">
               <div className={`h-10 rounded-xs ${classesIspt[i]}`} />
-              <p className="mt-1 font-mono text-[0.625rem] text-pierre-500">{n}</p>
+              <p className="mt-1 font-mono text-legende text-pierre-500">{n}</p>
             </div>
           ))}
           {nuances.map((n, i) => (
             <div key={`p${n}`} className="text-center">
               <div className={`h-10 rounded-xs ${classesPierre[i]}`} />
-              <p className="mt-1 font-mono text-[0.625rem] text-pierre-500">{n}</p>
+              <p className="mt-1 font-mono text-legende text-pierre-500">{n}</p>
             </div>
           ))}
         </div>
@@ -120,7 +120,7 @@ export default function SystemeDeDesign() {
           <p className="font-serif text-6xl text-encre">Former les bâtisseurs</p>
           <p className="font-serif text-4xl text-encre italic">Scientia splendet et conscientia</p>
           <p className="font-serif text-2xl text-encre">Titre de niveau trois</p>
-          <p className="max-w-2xl text-[1.0625rem] leading-relaxed text-pierre-700">
+          <p className="max-w-2xl text-chapeau leading-relaxed text-pierre-700">
             IBM Plex Sans pour le texte courant : l&apos;Institut Supérieur Pédagogique et Technique
             de Bukavu forme des ingénieurs en techniques appliquées, aptes à intégrer les
             entreprises et à enseigner dans les établissements techniques.

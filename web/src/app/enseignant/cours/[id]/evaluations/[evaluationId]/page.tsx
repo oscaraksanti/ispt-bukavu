@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BoutonAction } from "@/components/admin/bouton-action";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
 import { TableauNotes } from "@/components/notes/tableau-notes";
 import { Case } from "@/components/ui/champs";
-import { Encadre, Etiquette } from "@/components/ui/elements";
+import { Encadre, Etiquette, LienRetour } from "@/components/ui/elements";
 import { exigerEnseignant } from "@/features/espaces/acces";
 import {
   enregistrerNotes,
@@ -54,12 +53,7 @@ export default async function SaisieNotes({
   return (
     <div className="space-y-6">
       <header>
-        <Link
-          href={`/enseignant/cours/${id}`}
-          className="text-sm text-ispt-600 underline hover:no-underline"
-        >
-          ← {e.coursOffert.cours.intitule}
-        </Link>
+        <LienRetour href={`/enseignant/cours/${id}`}>{e.coursOffert.cours.intitule}</LienRetour>
         <h1 className="mt-4 text-[2rem] leading-tight">{e.intitule}</h1>
         <p className="mt-2 flex flex-wrap items-center gap-2 text-pierre-700">
           <Etiquette ton={enSaisie ? "neutre" : "ispt"}>{LIBELLES_EVALUATION[e.statut]}</Etiquette>
@@ -77,7 +71,7 @@ export default async function SaisieNotes({
             ["Absents", stats.absents],
           ].map(([l, v]) => (
             <div key={l} className="rounded-md border border-pierre-200 bg-white p-3">
-              <dt className="font-mono text-[0.6875rem] tracking-wide text-pierre-500 uppercase">
+              <dt className="font-mono text-legende tracking-wide text-pierre-500 uppercase">
                 {l}
               </dt>
               <dd className="mt-1 font-serif text-2xl text-encre">{v}</dd>

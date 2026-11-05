@@ -146,7 +146,7 @@ export function EditeurBloc({
           return (
             <fieldset key={champ.cle} className="space-y-3 md:col-span-2">
               <legend className="text-sm font-medium text-pierre-800">{champ.libelle}</legend>
-              {champ.aide && <p className="text-[0.8125rem] text-pierre-500">{champ.aide}</p>}
+              {champ.aide && <p className="text-detail text-pierre-500">{champ.aide}</p>}
               <ol className="space-y-3">
                 {liste.map((element, i) => {
                   const commandes = (

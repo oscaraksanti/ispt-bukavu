@@ -38,7 +38,7 @@ export default async function Resultats() {
 
   return (
     <div className="mx-auto max-w-4xl">
-      <h1 className="text-[2.25rem] leading-tight">Mes résultats</h1>
+      <h1 className="text-titre-page leading-tight">Mes résultats</h1>
       <p className="mt-2 text-pierre-600">
         Résultats proclamés par le jury, semestre après semestre. Chaque bulletin porte un QR code
         qui permet d&apos;en vérifier l&apos;authenticité.

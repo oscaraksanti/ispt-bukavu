@@ -31,7 +31,7 @@ export default async function AccueilEnseignant() {
       <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="surtitre">Espace enseignant</p>
-          <h1 className="mt-3 text-[2.25rem] leading-tight sm:text-5xl">
+          <h1 className="mt-3 text-titre-page leading-tight sm:text-5xl">
             Bonjour, {u.prenom ?? u.nom}
           </h1>
         </div>

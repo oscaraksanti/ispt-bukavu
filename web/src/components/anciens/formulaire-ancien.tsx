@@ -143,7 +143,7 @@ export function FormulaireAncien({ filieres }: { filieres: { id: string; nom: st
           avec le lien personnel qui me sera envoyé.
         </label>
         {e.consentement && (
-          <p id="consentement-erreur" className="text-[0.8125rem] font-medium text-erreur">
+          <p id="consentement-erreur" className="text-detail font-medium text-erreur">
             {e.consentement}
           </p>
         )}

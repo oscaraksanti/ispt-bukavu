@@ -1,8 +1,8 @@
-import { ExternalLink, FileText, Link2 } from "lucide-react";
+import { ArrowUpRight, FileText, Link2 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Etiquette, EtatVide } from "@/components/ui/elements";
+import { Etiquette, EtatVide, LienRetour } from "@/components/ui/elements";
 import { formatHeure, formatJour } from "@/features/actualites/dates";
 import { etatRemise, LIBELLES_ETAT, type EtatRemise } from "@/features/devoirs/regles";
 import { devoirsDeLEtudiant } from "@/features/devoirs/requetes";
@@ -45,14 +45,12 @@ export default async function CoursDetailEtudiant({ params }: PageProps<"/etudia
   const parChapitre = Map.groupBy(co.supports, (s) => s.chapitre ?? "Documents");
   return (
     <div className="mx-auto max-w-3xl">
-      <Link href="/etudiant/cours" className="text-sm text-ispt-600 underline hover:no-underline">
-        ← Mes cours
-      </Link>
+      <LienRetour href="/etudiant/cours">Mes cours</LienRetour>
       <p className="mt-4 font-mono text-xs text-ispt-600">
         {co.cours.ue.code} · S{co.cours.ue.semestre} · {co.cours.credits} crédit(s) ·{" "}
         {co.cours.volumeHoraire} h
       </p>
-      <h1 className="mt-2 text-[2.25rem] leading-tight">{co.cours.intitule}</h1>
+      <h1 className="mt-2 text-titre-page leading-tight">{co.cours.intitule}</h1>
       <p className="mt-2 text-pierre-700">
         {co.enseignants
           .map((e) =>
@@ -88,7 +86,7 @@ export default async function CoursDetailEtudiant({ params }: PageProps<"/etudia
                       )}
                       <span className="flex-1">{s.titre}</span>
                       {s.type === "LIEN" && (
-                        <ExternalLink aria-hidden className="size-3.5 text-pierre-400" />
+                        <ArrowUpRight aria-hidden className="size-3.5 text-pierre-400" />
                       )}
                     </a>
                   </li>

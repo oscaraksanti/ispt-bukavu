@@ -34,7 +34,7 @@ export function ListeCommuniques({
             <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-ispt-600" />
           )}
           <Link href={`${base}/${c.id}`} className="block px-5 py-4 hover:bg-pierre-50">
-            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[0.6875rem] tracking-wide text-pierre-600 uppercase">
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-legende tracking-wide text-pierre-600 uppercase">
               {c.epingle && (
                 <span className="inline-flex items-center gap-1 text-rouge">
                   <Pin aria-hidden className="size-3" /> Épinglé

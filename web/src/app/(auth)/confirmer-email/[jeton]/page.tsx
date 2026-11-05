@@ -13,7 +13,7 @@ export default function PageConfirmerEmail({ params }: PageProps<"/confirmer-ema
   return (
     <>
       <p className="surtitre">Candidature en ligne</p>
-      <h1 className="mt-3 text-4xl">Confirmer mon adresse</h1>
+      <h1 className="mt-3 text-titre-page">Confirmer mon adresse</h1>
       <p className="mt-3 text-pierre-600">
         Une dernière étape : confirmez que cette adresse email est bien la vôtre. Toutes les
         nouvelles de votre dossier y seront envoyées.

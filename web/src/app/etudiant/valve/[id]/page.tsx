@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { LienRetour } from "@/components/ui/elements";
 import { notFound } from "next/navigation";
 import { AccuseLecture } from "@/components/valve/accuse-lecture";
 import { Communique } from "@/components/valve/communique";
@@ -23,9 +23,7 @@ export default async function CommuniqueEtudiant({ params }: PageProps<"/etudian
   if (!c) notFound();
   return (
     <div className="mx-auto max-w-3xl">
-      <Link href="/etudiant/valve" className="text-sm text-ispt-600 underline hover:no-underline">
-        ← Valve
-      </Link>
+      <LienRetour href="/etudiant/valve">Valve</LienRetour>
       <div className="mt-6 rounded-md border border-pierre-200 bg-white p-6 sm:p-10">
         <Communique c={versAffiche(c)} />
       </div>

@@ -10,6 +10,18 @@
   --font-serif: var(--font-newsreader), ui-serif, Georgia, serif;
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 
+  /* Échelle typographique : six tailles nommées au lieu de valeurs libres */
+  --text-legende: 0.6875rem; /* 11 px : légendes, libellés techniques en capitales */
+  --text-legende--line-height: 1.5;
+  --text-detail: 0.8125rem; /* 13 px : métadonnées, aides de saisie */
+  --text-detail--line-height: 1.5;
+  --text-corps: 0.9375rem; /* 15 px : corps des interfaces, tableaux, listes */
+  --text-corps--line-height: 1.6;
+  --text-chapeau: 1.0625rem; /* 17 px : introductions, textes éditoriaux */
+  --text-chapeau--line-height: 1.7;
+  --text-titre-page: 2.25rem; /* 36 px : titre de page des espaces et formulaires */
+  --text-titre-page--line-height: 1.12;
+
   /* Couleurs de marque */
   --color-ispt-50: #f2f4fb;
   --color-ispt-100: #e3e7f5;
@@ -78,8 +90,20 @@
 
 @layer base {
   html {
+    /* Thème clair assumé : empêche l'assombrissement automatique (Chrome Android). */
+    color-scheme: light;
     -webkit-text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
+  }
+
+  /* Fenêtre modale ouverte : la page derrière ne défile plus. */
+  html:has(dialog[open]:modal) {
+    overflow: hidden;
+  }
+
+  /* Icônes Lucide au trait fin de la charte (1,5 px), comme le blason et les filets. */
+  .lucide {
+    stroke-width: 1.5;
   }
 
   body {
@@ -222,7 +246,7 @@
 
 :root {
   --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --duree-entree: 1000ms;
+  --duree-entree: 700ms;
 }
 
 @layer components {
@@ -263,23 +287,23 @@
   /* Au chargement de la page */
   .entree {
     animation: apparition var(--duree-entree) var(--ease-expo) both;
-    animation-delay: calc(200ms + var(--i, 0) * 110ms);
+    animation-delay: calc(150ms + var(--i, 0) * 90ms);
   }
   .entree-ligne > span {
-    animation: monter 1100ms var(--ease-expo) both;
-    animation-delay: calc(80ms + var(--i, 0) * 110ms);
+    animation: monter 800ms var(--ease-expo) both;
+    animation-delay: calc(60ms + var(--i, 0) * 90ms);
   }
   .entree-image {
-    animation: fondu 900ms var(--ease-expo) both;
-    animation-delay: calc(300ms + var(--i, 0) * 120ms);
+    animation: fondu 700ms var(--ease-expo) both;
+    animation-delay: calc(250ms + var(--i, 0) * 100ms);
   }
   .entree-image img {
-    animation: poser 1800ms var(--ease-expo) both;
-    animation-delay: calc(300ms + var(--i, 0) * 120ms);
+    animation: poser 1400ms var(--ease-expo) both;
+    animation-delay: calc(250ms + var(--i, 0) * 100ms);
   }
   .entree-trait {
     transform-origin: left;
-    animation: trace 900ms var(--ease-expo) 750ms both;
+    animation: trace 700ms var(--ease-expo) 600ms both;
   }
 
   /* Léger décalage des photos de l'accueil au défilement, sur grand écran */
@@ -292,9 +316,9 @@
       }
       .entree-image img.parallaxe {
         animation:
-          poser 1800ms var(--ease-expo) both,
+          poser 1400ms var(--ease-expo) both,
           parallaxe linear both;
-        animation-delay: calc(300ms + var(--i, 0) * 120ms), 0s;
+        animation-delay: calc(250ms + var(--i, 0) * 100ms), 0s;
         animation-timeline: auto, scroll(root);
         animation-range:
           normal,

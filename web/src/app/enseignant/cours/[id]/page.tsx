@@ -1,4 +1,4 @@
-import { ExternalLink, FileText, Link2, X } from "lucide-react";
+import { ArrowUpRight, FileText, Link2, X } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -158,7 +158,7 @@ export default async function CoursEnseignant({ params }: PageProps<"/enseignant
                     {s.titre}
                   </a>
                   {s.type === "LIEN" && (
-                    <ExternalLink aria-hidden className="size-3.5 text-pierre-400" />
+                    <ArrowUpRight aria-hidden className="size-3.5 text-pierre-400" />
                   )}
                   <BoutonAction
                     action={supprimerSupport.bind(null, s.id)}

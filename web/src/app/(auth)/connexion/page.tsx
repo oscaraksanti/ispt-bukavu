@@ -20,7 +20,7 @@ export default function PageConnexion({ searchParams }: PageProps<"/connexion">)
     <>
       <ViderEspacesHorsLigne />
       <p className="surtitre">Espace sécurisé</p>
-      <h1 className="mt-3 text-4xl">Connexion</h1>
+      <h1 className="mt-3 text-titre-page">Connexion</h1>
       <p className="mt-3 text-pierre-600">
         Personnel, enseignants, étudiants et candidats de l&apos;ISPT-Bukavu.
       </p>
@@ -44,7 +44,7 @@ export default function PageConnexion({ searchParams }: PageProps<"/connexion">)
             {COMPTES_DEMO.map((c) => (
               <div key={c.identifiant}>
                 <dt className="text-xs text-pierre-600">{c.profil}</dt>
-                <dd className="font-mono text-[0.8125rem] text-encre">{c.identifiant}</dd>
+                <dd className="font-mono text-detail text-encre">{c.identifiant}</dd>
               </div>
             ))}
           </dl>

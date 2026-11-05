@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { LienRetour } from "@/components/ui/elements";
 import { GestionCommunique } from "@/components/valve/gestion-communique";
 import { exigerEnseignant } from "@/features/espaces/acces";
 
@@ -17,9 +17,7 @@ export default async function CommuniqueEnseignant({
   const { enregistre } = await searchParams;
   return (
     <div>
-      <Link href="/enseignant/valve" className="text-sm text-ispt-600 underline hover:no-underline">
-        ← Mes communiqués
-      </Link>
+      <LienRetour href="/enseignant/valve">Mes communiqués</LienRetour>
       <div className="mt-6">
         <GestionCommunique id={id} u={u} retour="enseignant" enregistre={enregistre === "1"} />
       </div>

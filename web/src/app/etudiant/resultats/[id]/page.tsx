@@ -1,8 +1,7 @@
 import { FileBadge } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Etiquette } from "@/components/ui/elements";
+import { Etiquette, LienRetour } from "@/components/ui/elements";
 import { formatJour } from "@/features/actualites/dates";
 import { libellePeriode } from "@/features/deliberations/donnees";
 import {
@@ -56,15 +55,10 @@ export default async function Resultat({ params }: PageProps<"/etudiant/resultat
 
   return (
     <div className="mx-auto max-w-4xl">
-      <Link
-        href="/etudiant/resultats"
-        className="text-sm text-ispt-600 underline hover:no-underline"
-      >
-        ← Mes résultats
-      </Link>
+      <LienRetour href="/etudiant/resultats">Mes résultats</LienRetour>
       <div className="mt-4 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[2.25rem] leading-tight">{titre}</h1>
+          <h1 className="text-titre-page leading-tight">{titre}</h1>
           <p className="mt-2 text-pierre-600">
             Proclamé le {d.proclameLe ? formatJour.format(d.proclameLe) : "—"} ·{" "}
             {d.promotion.filiere.nom}
@@ -75,7 +69,7 @@ export default async function Resultat({ params }: PageProps<"/etudiant/resultat
             href={`/documents/${r.document.id}`}
             target="_blank"
             rel="noopener"
-            className="inline-flex h-11 items-center gap-2 rounded-xs bg-ispt-600 px-5 text-[0.9375rem] text-white hover:bg-ispt-700"
+            className="inline-flex h-11 items-center gap-2 rounded-xs bg-ispt-600 px-5 text-corps text-white hover:bg-ispt-700"
           >
             <FileBadge aria-hidden className="size-4" /> Télécharger le bulletin
           </a>

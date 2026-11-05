@@ -48,7 +48,7 @@ export default function Verifier() {
           </Champ>
           <button
             type="submit"
-            className="h-11 w-full rounded-xs bg-ispt-600 text-[0.9375rem] font-medium text-white hover:bg-ispt-700"
+            className="h-11 w-full rounded-xs bg-ispt-600 text-corps font-medium text-white hover:bg-ispt-700"
           >
             Vérifier
           </button>

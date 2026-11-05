@@ -13,7 +13,7 @@ export default async function ExamensEnseignant() {
   const epreuves = await epreuvesDeLEnseignant(profil.id);
   return (
     <div>
-      <h1 className="text-[2.25rem] leading-tight">Examens</h1>
+      <h1 className="text-titre-page leading-tight">Examens</h1>
       <p className="mt-2 max-w-2xl text-pierre-700">
         Les épreuves de vos cours et celles que vous surveillez.
       </p>

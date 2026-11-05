@@ -59,7 +59,7 @@ export default async function PageFormations() {
                     <p className="font-mono text-xs tracking-wide text-pierre-500 uppercase">
                       Domaines
                     </p>
-                    <p className="mt-2 text-[0.9375rem] leading-relaxed text-pierre-800">
+                    <p className="mt-2 text-corps leading-relaxed text-pierre-800">
                       {f.domaines.join(" · ")}
                     </p>
                     <p className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-ispt-600">

@@ -24,7 +24,7 @@ Couleurs relevées sur le blason officiel, puis déclinées en nuances pour l'in
 | Accent | Violet devise | `#612D89` | Devise, citations institutionnelles |
 | Neutre | Papier | `#F7F6F2` | Fond général, légèrement chaud |
 | Neutre | Pierre 50 → 900 | `#FBFAF7` → `#1C1B18` | Textes secondaires, bordures, fonds de sections |
-| Système | Succès / Attention / Erreur / Info | `#1F7A4D` / `#B25E09` / `#B42318` / `#283890` | Retours de l'interface uniquement |
+| Système | Succès / Attention / Erreur / Info | `#1F7A4D` / `#9C5208` / `#B42318` / `#283890` | Retours de l'interface uniquement |
 
 Le jaune n'est jamais utilisé pour du texte sur fond clair. Le texte posé sur le jaune est en encre.
 
@@ -37,6 +37,18 @@ Le jaune n'est jamais utilisé pour du texte sur fond clair. Le texte posé sur 
 | Données techniques | **IBM Plex Mono** | Matricules, codes de vérification, coordonnées, horaires |
 
 Toutes les polices sont libres (SIL OFL) et auto-hébergées. Échelle de titres : 64 / 48 / 36 / 28 / 22 / 18 px sur grand écran, réduite d'environ 30 % sur mobile. Texte courant 16-17 px, interligne 1,6.
+
+Les tailles d'interface sont des jetons (`globals.css`, `@theme`) ; aucune valeur libre (`text-[…]`) pour ces usages :
+
+| Jeton | Taille | Usage |
+|---|---|---|
+| `text-legende` | 11 px | Légendes de photos, libellés techniques en capitales, raccourcis clavier |
+| `text-detail` | 13 px | Métadonnées, aides de saisie |
+| `text-corps` | 15 px | Corps des interfaces : tableaux, listes, navigation |
+| `text-chapeau` | 17 px | Introductions et textes éditoriaux |
+| `text-titre-page` | 36 px | Titre de page des espaces, de l'administration et des formulaires |
+
+Les titres de section du site public (32 → 44 px) restent portés par le composant `EnteteSection`.
 
 ## 4. Grille et espacement
 
@@ -54,7 +66,29 @@ Toutes les polices sont libres (SIL OFL) et auto-hébergées. Échelle de titres
 
 ## 6. Iconographie
 
-Jeu d'icônes linéaires unique (trait de 1,5 px, angles nets), jamais d'émojis. Les icônes accompagnent un libellé ; elles ne le remplacent pas, sauf pour les actions universelles (fermer, menu, recherche).
+Jeu d'icônes linéaires unique, Lucide, au trait de 1,5 px (règle `.lucide` de `globals.css`), jamais d'émojis. Les icônes accompagnent un libellé ; elles ne le remplacent pas, sauf pour les actions universelles (fermer, menu, recherche), qui portent alors un libellé accessible. Tailles : 16 px dans le texte et les boutons, 20 px pour les boutons d'icône seule.
+
+**Une icône par concept, la même partout** (navigation, notifications, tableau de bord). La table des icônes de l'administration est typée (`components/admin/icones.ts`) : une icône manquante est une erreur de compilation.
+
+| Concept | Icône | Concept | Icône |
+|---|---|---|---|
+| Étudiants | `GraduationCap` | Filières | `Layers` |
+| Enseignants | `Presentation` | Comptes | `UserCog` |
+| Années et promotions | `CalendarCog` | Rôles | `ShieldCheck` |
+| Programme | `BookOpen` | Journal | `History` |
+| Horaires | `CalendarClock` | Valve | `Megaphone` |
+| Examens | `CalendarCheck` | Actualités | `Newspaper` |
+| Notes | `ClipboardCheck` | Agenda | `CalendarDays` |
+| Délibérations | `Scale` | Messages | `Inbox` |
+| Documents officiels | `FileBadge` | Médiathèque | `Images` |
+| Candidatures | `FolderOpen` | Galerie | `GalleryHorizontalEnd` |
+| Campagnes | `CalendarRange` | Anciens | `Award` |
+| Finances | `Wallet` | Stages | `HardHat` |
+| Devoirs | `NotebookPen` | Offres | `BriefcaseBusiness` |
+| Succès | `CircleCheck` | Alerte | `TriangleAlert` |
+| Lien externe | `ArrowUpRight` | Retour | `ArrowLeft` (composant `LienRetour`) |
+
+Les flèches ne sont jamais tapées comme caractères (« ← », « → ») dans un lien.
 
 ## 7. Photographie
 
@@ -65,8 +99,9 @@ Jeu d'icônes linéaires unique (trait de 1,5 px, angles nets), jamais d'émojis
 
 ## 8. Mouvement
 
-- Durées courtes : 150 ms (interactions), 300 ms (apparitions), courbe d'accélération douce.
-- Apparition progressive des sections au défilement, une seule fois, sans rebond.
+- Interactions (survol, focus, boutons) : 150 ms, courbe douce.
+- Apparitions : 600 à 800 ms, courbe « expo » (rapide au départ, douce à l'arrivée) ; photos : 1,2 à 1,4 s pour le léger recadrage.
+- **Rationner le mouvement** : seuls l'accroche, les titres de section, les photos et les séries de cartes apparaissent au défilement, une seule fois, sans rebond. Les paragraphes, listes et boutons sont affichés d'emblée.
 - Aucun mouvement si l'utilisateur a demandé la réduction des animations.
 
 ## 9. Voix et ton

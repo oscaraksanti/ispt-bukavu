@@ -49,7 +49,7 @@ export function CelluleHoraire({
         onClick={() => setOuvert((o) => !o)}
         aria-expanded={ouvert}
         className={cn(
-          "flex h-full min-h-14 w-full flex-col items-center justify-center px-2 py-1.5 text-center text-[0.8125rem] leading-snug transition-colors hover:bg-ispt-50 print:min-h-0",
+          "flex h-full min-h-14 w-full flex-col items-center justify-center px-2 py-1.5 text-center text-detail leading-snug transition-colors hover:bg-ispt-50 print:min-h-0",
           !intitule && "text-pierre-400",
           statut === "ANNULEE" && "line-through",
         )}
@@ -65,7 +65,7 @@ export function CelluleHoraire({
           )}
         </span>
         {salleActuelle && (
-          <span className="mt-0.5 text-[0.6875rem] text-pierre-500">{salleActuelle}</span>
+          <span className="mt-0.5 text-legende text-pierre-500">{salleActuelle}</span>
         )}
         <span className="sr-only">, {libelle}</span>
       </button>

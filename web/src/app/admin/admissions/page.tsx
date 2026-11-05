@@ -140,13 +140,13 @@ export default async function Candidatures({ searchParams }: PageProps<"/admin/a
           <div className="flex flex-wrap gap-2">
             <a
               href={`/affiche/${campagne.id}`}
-              className="inline-flex h-11 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-5 text-[0.9375rem] font-medium text-encre hover:border-encre"
+              className="inline-flex h-11 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-5 text-corps font-medium text-encre hover:border-encre"
             >
               <QrCode aria-hidden className="size-4" /> Affiche
             </a>
             <a
               href={`/admin/admissions/export?campagne=${campagne.id}`}
-              className="inline-flex h-11 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-5 text-[0.9375rem] font-medium text-encre hover:border-encre"
+              className="inline-flex h-11 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-5 text-corps font-medium text-encre hover:border-encre"
             >
               <Download aria-hidden className="size-4" /> Exporter (CSV)
             </a>

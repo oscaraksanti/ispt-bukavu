@@ -1,10 +1,10 @@
 import {
   CalendarCheck,
-  BookOpenCheck,
-  Briefcase,
-  ClipboardList,
+  ClipboardCheck,
   FileBadge,
-  FileText,
+  FolderOpen,
+  HardHat,
+  NotebookPen,
   Megaphone,
   Wallet,
   type LucideIcon,
@@ -19,13 +19,13 @@ import {
 import { cn } from "@/lib/cn";
 
 const ICONES: Record<IconeNotification, LucideIcon> = {
-  notes: BookOpenCheck,
+  notes: ClipboardCheck,
   valve: Megaphone,
-  candidature: FileText,
+  candidature: FolderOpen,
   frais: Wallet,
   document: FileBadge,
-  stage: Briefcase,
-  devoir: ClipboardList,
+  stage: HardHat,
+  devoir: NotebookPen,
   examen: CalendarCheck,
 };
 
@@ -52,7 +52,7 @@ export function ListeNotifications({ notifications }: { notifications: Notificat
     <div className="mx-auto max-w-3xl">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[2.25rem] leading-tight">Notifications</h1>
+          <h1 className="text-titre-page leading-tight">Notifications</h1>
           <p className="mt-2 text-pierre-600">
             {nonLues > 0
               ? `${nonLues} nouvelle${nonLues > 1 ? "s" : ""} depuis votre dernière visite.`
@@ -115,7 +115,7 @@ export function ListeNotifications({ notifications }: { notifications: Notificat
                             <span className="flex items-baseline justify-between gap-3">
                               <span
                                 className={cn(
-                                  "text-[0.9375rem]",
+                                  "text-corps",
                                   lue ? "text-pierre-800" : "font-medium text-encre",
                                 )}
                               >
@@ -127,7 +127,7 @@ export function ListeNotifications({ notifications }: { notifications: Notificat
                               </span>
                             </span>
                             <span className="mt-1 block text-sm text-pierre-600">{n.message}</span>
-                            <span className="mt-2 block font-mono text-[0.6875rem] tracking-wide text-pierre-600 uppercase">
+                            <span className="mt-2 block font-mono text-legende tracking-wide text-pierre-600 uppercase">
                               {libelleDe(n.type)}
                             </span>
                           </span>

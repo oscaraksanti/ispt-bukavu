@@ -11,7 +11,7 @@ export default function HorsLigne() {
         <div className="flex justify-center">
           <Blason hauteur={88} decoratif />
         </div>
-        <h1 className="mt-8 text-4xl">Pas de connexion</h1>
+        <h1 className="mt-8 text-titre-page">Pas de connexion</h1>
         <p className="mt-4 text-pierre-700">
           Cette page n&apos;a pas encore été consultée sur cet appareil. Les pages déjà ouvertes
           (horaire, valve, notes) restent disponibles hors ligne ; les autres le seront dès le

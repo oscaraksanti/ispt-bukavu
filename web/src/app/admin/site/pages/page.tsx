@@ -1,4 +1,4 @@
-import { ArrowRight, ExternalLink } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EnteteAdmin } from "@/components/admin/entete-admin";
@@ -57,7 +57,7 @@ export default async function PagesDuSite() {
                   rel="noopener"
                   className="inline-flex h-8 items-center gap-1.5 rounded-xs px-3 text-sm text-pierre-700 hover:bg-pierre-100"
                 >
-                  <ExternalLink aria-hidden className="size-4" />
+                  <ArrowUpRight aria-hidden className="size-4" />
                   Voir<span className="sr-only"> la page {p.titre}</span>
                 </a>
                 <Link

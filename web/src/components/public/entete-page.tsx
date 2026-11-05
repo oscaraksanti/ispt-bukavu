@@ -91,7 +91,7 @@ export function BlocPage({
       <div className="conteneur grid gap-8 py-16 lg:grid-cols-12 lg:py-20">
         <div className="lg:col-span-4">
           <p className="revele surtitre">{numero}</p>
-          <h2 className="revele-titre ligne-masquee mt-3 text-3xl lg:text-[2.25rem]">
+          <h2 className="revele-titre ligne-masquee mt-3 text-3xl lg:text-titre-page">
             <span>{titre}</span>
           </h2>
         </div>

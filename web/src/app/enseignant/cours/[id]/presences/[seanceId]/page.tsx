@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
 import { EnteteCours } from "@/components/cours/entete-cours";
-import { EtatVide } from "@/components/ui/elements";
+import { EtatVide, LienRetour } from "@/components/ui/elements";
 import { libellePromotion } from "@/features/academique/regles";
 import { formatHeure, formatJour } from "@/features/actualites/dates";
 import { coursDeLEnseignant } from "@/features/devoirs/acces";
@@ -45,12 +44,7 @@ export default async function AppelSeance({
         actif="presences"
       />
       <div className="mx-auto max-w-3xl">
-        <Link
-          href={`/enseignant/cours/${id}/presences`}
-          className="text-sm text-ispt-600 underline hover:no-underline"
-        >
-          ← Toutes les séances
-        </Link>
+        <LienRetour href={`/enseignant/cours/${id}/presences`}>Toutes les séances</LienRetour>
         <h2 className="mt-4 text-2xl first-letter:uppercase">
           Appel du {formatJour.format(seance.debut)}, {formatHeure.format(seance.debut)}–
           {formatHeure.format(seance.fin)}

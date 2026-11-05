@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { EnteteAdmin, Panneau } from "@/components/admin/entete-admin";
@@ -162,7 +162,7 @@ export default async function Dossier({ params }: PageProps<"/admin/admissions/[
                             rel="noopener"
                             className="inline-flex items-center gap-1.5 text-sm font-medium text-ispt-600 underline hover:no-underline"
                           >
-                            <ExternalLink aria-hidden className="size-3.5" /> Ouvrir
+                            <ArrowUpRight aria-hidden className="size-3.5" /> Ouvrir
                           </a>
                         </div>
                       ) : (

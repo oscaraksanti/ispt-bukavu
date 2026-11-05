@@ -37,7 +37,7 @@ export function Photo({
 export function Legende({ children }: { children: React.ReactNode }) {
   if (!children) return null;
   return (
-    <figcaption className="absolute bottom-0 left-0 bg-encre/85 px-2.5 py-1 font-mono text-[0.625rem] tracking-wide text-white uppercase">
+    <figcaption className="absolute bottom-0 left-0 bg-encre/85 px-2.5 py-1 font-mono text-legende tracking-wide text-white uppercase">
       {children}
     </figcaption>
   );

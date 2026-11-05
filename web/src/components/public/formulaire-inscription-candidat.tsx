@@ -125,7 +125,7 @@ export function FormulaireInscriptionCandidat() {
           instruire ma candidature et me contacter à son sujet.
         </label>
         {e.consentement && (
-          <p id="consentement-erreur" className="text-[0.8125rem] font-medium text-erreur">
+          <p id="consentement-erreur" className="text-detail font-medium text-erreur">
             {e.consentement}
           </p>
         )}

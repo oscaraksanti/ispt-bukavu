@@ -11,7 +11,7 @@ export default function PageActivation() {
   return (
     <>
       <p className="surtitre">Espace étudiant</p>
-      <h1 className="mt-3 text-4xl">Activer mon compte</h1>
+      <h1 className="mt-3 text-titre-page">Activer mon compte</h1>
       <p className="mt-3 text-pierre-600">
         Saisissez votre matricule et le code remis par le secrétariat, puis choisissez votre mot de
         passe. Vous vous connecterez ensuite avec votre matricule.

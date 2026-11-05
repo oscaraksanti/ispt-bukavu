@@ -22,7 +22,7 @@ export default async function StagesEncadres() {
   });
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="text-[2.25rem] leading-tight">Stages encadrés</h1>
+      <h1 className="text-titre-page leading-tight">Stages encadrés</h1>
       {stages.length === 0 && <EtatVide titre="Aucun stage à encadrer" />}
       {stages.map((s) => (
         <section key={s.id} className="rounded-md border border-pierre-200 bg-white p-6">

@@ -5,6 +5,7 @@ import { Signature } from "@/components/marque/blason";
 import { seDeconnecter } from "@/features/auth/actions";
 import { Cloche } from "@/components/notifications/cloche";
 import { BandeauHorsLigne } from "@/components/pwa/bandeau-hors-ligne";
+import { LienEvitement } from "@/components/ui/elements";
 import { NavigationEspace } from "./navigation-espace";
 
 /** Cadre commun des espaces étudiant et enseignant : en-tête, onglets, contenu. */
@@ -28,6 +29,7 @@ export function CadreEspace({
 }) {
   return (
     <div className="min-h-svh bg-papier">
+      <LienEvitement />
       <BandeauHorsLigne />
       <header className="border-b border-pierre-200 bg-white">
         <div className="conteneur flex h-16 items-center justify-between gap-4">
@@ -52,7 +54,7 @@ export function CadreEspace({
               <Link
                 prefetch={false}
                 href={aide}
-                className="inline-flex size-9 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100"
+                className="inline-flex size-10 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100"
               >
                 <CircleHelp aria-hidden className="size-5" />
                 <span className="sr-only">Aide</span>
@@ -62,7 +64,7 @@ export function CadreEspace({
             <form action={seDeconnecter}>
               <button
                 type="submit"
-                className="inline-flex h-9 items-center gap-2 rounded-xs px-3 text-sm text-pierre-700 hover:bg-pierre-100"
+                className="inline-flex h-10 items-center gap-2 rounded-xs px-3 text-sm text-pierre-700 hover:bg-pierre-100"
               >
                 <LogOut aria-hidden className="size-4" />
                 <span className="sr-only sm:not-sr-only">Se déconnecter</span>

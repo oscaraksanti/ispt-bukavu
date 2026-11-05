@@ -113,7 +113,7 @@ export default async function PageInstitut() {
           <div className="conteneur grid gap-12 py-16 lg:grid-cols-12 lg:py-20">
             <div className="revele lg:col-span-4">
               <p className="surtitre text-chantier">{suivant()}</p>
-              <h2 className="mt-3 text-3xl text-white lg:text-[2.25rem]">
+              <h2 className="mt-3 text-3xl text-white lg:text-titre-page">
                 {stages.texte("titre")}
               </h2>
               <p className="mt-4 text-white/70">{stages.texte("intro")}</p>
@@ -125,7 +125,7 @@ export default async function PageInstitut() {
                   <p className="mt-2 text-sm text-white/65">{s.texte}</p>
                   <ul className="mt-5 space-y-2.5">
                     {s.lieux.map((l) => (
-                      <li key={l} className="flex items-start gap-3 text-[0.9375rem]">
+                      <li key={l} className="flex items-start gap-3 text-corps">
                         <span aria-hidden className="mt-2 size-2 shrink-0 bg-chantier" />
                         {l}
                       </li>

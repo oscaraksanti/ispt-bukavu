@@ -9,7 +9,7 @@ export default function PageIntrouvable() {
         <Blason hauteur={72} />
       </Link>
       <p className="mt-10 font-mono text-sm tracking-widest text-ispt-600">ERREUR 404</p>
-      <h1 className="mt-3 text-4xl sm:text-5xl">Cette page est introuvable</h1>
+      <h1 className="mt-3 text-titre-page sm:text-5xl">Cette page est introuvable</h1>
       <p className="mt-4 max-w-md text-pierre-600">
         L&apos;adresse a peut-être changé, ou la page n&apos;existe plus.
       </p>

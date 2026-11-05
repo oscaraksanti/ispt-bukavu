@@ -13,7 +13,7 @@ export function LienNavigation({ href, children }: { href: string; children: Rea
       href={href}
       aria-current={actif ? "page" : undefined}
       className={cn(
-        "relative inline-flex h-10 items-center px-3 text-[0.9375rem] text-pierre-700 transition-colors hover:text-encre",
+        "relative inline-flex h-10 items-center px-3 text-corps text-pierre-700 transition-colors hover:text-encre",
         "after:absolute after:inset-x-3 after:bottom-1 after:h-[3px] after:origin-left after:scale-x-0 after:bg-chantier after:transition-transform after:duration-150",
         actif && "text-encre after:scale-x-100",
       )}

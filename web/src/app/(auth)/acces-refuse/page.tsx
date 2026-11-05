@@ -7,7 +7,7 @@ export default function PageAccesRefuse() {
   return (
     <>
       <p className="surtitre">Accès refusé</p>
-      <h1 className="mt-3 text-4xl">Cette page ne vous est pas ouverte</h1>
+      <h1 className="mt-3 text-titre-page">Cette page ne vous est pas ouverte</h1>
       <p className="mt-3 text-pierre-600">
         Votre compte ne dispose pas des droits nécessaires. Si vous pensez qu&apos;il s&apos;agit
         d&apos;une erreur, adressez-vous au support technique de l&apos;institut.

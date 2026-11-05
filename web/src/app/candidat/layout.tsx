@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { Signature } from "@/components/marque/blason";
 import { Cloche } from "@/components/notifications/cloche";
-import { Squelette } from "@/components/ui/elements";
+import { LienEvitement, Squelette } from "@/components/ui/elements";
 import { exigerCandidat } from "@/features/admissions/acces";
 import { seDeconnecter } from "@/features/auth/actions";
 import { compterNonLues } from "@/features/notifications/requetes";
@@ -21,6 +21,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
   const nonLues = await compterNonLues(u.id);
   return (
     <>
+      <LienEvitement />
       <header className="border-b border-pierre-200 bg-white">
         <div className="conteneur flex h-16 items-center justify-between gap-4">
           <Link href="/" aria-label="Retour au site de l'ISPT-Bukavu">
@@ -31,7 +32,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
             <Link
               prefetch={false}
               href="/aide/candidat"
-              className="inline-flex size-9 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100"
+              className="inline-flex size-10 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100"
             >
               <CircleHelp aria-hidden className="size-5" />
               <span className="sr-only">Aide</span>
@@ -40,7 +41,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
             <form action={seDeconnecter}>
               <button
                 type="submit"
-                className="inline-flex h-9 items-center gap-2 rounded-xs px-3 text-sm text-pierre-700 hover:bg-pierre-100"
+                className="inline-flex h-10 items-center gap-2 rounded-xs px-3 text-sm text-pierre-700 hover:bg-pierre-100"
               >
                 <LogOut aria-hidden className="size-4" />
                 <span className="sr-only sm:not-sr-only">Se déconnecter</span>

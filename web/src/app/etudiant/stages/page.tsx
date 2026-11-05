@@ -22,7 +22,7 @@ export default async function StagesEtudiant() {
   });
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="text-[2.25rem] leading-tight">Stages</h1>
+      <h1 className="text-titre-page leading-tight">Stages</h1>
       {stages.length === 0 && (
         <EtatVide
           titre="Aucun stage pour le moment"

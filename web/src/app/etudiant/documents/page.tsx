@@ -26,7 +26,7 @@ export default async function DocumentsEtudiant() {
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <header>
-        <h1 className="text-[2.25rem] leading-tight">Documents officiels</h1>
+        <h1 className="text-titre-page leading-tight">Documents officiels</h1>
         <p className="mt-2 text-pierre-600">
           Attestations et relevés délivrés par le secrétariat académique. Chaque document porte un
           QR code : un employeur ou une autre université peut en vérifier l&apos;authenticité en

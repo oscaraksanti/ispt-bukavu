@@ -31,7 +31,7 @@ export function VueSemaine({
       <div className="flex items-center justify-between gap-3">
         <Link
           href={`${base}?semaine=${ajouterJours(lundi, -7)}`}
-          className="inline-flex h-9 items-center gap-1 rounded-xs border border-pierre-300 bg-white px-3 text-sm hover:border-encre"
+          className="inline-flex h-10 items-center gap-1 rounded-xs border border-pierre-300 bg-white px-3 text-sm hover:border-encre"
         >
           <ChevronLeft aria-hidden className="size-4" />{" "}
           <span className="sr-only sm:not-sr-only">Précédente</span>
@@ -39,7 +39,7 @@ export function VueSemaine({
         <p className="text-center font-medium text-encre">Semaine {libelleSemaine(lundi)}</p>
         <Link
           href={`${base}?semaine=${ajouterJours(lundi, 7)}`}
-          className="inline-flex h-9 items-center gap-1 rounded-xs border border-pierre-300 bg-white px-3 text-sm hover:border-encre"
+          className="inline-flex h-10 items-center gap-1 rounded-xs border border-pierre-300 bg-white px-3 text-sm hover:border-encre"
         >
           <span className="sr-only sm:not-sr-only">Suivante</span>{" "}
           <ChevronRight aria-hidden className="size-4" />

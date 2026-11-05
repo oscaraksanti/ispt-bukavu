@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BoutonAction } from "@/components/admin/bouton-action";
@@ -56,7 +56,7 @@ export default async function OffreAdmin({ params }: PageProps<"/admin/offres/[i
                 rel="noopener"
                 className="inline-flex h-9 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-4 text-sm font-medium text-encre hover:border-encre"
               >
-                <ExternalLink aria-hidden className="size-4" /> Voir sur le site
+                <ArrowUpRight aria-hidden className="size-4" /> Voir sur le site
               </a>
             )}
             {publiee ? (

@@ -17,7 +17,7 @@ export function EnteteAdmin({
     <header className="flex flex-col gap-5 border-b border-pierre-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
       <div>
         {ariane && <FilAriane elements={ariane} />}
-        <h1 className="mt-3 text-3xl sm:text-[2.25rem]">{titre}</h1>
+        <h1 className="mt-3 text-3xl sm:text-titre-page">{titre}</h1>
         {description && <p className="mt-2 max-w-2xl text-pierre-600">{description}</p>}
       </div>
       {actions && <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>}

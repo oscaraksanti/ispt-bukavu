@@ -13,7 +13,7 @@ export default async function ExamensEtudiant() {
   const epreuves = await epreuvesDeLEtudiant(profil.inscriptions.map((i) => i.promotionId));
   return (
     <div>
-      <h1 className="text-[2.25rem] leading-tight">Examens</h1>
+      <h1 className="text-titre-page leading-tight">Examens</h1>
       <p className="mt-2 max-w-2xl text-pierre-700">
         Vos épreuves, heures et salles. Toute modification vous est signalée par une notification.
       </p>

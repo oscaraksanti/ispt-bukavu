@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, ExternalLink } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -66,7 +66,7 @@ export default async function Album({ params }: PageProps<"/admin/galerie/[id]">
                 rel="noopener"
                 className="inline-flex h-9 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-4 text-sm font-medium text-encre hover:border-encre"
               >
-                <ExternalLink aria-hidden className="size-4" /> Voir sur le site
+                <ArrowUpRight aria-hidden className="size-4" /> Voir sur le site
               </a>
             )}
             <BoutonAction

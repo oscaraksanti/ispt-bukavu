@@ -1,4 +1,4 @@
-import { ArrowRight, Briefcase, ExternalLink, MapPin } from "lucide-react";
+import { ArrowRight, Briefcase, ArrowUpRight, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -141,7 +141,7 @@ async function Annuaire({ searchParams }: { searchParams: PageProps<"/anciens">[
                           rel="noopener noreferrer nofollow"
                           className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-medium text-ispt-700 underline hover:no-underline"
                         >
-                          <ExternalLink aria-hidden className="size-4" /> Profil professionnel
+                          <ArrowUpRight aria-hidden className="size-4" /> Profil professionnel
                           <span className="sr-only"> de {a.nom}</span>
                         </a>
                       )}

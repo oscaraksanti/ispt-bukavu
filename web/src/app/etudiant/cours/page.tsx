@@ -25,7 +25,7 @@ export default async function CoursEtudiant() {
   const parSemestre = Map.groupBy(cours, (c) => c.cours.ue.semestre);
   return (
     <div className="mx-auto max-w-4xl">
-      <h1 className="text-[2.25rem] leading-tight">Mes cours</h1>
+      <h1 className="text-titre-page leading-tight">Mes cours</h1>
       {cours.length === 0 ? (
         <div className="mt-8">
           <EtatVide

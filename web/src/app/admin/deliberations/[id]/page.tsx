@@ -1,4 +1,4 @@
-import { AlertTriangle, CheckCircle2, Download, FileText, RefreshCw } from "lucide-react";
+import { TriangleAlert, CircleCheck, Download, FileText, RefreshCw } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -190,7 +190,7 @@ export default async function Deliberation({
             </div>
             {d.statut === "PROCLAMEE" && d.proclameLe && (
               <p className="mt-5 flex items-center gap-2 rounded-xs bg-succes-fond px-4 py-3 text-sm text-succes">
-                <CheckCircle2 aria-hidden className="size-4 shrink-0" />
+                <CircleCheck aria-hidden className="size-4 shrink-0" />
                 Résultats proclamés le{" "}
                 {d.proclameLe.toLocaleString("fr-FR", {
                   timeZone: "Africa/Lubumbashi",
@@ -232,14 +232,14 @@ export default async function Deliberation({
           <Panneau titre="Contrôles avant le jury">
             {c.bloquants.length === 0 && c.avertissements.length === 0 ? (
               <p className="flex items-center gap-2 text-sm text-succes">
-                <CheckCircle2 aria-hidden className="size-4" /> Aucune anomalie : le jury peut
+                <CircleCheck aria-hidden className="size-4" /> Aucune anomalie : le jury peut
                 statuer.
               </p>
             ) : (
               <ul className="space-y-2 text-sm">
                 {c.bloquants.map((b) => (
                   <li key={b} className="flex gap-2 text-erreur">
-                    <AlertTriangle aria-hidden className="mt-0.5 size-4 shrink-0" />
+                    <TriangleAlert aria-hidden className="mt-0.5 size-4 shrink-0" />
                     <span>
                       <span className="font-medium">Bloquant : </span>
                       {b}
@@ -248,7 +248,7 @@ export default async function Deliberation({
                 ))}
                 {c.avertissements.map((b) => (
                   <li key={b} className="flex gap-2 text-attention">
-                    <AlertTriangle aria-hidden className="mt-0.5 size-4 shrink-0" />
+                    <TriangleAlert aria-hidden className="mt-0.5 size-4 shrink-0" />
                     <span>{b}</span>
                   </li>
                 ))}

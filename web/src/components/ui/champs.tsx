@@ -3,7 +3,7 @@ import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 const baseChamp =
-  "w-full rounded-xs border border-pierre-300 bg-white px-3 text-[0.9375rem] text-pierre-900 transition-colors duration-150 placeholder:text-pierre-400 hover:border-pierre-400 focus:border-ispt-600 focus:ring-2 focus:ring-ispt-600/15 focus:outline-none disabled:cursor-not-allowed disabled:bg-pierre-100 aria-invalid:border-erreur aria-invalid:focus:ring-erreur/15";
+  "w-full rounded-xs border border-pierre-300 bg-white px-3 text-corps text-pierre-900 transition-colors duration-150 placeholder:text-pierre-400 hover:border-pierre-400 focus:border-ispt-600 focus:ring-2 focus:ring-ispt-600/15 focus:outline-none disabled:cursor-not-allowed disabled:bg-pierre-100 aria-invalid:border-erreur aria-invalid:focus:ring-erreur/15";
 
 export function Libelle({
   className,
@@ -85,12 +85,12 @@ export function Champ({
       </Libelle>
       {children}
       {aide && !erreur && (
-        <p id={`${id}-aide`} className="text-[0.8125rem] text-pierre-500">
+        <p id={`${id}-aide`} className="text-detail text-pierre-500">
           {aide}
         </p>
       )}
       {erreur && (
-        <p id={`${id}-erreur`} role="alert" className="text-[0.8125rem] font-medium text-erreur">
+        <p id={`${id}-erreur`} role="alert" className="text-detail font-medium text-erreur">
           {erreur}
         </p>
       )}

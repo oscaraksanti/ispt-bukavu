@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { EditeurBloc } from "@/components/admin/editeur-bloc";
@@ -59,9 +59,9 @@ export default async function EditionPage({ params }: PageProps<"/admin/site/pag
             href={definition.chemin}
             target="_blank"
             rel="noopener"
-            className="inline-flex h-11 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-5 text-[0.9375rem] font-medium text-encre hover:border-encre"
+            className="inline-flex h-11 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-5 text-corps font-medium text-encre hover:border-encre"
           >
-            <ExternalLink aria-hidden className="size-4" /> Voir la page
+            <ArrowUpRight aria-hidden className="size-4" /> Voir la page
           </a>
         }
       />

@@ -1,4 +1,4 @@
-import { CalendarClock, ExternalLink, Mail, MapPin } from "lucide-react";
+import { CalendarClock, ArrowUpRight, Mail, MapPin } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -76,15 +76,15 @@ async function Contenu({ params }: { params: PageProps<"/offres/[id]">["params"]
                   href={o.lienCandidature}
                   target="_blank"
                   rel="noopener noreferrer nofollow"
-                  className="flex h-11 items-center justify-center gap-2 rounded-xs bg-chantier px-5 text-[0.9375rem] font-medium text-encre hover:bg-chantier-fonce"
+                  className="flex h-11 items-center justify-center gap-2 rounded-xs bg-chantier px-5 text-corps font-medium text-encre hover:bg-chantier-fonce"
                 >
-                  <ExternalLink aria-hidden className="size-4" /> Postuler en ligne
+                  <ArrowUpRight aria-hidden className="size-4" /> Postuler en ligne
                 </a>
               )}
               {o.emailCandidature && (
                 <a
                   href={`mailto:${o.emailCandidature}?subject=${encodeURIComponent(`Candidature : ${o.titre}`)}`}
-                  className="flex h-11 items-center justify-center gap-2 rounded-xs border border-pierre-300 px-5 text-[0.9375rem] font-medium text-encre hover:border-encre"
+                  className="flex h-11 items-center justify-center gap-2 rounded-xs border border-pierre-300 px-5 text-corps font-medium text-encre hover:border-encre"
                 >
                   <Mail aria-hidden className="size-4" /> {o.emailCandidature}
                 </a>

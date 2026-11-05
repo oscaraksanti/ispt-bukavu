@@ -1,8 +1,49 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
+
+/* Lien d'évitement (premier élément focalisable de chaque cadre) ------------- */
+
+export function LienEvitement() {
+  return (
+    <a
+      href="#contenu"
+      className="sr-only z-[60] rounded-xs bg-chantier px-4 py-2 font-medium text-encre focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+    >
+      Aller au contenu
+    </a>
+  );
+}
+
+/* Lien de retour vers la page parente ------------------------------------------ */
+
+export function LienRetour({
+  href,
+  children,
+  className,
+}: {
+  href: ComponentProps<typeof Link>["href"];
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "group inline-flex min-h-6 items-center gap-1.5 text-sm text-ispt-600 hover:text-encre",
+        className,
+      )}
+    >
+      <ArrowLeft
+        aria-hidden
+        className="size-4 shrink-0 transition-transform duration-150 ease-doux group-hover:-translate-x-0.5"
+      />
+      {children}
+    </Link>
+  );
+}
 
 /* Lien avec flèche ------------------------------------------------------- */
 
@@ -103,7 +144,7 @@ export function EnteteSection({
     >
       <div className="max-w-2xl">
         {(numero || surtitre) && (
-          <p className={cn("revele surtitre flex items-center gap-3", clair && "text-chantier")}>
+          <p className={cn("surtitre flex items-center gap-3", clair && "text-chantier")}>
             {numero && <span>{numero}</span>}
             {numero && surtitre && <FiletCote clair={clair} className="w-8" />}
             {surtitre && <span>{surtitre}</span>}
@@ -119,9 +160,8 @@ export function EnteteSection({
         </Titre>
         {intro && (
           <p
-            style={{ "--i": 1 } as React.CSSProperties}
             className={cn(
-              "revele mt-4 text-[1.0625rem] leading-relaxed",
+              "mt-4 text-chapeau leading-relaxed",
               clair ? "text-white/75" : "text-pierre-600",
             )}
           >
@@ -129,11 +169,7 @@ export function EnteteSection({
           </p>
         )}
       </div>
-      {action && (
-        <div className="revele shrink-0" style={{ "--i": 2 } as React.CSSProperties}>
-          {action}
-        </div>
-      )}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }

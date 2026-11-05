@@ -21,7 +21,7 @@ export default async function HoraireEnseignant({
   });
   return (
     <div>
-      <h1 className="text-[2.25rem] leading-tight">Mon horaire</h1>
+      <h1 className="text-titre-page leading-tight">Mon horaire</h1>
       <div className="mt-6">
         <VueSemaine
           lundi={lundi}

@@ -37,7 +37,7 @@ export function CarteActualite({
           {actualite.titre}
         </Link>
       </h3>
-      <p className="mt-3 line-clamp-3 text-[0.9375rem] leading-relaxed text-pierre-600">
+      <p className="mt-3 line-clamp-3 text-corps leading-relaxed text-pierre-600">
         {actualite.resume}
       </p>
     </article>

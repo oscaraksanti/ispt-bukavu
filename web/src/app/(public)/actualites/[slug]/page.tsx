@@ -80,7 +80,7 @@ async function Article({ slug }: { slug: string }) {
               {tempsDeLecture(a.contenu)} min de lecture
             </p>
             <h1
-              className="entree-ligne ligne-masquee mt-5 text-[2.25rem] leading-[1.08] sm:text-5xl"
+              className="entree-ligne ligne-masquee mt-5 text-titre-page leading-[1.08] sm:text-5xl"
               style={{ "--i": 1 } as React.CSSProperties}
             >
               <span>{a.titre}</span>

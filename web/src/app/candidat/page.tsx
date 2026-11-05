@@ -119,7 +119,7 @@ export default async function MonDossier() {
       <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="surtitre">{d.campagne.libelle}</p>
-          <h1 className="mt-3 text-[2.25rem] leading-tight sm:text-5xl">Dossier n° {d.numero}</h1>
+          <h1 className="mt-3 text-titre-page leading-tight sm:text-5xl">Dossier n° {d.numero}</h1>
           <p className="mt-3 flex flex-wrap items-center gap-3 text-pierre-700">
             <Etiquette ton={TON_STATUT[statut]}>{LIBELLES_STATUT[statut]}</Etiquette>
             {statut === "BROUILLON" && (
