@@ -22,11 +22,15 @@ export const MOT_DE_PASSE = "Essai-E2E-2026";
 async function compte(email: string | null, nom: string, roles: string[]) {
   const motDePasseHash = await hash(MOT_DE_PASSE);
   const existant = email ? await db.utilisateur.findUnique({ where: { email } }) : null;
-  const u =
-    existant ??
-    (await db.utilisateur.create({
-      data: { email, nom, prenom: "Test", motDePasseHash, statut: "ACTIF" },
-    }));
+  // Mot de passe remis à sa valeur de test à chaque préparation (un scénario le change).
+  const u = existant
+    ? await db.utilisateur.update({
+        where: { id: existant.id },
+        data: { motDePasseHash, statut: "ACTIF" },
+      })
+    : await db.utilisateur.create({
+        data: { email, nom, prenom: "Test", motDePasseHash, statut: "ACTIF" },
+      });
   for (const code of roles) {
     const role = await db.role.findUniqueOrThrow({ where: { code } });
     await db.utilisateurRole.upsert({

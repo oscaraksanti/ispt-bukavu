@@ -16,6 +16,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
   const { u, profil } = await exigerEnseignant();
   return (
     <CadreEspace
+      compte="/enseignant/compte"
       aide="/aide/enseignant"
       nom={[profil.titre, u.nomComplet].filter(Boolean).join(" ")}
       sousTitre={profil.domaine ?? "Enseignant"}

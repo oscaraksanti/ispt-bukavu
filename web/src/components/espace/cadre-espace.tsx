@@ -1,4 +1,4 @@
-import { CircleHelp, LogOut } from "lucide-react";
+import { CircleHelp, CircleUserRound, LogOut } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Signature } from "@/components/marque/blason";
@@ -16,8 +16,11 @@ export function CadreEspace({
   autresEspaces,
   notifications,
   aide,
+  compte,
   children,
 }: {
+  /** Page « Mon compte » de l'espace. */
+  compte: string;
   /** Guide d'utilisation de l'espace. */
   aide?: string;
   nom: string;
@@ -46,10 +49,17 @@ export function CadreEspace({
                 {e.libelle}
               </Link>
             ))}
-            <div className="hidden text-right sm:block">
-              <p className="text-sm font-medium text-encre">{nom}</p>
-              <p className="text-xs text-pierre-500">{sousTitre}</p>
-            </div>
+            <Link
+              href={compte}
+              className="inline-flex size-10 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100 sm:size-auto sm:px-2 sm:py-1 sm:text-right"
+            >
+              <span className="sr-only">Mon compte, </span>
+              <span className="hidden sm:block">
+                <span className="block text-sm font-medium text-encre">{nom}</span>
+                <span className="block text-xs text-pierre-500">{sousTitre}</span>
+              </span>
+              <CircleUserRound aria-hidden className="size-5 sm:hidden" />
+            </Link>
             {aide && (
               <Link
                 prefetch={false}

@@ -55,6 +55,7 @@ test("espace étudiant", async ({ page }) => {
     "/etudiant/frais",
     "/etudiant/notifications",
     "/etudiant/resultats",
+    "/etudiant/compte",
     `/etudiant/cours/${D.ids.coursOffert}`,
   ]) {
     await page.goto(chemin);
@@ -67,6 +68,7 @@ test("espace enseignant", async ({ page }) => {
   for (const chemin of [
     "/enseignant",
     "/enseignant/examens",
+    "/enseignant/compte",
     `/enseignant/cours/${D.ids.coursOffert}`,
     `/enseignant/cours/${D.ids.coursOffert}/devoirs`,
     `/enseignant/cours/${D.ids.coursOffert}/presences`,
@@ -87,6 +89,7 @@ test("administration", async ({ page }) => {
     "/admin/utilisateurs",
     "/admin/notes",
     "/admin/notifications",
+    "/admin/compte",
     "/admin/deliberations",
     "/admin/deliberations/reglement",
     "/admin/admissions",

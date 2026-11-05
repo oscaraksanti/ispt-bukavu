@@ -18,6 +18,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
   const promotion = profil.inscriptions[0]?.promotion;
   return (
     <CadreEspace
+      compte="/etudiant/compte"
       aide="/aide/etudiant"
       nom={u.nomComplet}
       sousTitre={`${profil.matricule}${promotion ? ` · ${libellePromotion(promotion)}` : ""}`}

@@ -1,4 +1,4 @@
-import { CircleHelp, LogOut } from "lucide-react";
+import { CircleHelp, CircleUserRound, LogOut } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -28,7 +28,14 @@ async function Cadre({ children }: { children: React.ReactNode }) {
             <Signature compacte />
           </Link>
           <div className="flex items-center gap-2 sm:gap-4">
-            <p className="hidden text-sm text-pierre-700 sm:block">{u.nomComplet}</p>
+            <Link
+              href="/candidat/compte"
+              className="inline-flex size-10 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100 sm:size-auto sm:px-2 sm:py-2"
+            >
+              <span className="sr-only">Mon compte, </span>
+              <span className="hidden text-sm sm:block">{u.nomComplet}</span>
+              <CircleUserRound aria-hidden className="size-5 sm:hidden" />
+            </Link>
             <Link
               prefetch={false}
               href="/aide/candidat"

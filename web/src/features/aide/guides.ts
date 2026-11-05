@@ -17,6 +17,18 @@ export type Guide = {
   sections: SectionGuide[];
 };
 
+/** Section commune : la page « Mon compte » existe dans chaque espace. */
+const MON_COMPTE: SectionGuide = {
+  titre: "Mon compte : mot de passe et appareils",
+  etapes: [
+    "Cliquez sur votre nom (ou sur l'icône de profil sur téléphone), en haut de l'écran.",
+    "« Changer de mot de passe » : saisissez l'actuel, puis deux fois le nouveau.",
+    "« Appareils connectés » : vous voyez où votre compte est ouvert et pouvez déconnecter les autres appareils.",
+  ],
+  conseil:
+    "Après un changement de mot de passe, les autres appareils sont déconnectés et un email de confirmation est envoyé si une adresse est enregistrée.",
+};
+
 export const GUIDES: Guide[] = [
   {
     slug: "etudiant",
@@ -81,6 +93,8 @@ export const GUIDES: Guide[] = [
           "Le secrétariat traite la demande ; vous êtes notifié quand le document est émis.",
           "Le document s'imprime depuis votre espace. Son QR code permet à quiconque de vérifier son authenticité.",
         ],
+        conseil:
+          "Le relevé de notes et l'attestation de réussite reprennent les résultats proclamés par le jury : ils ne peuvent être délivrés qu'après la proclamation.",
       },
       {
         titre: "Stages et emplois",
@@ -92,6 +106,7 @@ export const GUIDES: Guide[] = [
         texte:
           "La plateforme s'installe sur l'écran d'accueil du téléphone depuis le navigateur (« Ajouter à l'écran d'accueil »). Les pages déjà consultées restent lisibles en cas de coupure ; un bandeau indique alors que vous êtes hors ligne.",
       },
+      MON_COMPTE,
     ],
   },
   {
@@ -150,6 +165,7 @@ export const GUIDES: Guide[] = [
         texte:
           "« Valve » › « Nouveau communiqué » permet d'informer les étudiants de vos cours. Selon vos droits, le communiqué est publié directement ou soumis à validation.",
       },
+      MON_COMPTE,
     ],
   },
   {
@@ -184,6 +200,7 @@ export const GUIDES: Guide[] = [
         texte:
           "Le suivi indique chaque étape de l'instruction. La caisse vérifie votre paiement : votre reçu apparaît alors dans votre espace ; si la référence n'est pas reconnue, vous pouvez la corriger. Si une pièce est refusée, vous êtes prévenu avec le motif. La décision vous est notifiée dans votre espace et par email ; une fois inscrit, vous vous connectez avec le même mot de passe à votre espace étudiant.",
       },
+      MON_COMPTE,
     ],
   },
   {
@@ -272,6 +289,7 @@ export const GUIDES: Guide[] = [
         texte:
           "« Documents » traite les demandes des étudiants et permet d'émettre directement une attestation ou un relevé. En bas de la page, « Paramètres des documents » fixe le signataire et les formules, à confirmer par l'institut.",
       },
+      MON_COMPTE,
     ],
   },
 ];

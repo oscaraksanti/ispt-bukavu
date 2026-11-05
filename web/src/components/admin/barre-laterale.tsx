@@ -74,18 +74,22 @@ function Pied({ nom, email }: { nom: string; email: string }) {
     .join("");
   return (
     <div className="border-t border-white/10 pt-4">
-      <div className="flex items-center gap-3">
+      <Link
+        href="/admin/compte"
+        className="-mx-2 flex items-center gap-3 rounded-xs px-2 py-1.5 hover:bg-white/5"
+      >
         <span
           aria-hidden
           className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/10 font-mono text-xs text-white"
         >
           {initiales}
         </span>
-        <div className="min-w-0">
-          <p className="truncate text-sm text-white">{nom}</p>
-          <p className="truncate text-xs text-white/60">{email}</p>
-        </div>
-      </div>
+        <span className="min-w-0">
+          <span className="sr-only">Mon compte, </span>
+          <span className="block truncate text-sm text-white">{nom}</span>
+          <span className="block truncate text-xs text-white/60">{email}</span>
+        </span>
+      </Link>
       <div className="mt-3 flex flex-wrap items-center gap-x-1 gap-y-1">
         {/* Sans préchargement : le guide est une page du site public. */}
         <Link

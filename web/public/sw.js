@@ -29,6 +29,8 @@ const JAMAIS = [
   /^\/reinitialiser/,
   /^\/activer/,
   /^\/mot-de-passe-oublie/,
+  // « Mon compte » (appareils connectés) n'est jamais conservé sur l'appareil.
+  /^\/(etudiant|enseignant)\/compte/,
   /^\/candidat/,
   /^\/confirmer-email/,
   /^\/affiche/,
