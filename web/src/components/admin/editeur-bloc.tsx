@@ -106,7 +106,7 @@ export function EditeurBloc({
 
   return (
     <form
-      method="post"
+      action={envoyer}
       onSubmit={(e) => {
         e.preventDefault();
         const donnees = new FormData(e.currentTarget);

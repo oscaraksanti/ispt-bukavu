@@ -31,6 +31,9 @@ export function BoutonEnvoi({
 /**
  * Gestionnaire d'envoi qui transmet le formulaire à une action serveur sans
  * que React efface les champs ensuite : en cas d'erreur, la saisie reste.
+ * À poser avec `action={envoyer}` sur le même formulaire : un envoi parti
+ * avant le chargement du script (connexion lente) est alors traité par le
+ * serveur au lieu d'échouer.
  */
 export function envoyerSansEffacer(envoyer: (fd: FormData) => void) {
   return (e: FormEvent<HTMLFormElement>) => {

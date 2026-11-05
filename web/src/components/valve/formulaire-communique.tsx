@@ -47,7 +47,7 @@ export function FormulaireCommunique({
 
   return (
     <form
-      method="post"
+      action={envoyer}
       className="space-y-5"
       onSubmit={(e) => {
         e.preventDefault();

@@ -10,7 +10,7 @@ import { BoutonEnvoi, envoyerSansEffacer } from "@/components/ui/formulaire";
 export function FormulaireConnexion({ suite }: { suite?: string }) {
   const [etat, action, enCours] = useActionState(seConnecter, undefined);
   return (
-    <form method="post" onSubmit={envoyerSansEffacer(action)} className="space-y-5" noValidate>
+    <form action={action} onSubmit={envoyerSansEffacer(action)} className="space-y-5" noValidate>
       {etat?.erreur && (
         <Encadre ton="erreur" titre="Connexion impossible">
           {etat.erreur}

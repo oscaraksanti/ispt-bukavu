@@ -13,7 +13,7 @@ import { ETAT_INITIAL } from "@/lib/etat-formulaire";
 export function FormulaireConfirmation({ jeton }: { jeton: string }) {
   const [etat, action, enCours] = useActionState(confirmerEmail, ETAT_INITIAL);
   return (
-    <form method="post" onSubmit={envoyerSansEffacer(action)} className="space-y-5">
+    <form action={action} onSubmit={envoyerSansEffacer(action)} className="space-y-5">
       {etat.statut === "erreur" && <Encadre ton="erreur">{etat.message}</Encadre>}
       <input type="hidden" name="jeton" value={jeton} />
       <BoutonEnvoi className="w-full" enCoursForce={enCours} enCours="Confirmation…">
