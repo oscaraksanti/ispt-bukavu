@@ -276,9 +276,10 @@
   .ligne-masquee {
     display: block;
     overflow: clip;
-    /* laisse respirer les jambages (g, p, q) sans élargir l'interlignage */
-    padding-bottom: 0.12em;
-    margin-bottom: -0.12em;
+    /* laisse respirer les jambages (g, p, q) et les accents des capitales (É, À)
+       sans élargir l'interlignage */
+    padding-block: 0.16em 0.12em;
+    margin-block: -0.16em -0.12em;
   }
   .ligne-masquee > span {
     display: block;
