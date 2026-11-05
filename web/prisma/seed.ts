@@ -242,10 +242,59 @@ async function administrateur() {
   });
 }
 
+/** Albums livrés avec les photographies officielles, créés une seule fois. */
+const ALBUMS = [
+  {
+    slug: "telecommunications-sur-le-terrain",
+    titre: "Télécommunications sur le terrain",
+    description: "Installations d'antennes et d'équipements de télécommunication.",
+    photos: [
+      "telecoms-antenne-toit-bukavu.jpg",
+      "telecoms-antennes-liaison.jpg",
+      "telecoms-parabole-hauteur.jpg",
+      "telecoms-station-satellite.jpg",
+      "telecoms-intervention-toit.jpg",
+    ],
+  },
+];
+
+/**
+ * Crée l'album si ses photos viennent d'entrer dans la médiathèque : un album
+ * retiré ensuite par l'institut n'est jamais recréé.
+ */
+async function albums(ids: Record<string, string>, nouvelles: Set<string>) {
+  for (const a of ALBUMS) {
+    if (!a.photos.some((p) => nouvelles.has(p))) continue;
+    if (await db.album.findUnique({ where: { slug: a.slug } })) continue;
+    await db.album.create({
+      data: {
+        slug: a.slug,
+        titre: a.titre,
+        description: a.description,
+        publie: true,
+        medias: {
+          create: a.photos
+            .filter((p) => ids[p])
+            .map((p, ordre) => ({ mediaId: ids[p], ordre })),
+        },
+      },
+    });
+  }
+}
+
 async function main() {
   await permissionsEtRoles();
   await referentiels();
+  const deja = new Set(
+    (
+      await db.media.findMany({
+        where: { cle: { startsWith: "public/photos/" } },
+        select: { cle: true },
+      })
+    ).map((m) => m.cle.slice("public/photos/".length)),
+  );
   const ids = await medias();
+  await albums(ids, new Set(Object.keys(ids).filter((f) => !deja.has(f))));
   await contenus(ids);
   await administrateur();
   console.log("Initialisation terminée.");

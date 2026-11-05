@@ -40,6 +40,12 @@ export const PHOTOS_OFFICIELLES: Record<string, string> = {
     "Technicien harnaché installant des équipements de télécommunication sur un mât, au-dessus d'une rue de Bukavu.",
   "telecoms-parabole-hauteur.jpg":
     "Technicien en casque et harnais, en hauteur devant une antenne parabolique, au-dessus d'une plaine.",
+  "telecoms-intervention-toit.jpg":
+    "Technicien en casquette et harnais sur un toit, devant un panneau solaire et des collines.",
+  "telecoms-antennes-liaison.jpg":
+    "Technicien tenant deux antennes de liaison radio en cours d'installation sur un toit.",
+  "telecoms-station-satellite.jpg":
+    "Technicien en polo bleu près d'une antenne parabolique, devant des cases au toit de paille.",
   "tp-electronique.jpg":
     "Étudiants soudant des composants électroniques, multimètre à portée de main.",
   "tp-topographie-1.jpg": "Étudiant en gilet réfléchissant réglant un niveau topographique.",
