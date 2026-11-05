@@ -1,5 +1,6 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
 import { refresh, updateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -7,7 +8,7 @@ import { versDateBukavu } from "@/features/actualites/dates";
 import { exigerPermission } from "@/features/auth/acces";
 import { ETIQUETTE_DOCUMENTS } from "@/features/documents/verification";
 import { notifier } from "@/features/notifications/emettre";
-import type { Prisma } from "@/generated/prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
@@ -269,11 +270,13 @@ export async function cloturer(id: string): Promise<EtatFormulaire> {
   if (d.statut !== "PREPARATION") return echec("Ce jury est déjà clôturé.");
   // Calcul de dernière minute : on clôture sur les notes publiées à cet instant.
   await calculer(id);
-  const [resultats, { coursSansNotes, nbCours }, jury] = await Promise.all([
-    db.resultatDeliberation.findMany({ where: { deliberationId: id } }),
-    notesDeLaPromotion(d.promotionId, d.periode as Periode, d.semestre),
-    db.deliberation.findUniqueOrThrow({ where: { id } }),
-  ]);
+  const [resultats, { coursSansNotes, ponderationsIncompletes, nbCours }, jury] = await Promise.all(
+    [
+      db.resultatDeliberation.findMany({ where: { deliberationId: id } }),
+      notesDeLaPromotion(d.promotionId, d.periode as Periode, d.semestre),
+      db.deliberation.findUniqueOrThrow({ where: { id } }),
+    ],
+  );
   const c = controles(
     resultats.map((r) => ({
       coursNonPresentes: r.coursNonPresentes,
@@ -283,13 +286,19 @@ export async function cloturer(id: string): Promise<EtatFormulaire> {
       decision: r.decisionProposee,
     })),
     coursSansNotes,
-    { nbCours, secretaire: jury.secretaireJury, president: jury.presidentJury },
+    {
+      nbCours,
+      secretaire: jury.secretaireJury,
+      president: jury.presidentJury,
+      ponderationsIncompletes,
+    },
   );
   if (c.bloquants.length) return echec(`Clôture impossible : ${c.bloquants.join(" ")}`);
-  await db.deliberation.update({
-    where: { id },
+  const { count } = await db.deliberation.updateMany({
+    where: { id, statut: "PREPARATION" },
     data: { statut: "CLOTUREE", clotureLe: new Date(), clotureParId: u.id },
   });
+  if (count === 0) return echec("Ce jury vient d'être clôturé par une autre personne.");
   await journaliser({
     auteurId: u.id,
     action: "deliberation_cloturee",
@@ -321,6 +330,26 @@ export async function rouvrir(id: string): Promise<EtatFormulaire> {
   return succes("Jury rouvert : les résultats peuvent être recalculés et ajustés.");
 }
 
+/** Codes de vérification inédits (ni en base, ni en double dans le lot). */
+async function codesLibres(n: number) {
+  const codes = new Set<string>();
+  while (codes.size < n) {
+    const lot = Array.from({ length: n - codes.size }, () => codeVerification(12));
+    const pris = await db.documentOfficiel.findMany({
+      where: { code: { in: lot } },
+      select: { code: true },
+    });
+    for (const c of lot) if (!pris.some((p) => p.code === c)) codes.add(c);
+  }
+  return [...codes];
+}
+
+/**
+ * Proclamation : tout ou rien. Le statut passe d'abord à « proclamée » sous
+ * condition (un double clic ou deux secrétaires en même temps n'émettent pas
+ * deux séries de bulletins), puis les bulletins sont émis dans la même
+ * transaction : en cas d'échec, rien n'est proclamé ni émis.
+ */
 export async function proclamer(id: string): Promise<EtatFormulaire> {
   const u = await exigerPermission(PERMISSION);
   const d = await db.deliberation.findUnique({
@@ -331,34 +360,51 @@ export async function proclamer(id: string): Promise<EtatFormulaire> {
     },
   });
   if (!d) return echec("Délibération introuvable.");
+  if (d.statut === "PROCLAMEE") return echec("Ces résultats sont déjà proclamés.");
   if (d.statut !== "CLOTUREE") return echec("Clôturez d'abord le jury.");
   const reglement = await reglementDe(d);
   const proclameLe = new Date();
-  for (const r of d.resultats) {
-    const donnees = donneesBulletin(d, r, reglement, d.resultats, proclameLe);
-    let doc = null;
-    for (let essai = 0; essai < 5 && !doc; essai++) {
-      try {
-        doc = await db.documentOfficiel.create({
-          data: {
-            code: codeVerification(12),
-            type: "BULLETIN",
-            etudiantId: r.etudiantId,
-            donnees: donnees as unknown as Prisma.InputJsonValue,
-            emisParId: u.id,
-          },
+  const aEmettre = d.resultats.filter((r) => !r.documentId);
+  const codes = await codesLibres(aEmettre.length);
+  const documents = aEmettre.map((r, i) => ({
+    id: randomUUID(),
+    code: codes[i],
+    type: "BULLETIN" as const,
+    etudiantId: r.etudiantId,
+    donnees: donneesBulletin(
+      d,
+      r,
+      reglement,
+      d.resultats,
+      proclameLe,
+    ) as unknown as Prisma.InputJsonValue,
+    emisParId: u.id,
+    emisLe: proclameLe,
+  }));
+  const proclamee = await db.$transaction(
+    async (tx) => {
+      const { count } = await tx.deliberation.updateMany({
+        where: { id, statut: "CLOTUREE" },
+        data: { statut: "PROCLAMEE", proclameLe, proclameParId: u.id },
+      });
+      if (count === 0) return false;
+      if (documents.length) {
+        await tx.documentOfficiel.createMany({
+          data: documents,
         });
-      } catch (e) {
-        if ((e as { code?: string }).code !== "P2002") throw e;
+        // Rattachement de chaque bulletin à son résultat, en une seule requête.
+        await tx.$executeRaw`
+          UPDATE "ResultatDeliberation" AS r SET "documentId" = v.doc
+          FROM (VALUES ${Prisma.join(
+            documents.map((doc, i) => Prisma.sql`(${aEmettre[i].id}, ${doc.id})`),
+          )}) AS v(id, doc)
+          WHERE r.id = v.id`;
       }
-    }
-    if (doc)
-      await db.resultatDeliberation.update({ where: { id: r.id }, data: { documentId: doc.id } });
-  }
-  await db.deliberation.update({
-    where: { id },
-    data: { statut: "PROCLAMEE", proclameLe, proclameParId: u.id },
-  });
+      return true;
+    },
+    { maxWait: 10_000, timeout: 60_000 },
+  );
+  if (!proclamee) return echec("Ces résultats viennent d'être proclamés par une autre personne.");
   await notifier(
     d.resultats.map((r) => r.etudiant.utilisateurId),
     {

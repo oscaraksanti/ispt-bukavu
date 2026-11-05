@@ -253,7 +253,13 @@ export function controles(
     decision: string | null;
   }[],
   coursSansNotes: string[],
-  contexte: { nbCours?: number; secretaire?: string | null; president?: string | null } = {},
+  contexte: {
+    nbCours?: number;
+    secretaire?: string | null;
+    president?: string | null;
+    /** Cours notés dont les évaluations publiées ne totalisent pas 100 %. */
+    ponderationsIncompletes?: { intitule: string; poids: number }[];
+  } = {},
 ) {
   const bloquants: string[] = [];
   const avertissements: string[] = [];
@@ -266,6 +272,16 @@ export function controles(
   if (coursSansNotes.length)
     bloquants.push(
       `${coursSansNotes.length} cours sans aucune note publiée : ${coursSansNotes.slice(0, 4).join(", ")}${coursSansNotes.length > 4 ? "…" : ""}`,
+    );
+  const incompletes = contexte.ponderationsIncompletes ?? [];
+  if (incompletes.length)
+    bloquants.push(
+      `${incompletes.length} cours dont les évaluations publiées ne totalisent pas 100 % : ${incompletes
+        .slice(0, 4)
+        .map((c) => `${c.intitule} (${c.poids} %)`)
+        .join(
+          ", ",
+        )}${incompletes.length > 4 ? "…" : ""}. Publiez les évaluations manquantes avant de clôturer.`,
     );
   const sansMotif = resultats.filter((x) => x.decisionJury && !x.motifJury?.trim()).length;
   if (sansMotif) bloquants.push(`${sansMotif} décision(s) du jury sans motif.`);

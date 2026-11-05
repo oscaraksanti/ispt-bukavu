@@ -72,6 +72,13 @@ export async function notesDeLaPromotion(promotionId: string, periode: Periode, 
   const coursSansNotes = cours
     .filter((c) => c.evaluations.length === 0)
     .map((c) => c.cours.intitule);
+  // Une note de cours calculée sur une partie seulement des évaluations n'est pas définitive.
+  const ponderationsIncompletes = cours
+    .map((c) => ({
+      intitule: c.cours.intitule,
+      poids: c.evaluations.reduce((t, e) => t + Number(e.ponderation), 0),
+    }))
+    .filter((c) => c.poids > 0 && c.poids < 100);
   const etudiants = inscriptions.map(({ etudiantId }) => ({
     etudiantId,
     cours: cours.map<CoursEtudiant>((c) => ({
@@ -97,5 +104,25 @@ export async function notesDeLaPromotion(promotionId: string, periode: Periode, 
         : null,
     })),
   }));
-  return { etudiants, coursSansNotes, nbCours: cours.length };
+  return { etudiants, coursSansNotes, ponderationsIncompletes, nbCours: cours.length };
+}
+
+/**
+ * Délibération clôturée ou proclamée qui couvre ce cours (son semestre, ou
+ * l'année) : tant qu'elle l'est, les notes publiées du cours sont figées.
+ */
+export async function deliberationFigeant(coursOffertId: string) {
+  const co = await db.coursOffert.findUnique({
+    where: { id: coursOffertId },
+    select: { promotionId: true, cours: { select: { ue: { select: { semestre: true } } } } },
+  });
+  if (!co) return null;
+  return db.deliberation.findFirst({
+    where: {
+      promotionId: co.promotionId,
+      statut: { in: ["CLOTUREE", "PROCLAMEE"] },
+      OR: [{ periode: "ANNUELLE" }, { periode: "SEMESTRE", semestre: co.cours.ue.semestre }],
+    },
+    select: { statut: true, periode: true, semestre: true },
+  });
 }

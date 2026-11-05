@@ -7,6 +7,7 @@ import { exigerConnexion, exigerPermission } from "@/features/auth/acces";
 import { db } from "@/lib/db";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
+import { deliberationFigeant } from "@/features/deliberations/donnees";
 import { notifier } from "@/features/notifications/emettre";
 import { etudiantsDuCours, peutGererCours } from "./acces";
 import {
@@ -106,9 +107,16 @@ export async function enregistrerNotes(
   if (e.statut !== "BROUILLON")
     return echec("Les notes ont été transmises : elles ne sont plus modifiables.");
 
-  const etudiants = await etudiantsDuCours(e.coursOffertId);
+  const [etudiants, anciennes] = await Promise.all([
+    etudiantsDuCours(e.coursOffertId),
+    db.note.findMany({ where: { evaluationId } }),
+  ]);
   const erreurs: string[] = [];
   const operations = [];
+  // Historique : chaque note modifiée (avant → après) est conservée dans le journal.
+  const changements: { matricule: string; avant: string; apres: string }[] = [];
+  const lire = (n: { valeur: unknown; absent: boolean } | null | undefined) =>
+    !n ? "—" : n.absent ? "absent" : String(Number(n.valeur));
   for (const et of etudiants) {
     const absent = fd.get(`absent-${et.id}`) === "on";
     const lue = lireNote(String(fd.get(`note-${et.id}`) ?? ""));
@@ -116,6 +124,9 @@ export async function enregistrerNotes(
       erreurs.push(et.matricule);
       continue;
     }
+    const avant = lire(anciennes.find((n) => n.etudiantId === et.id));
+    const apres = lue === null && !absent ? "—" : lire({ valeur: lue, absent });
+    if (avant !== apres) changements.push({ matricule: et.matricule, avant, apres });
     if (lue === null && !absent) {
       operations.push(db.note.deleteMany({ where: { evaluationId, etudiantId: et.id } }));
       continue;
@@ -131,12 +142,15 @@ export async function enregistrerNotes(
   }
   if (erreurs.length) return echec(`Notes invalides (0 à 20) pour : ${erreurs.join(", ")}.`);
   await db.$transaction(operations);
-  await journaliser({
-    auteurId: u.id,
-    action: "notes_saisies",
-    entite: "Evaluation",
-    entiteId: evaluationId,
-  });
+  if (changements.length)
+    await journaliser({
+      auteurId: u.id,
+      action: "notes_saisies",
+      entite: "Evaluation",
+      entiteId: evaluationId,
+      avant: Object.fromEntries(changements.map((c) => [c.matricule, c.avant])),
+      apres: Object.fromEntries(changements.map((c) => [c.matricule, c.apres])),
+    });
   refresh();
   return succes("Notes enregistrées.");
 }
@@ -178,6 +192,16 @@ export async function changerStatutEvaluation(
   if (!e) return echec("Évaluation introuvable.");
   if (!transitionPermise(e.statut as StatutEvaluation, vers, "secretariat"))
     return echec("Cette décision n'est pas possible à ce stade.");
+  // Publier ou retirer une note changerait un résultat que le jury a déjà arrêté.
+  if (e.statut === "PUBLIEE" || vers === "PUBLIEE") {
+    const jury = await deliberationFigeant(e.coursOffertId);
+    if (jury)
+      return echec(
+        jury.statut === "PROCLAMEE"
+          ? "Les résultats de ce cours sont proclamés : ses notes publiées sont figées. Annulez d'abord la proclamation pour les rectifier."
+          : "Le jury de ce cours est clôturé : ses notes publiées sont figées. Rouvrez d'abord le jury pour les rectifier.",
+      );
+  }
   await db.evaluation.update({ where: { id }, data: { statut: vers } });
   if (vers === "PUBLIEE") {
     const etudiants = await etudiantsDuCours(e.coursOffertId);

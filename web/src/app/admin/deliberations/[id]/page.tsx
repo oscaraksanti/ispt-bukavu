@@ -69,7 +69,7 @@ export default async function Deliberation({
   const reglement = await reglementDe(d);
   const annuelle = d.periode === "ANNUELLE";
   const enPreparation = d.statut === "PREPARATION";
-  const { coursSansNotes, nbCours } = await notesDeLaPromotion(
+  const { coursSansNotes, ponderationsIncompletes, nbCours } = await notesDeLaPromotion(
     d.promotionId,
     d.periode as Periode,
     d.semestre,
@@ -91,7 +91,12 @@ export default async function Deliberation({
     })),
     coursSansNotes,
     d.statut === "PREPARATION"
-      ? { nbCours, secretaire: d.secretaireJury, president: d.presidentJury }
+      ? {
+          nbCours,
+          secretaire: d.secretaireJury,
+          president: d.presidentJury,
+          ponderationsIncompletes,
+        }
       : { nbCours },
   );
   const pourStats: Resultat[] = resultats.map((r) => ({
