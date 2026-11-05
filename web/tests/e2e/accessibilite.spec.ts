@@ -111,3 +111,23 @@ test("administration", async ({ page }) => {
     await analyser(page);
   }
 });
+
+test("menu du site sur téléphone : visible, accessible, avec la connexion", async ({
+  page,
+  isMobile,
+}) => {
+  test.skip(!isMobile, "menu réservé aux petits écrans");
+  await page.goto("/actualites");
+  await page.waitForLoadState("networkidle");
+  await expect(page.getByRole("link", { name: "Connexion à votre espace" })).toBeVisible();
+  await page.getByRole("button", { name: "Ouvrir le menu" }).click();
+  const menu = page.getByRole("navigation", { name: "Menu" });
+  await expect(menu).toBeVisible();
+  // Le panneau couvre l'écran sous l'en-tête (et non une hauteur nulle).
+  const boite = await page.locator("#menu-mobile").boundingBox();
+  expect(boite?.height ?? 0).toBeGreaterThan(400);
+  await expect(menu.getByRole("link", { name: "Formations" })).toBeVisible();
+  await analyser(page);
+  await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
+});

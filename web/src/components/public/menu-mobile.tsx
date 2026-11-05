@@ -46,7 +46,7 @@ export function MenuMobile() {
       <div
         id="menu-mobile"
         hidden={!ouvert}
-        className="fixed inset-x-0 top-16 bottom-0 z-50 overflow-y-auto bg-papier"
+        className="fixed inset-x-0 top-16 z-50 h-[calc(100dvh-4rem)] overflow-y-auto bg-papier"
       >
         <nav aria-label="Menu" className="conteneur flex min-h-full flex-col py-6">
           <ul className="divide-y divide-pierre-200 border-y border-pierre-200">
