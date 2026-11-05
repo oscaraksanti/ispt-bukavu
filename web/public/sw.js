@@ -33,6 +33,7 @@ const JAMAIS = [
   /^\/(etudiant|enseignant)\/compte/,
   /^\/compte\//,
   /^\/messages\//,
+  /^\/campus\//,
   /^\/candidat/,
   /^\/confirmer-email/,
   /^\/affiche/,

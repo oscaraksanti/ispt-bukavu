@@ -39,7 +39,7 @@ export const PERMISSIONS = {
   // Administration
   // Communauté
   "messagerie.moderer": {
-    libelle: "Modérer la messagerie (signalements)",
+    libelle: "Modérer la messagerie et le Campus",
     domaine: "Communauté",
   },
   "utilisateurs.gerer": { libelle: "Gérer les comptes", domaine: "Administration" },

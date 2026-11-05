@@ -7,6 +7,7 @@ import {
   HardHat,
   NotebookPen,
   Megaphone,
+  UsersRound,
   Wallet,
   type LucideIcon,
 } from "lucide-react";
@@ -29,6 +30,7 @@ const ICONES: Record<IconeNotification, LucideIcon> = {
   devoir: NotebookPen,
   examen: CalendarCheck,
   moderation: Flag,
+  campus: UsersRound,
 };
 
 const heure = new Intl.DateTimeFormat("fr-FR", {

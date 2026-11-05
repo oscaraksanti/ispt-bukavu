@@ -88,6 +88,29 @@ export async function donneesPersonnelles(utilisateurId: string) {
       stages: true,
     },
   });
+  const [publications, commentaires, reactions, enregistrements] = await Promise.all([
+    db.publication.findMany({
+      where: { auteurId: utilisateurId },
+      orderBy: { creeLe: "desc" },
+      select: {
+        contenu: true,
+        audience: true,
+        statut: true,
+        creeLe: true,
+        modifieLe: true,
+        supprimeLe: true,
+        masqueLe: true,
+        _count: { select: { medias: true, reactions: true, commentaires: true } },
+      },
+    }),
+    db.commentaire.findMany({
+      where: { auteurId: utilisateurId },
+      orderBy: { creeLe: "desc" },
+      select: { contenu: true, creeLe: true, supprimeLe: true, masqueLe: true },
+    }),
+    db.reactionPublication.count({ where: { utilisateurId } }),
+    db.enregistrementPublication.count({ where: { utilisateurId } }),
+  ]);
   const [messages, conversations] = await Promise.all([
     db.message.findMany({
       where: { auteurId: utilisateurId },
@@ -211,6 +234,19 @@ export async function donneesPersonnelles(utilisateurId: string) {
         supprimeLe: m.supprimeLe,
         masqueLe: m.masqueLe,
       })),
+    },
+    campus: {
+      reglesAccepteesLe: identite.reglesCampusLe,
+      publications: publications.map(({ _count, ...p }) => ({
+        ...p,
+        contenu: p.supprimeLe ? null : p.contenu,
+        photos: _count.medias,
+        jaimeRecus: _count.reactions,
+        commentairesRecus: _count.commentaires,
+      })),
+      commentaires: commentaires.map((c) => ({ ...c, contenu: c.supprimeLe ? null : c.contenu })),
+      jaimeDonnes: reactions,
+      publicationsEnregistrees: enregistrements,
     },
     appareilsConnectes: sessions,
     actionsTracees: journal,

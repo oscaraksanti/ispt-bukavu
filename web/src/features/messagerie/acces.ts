@@ -7,6 +7,9 @@ import { ROLES_PERSONNEL } from "@/lib/permissions";
 import { aAccesMessagerie, cleCours, clePromotion, type ProfilMessagerie } from "./regles";
 
 export type ProfilComplet = ProfilMessagerie & {
+  /** Filières de l'étudiant (année en cours) et des cours confiés à l'enseignant. */
+  filieres: string[];
+  filieresEnseignees: string[];
   /** Cours offerts confiés (enseignant). */
   coursEnseignes: string[];
   /** Cours offerts des promotions de l'étudiant. */
@@ -30,7 +33,7 @@ export async function profilsMessagerie(ids: string[]): Promise<Map<string, Prof
       select: {
         promotionId: true,
         etudiant: { select: { utilisateurId: true } },
-        promotion: { select: { cours: { select: { id: true } } } },
+        promotion: { select: { filiereId: true, cours: { select: { id: true } } } },
       },
     }),
     db.coursEnseignant.findMany({
@@ -41,7 +44,7 @@ export async function profilsMessagerie(ids: string[]): Promise<Map<string, Prof
       select: {
         coursOffertId: true,
         enseignant: { select: { utilisateurId: true } },
-        coursOffert: { select: { promotionId: true } },
+        coursOffert: { select: { promotionId: true, promotion: { select: { filiereId: true } } } },
       },
     }),
   ]);
@@ -61,6 +64,8 @@ export async function profilsMessagerie(ids: string[]): Promise<Map<string, Prof
           coursSuivis: mesInscriptions.flatMap((i) => i.promotion.cours.map((x) => x.id)),
           coursEnseignes: mesCours.map((a) => a.coursOffertId),
           promotionsEnseignees: [...new Set(mesCours.map((a) => a.coursOffert.promotionId))],
+          filieres: [...new Set(mesInscriptions.map((i) => i.promotion.filiereId))],
+          filieresEnseignees: [...new Set(mesCours.map((a) => a.coursOffert.promotion.filiereId))],
         },
       ];
     }),
