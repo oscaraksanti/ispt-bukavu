@@ -99,4 +99,14 @@ test("l'appel d'une séance alimente l'assiduité de l'étudiant", async ({ brow
   const b = await session(browser, D.comptes.etudiantB);
   await b.goto(`/etudiant/cours/${D.ids.coursOffert}`);
   await expect(b.getByText("100 %")).toBeVisible();
+
+  // L'appel est fait : la séance ne peut plus être retirée de l'horaire.
+  const admin = await session(browser, D.comptes.admin);
+  const hier = new Date(Date.now() - 86_400_000).toISOString().slice(0, 10);
+  await admin.goto(`/admin/horaires?niveau=${D.ids.niveau}&semaine=${hier}`);
+  await admin.waitForLoadState("networkidle");
+  await admin.getByRole("button").filter({ hasText: "Salle E2E" }).click();
+  await admin.locator('select[name="coursOffertId"]').selectOption("");
+  await admin.getByRole("button", { name: "Enregistrer" }).click();
+  await expect(admin.getByText(/L'appel a déjà été fait pour cette séance/)).toBeVisible();
 });

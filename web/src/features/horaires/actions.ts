@@ -29,7 +29,14 @@ export async function definirCreneau(
   const { debut, fin } = bornesPlage(jour, plage);
   const existante = await db.seance.findFirst({
     where: { debut, coursOffert: { promotionId } },
+    include: { _count: { select: { presences: true } } },
   });
+  // L'appel déjà fait est une pièce du dossier de l'étudiant : on ne l'efface pas
+  // et on ne le rattache pas à un autre cours.
+  if (existante?._count.presences && existante.coursOffertId !== coursOffertId)
+    return echec(
+      "L'appel a déjà été fait pour cette séance : elle ne peut plus être retirée ni changer de cours. Marquez-la plutôt « reportée » ou « annulée ».",
+    );
   if (!coursOffertId) {
     if (existante) await db.seance.delete({ where: { id: existante.id } });
   } else {
@@ -39,7 +46,9 @@ export async function definirCreneau(
     if (existante)
       await db.seance.update({
         where: { id: existante.id },
-        data: { coursOffertId, salle, statut: "PREVUE", remarque: null },
+        data: existante._count.presences
+          ? { salle }
+          : { coursOffertId, salle, statut: "PREVUE", remarque: null },
       });
     else await db.seance.create({ data: { coursOffertId, debut, fin, salle } });
   }
