@@ -2,10 +2,12 @@
 
 import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
+import { after } from "next/server";
 import sharp from "sharp";
 import { exigerPermission } from "@/features/auth/acces";
 import { TAILLE_MAX_PIECE, TYPES_PIECES } from "@/features/admissions/fichiers";
 import { notifier } from "@/features/notifications/emettre";
+import { envoyerPush } from "@/features/push/envoi";
 import { contexteEtudiant, filtreEnLigne } from "@/features/valve/donnees";
 import { db } from "@/lib/db";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
@@ -68,7 +70,7 @@ async function enregistrerPiece(fichier: File, conversationId: string, auteurId:
 }
 
 export async function envoyerMessage(conversationId: string, fd: FormData): Promise<EtatEnvoi> {
-  const { profil } = await exigerMessagerie("/");
+  const { u, profil } = await exigerMessagerie("/");
   const acces = await accesConversation(profil, conversationId);
   if (!acces) return { ok: false, erreur: "Conversation introuvable." };
   const { conversation, animateur } = acces;
@@ -135,6 +137,31 @@ export async function envoyerMessage(conversationId: string, fd: FormData): Prom
       create: { conversationId, utilisateurId: profil.id, luJusquA: maintenant, animateur },
     }),
   ]);
+  // Notification sur le téléphone des autres participants (hors sourdine), après la réponse.
+  const auteurNom = [u.prenom, u.nom].filter(Boolean).join(" ");
+  after(async () => {
+    const destinataires = await db.participantConversation.findMany({
+      where: {
+        conversationId,
+        quitteLe: null,
+        sourdine: false,
+        utilisateurId: { not: profil.id },
+      },
+      select: { utilisateurId: true },
+    });
+    await envoyerPush(
+      destinataires.map((d) => d.utilisateurId),
+      {
+        titre:
+          conversation.type === "PRIVEE"
+            ? auteurNom
+            : `${auteurNom} · ${conversation.titre ?? "Groupe"}`,
+        corps: contenu || (mediaId ? "Pièce jointe" : ""),
+        lien: `/messages/aller/${conversationId}`,
+        tag: `conversation-${conversationId}`,
+      },
+    );
+  });
   return {
     ok: true,
     message: await messageClient(m.id, profil.id, conversation.type !== "PRIVEE"),

@@ -1,6 +1,7 @@
 import { CircleHelp, Download, KeyRound, MonitorSmartphone, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { BoutonAction } from "@/components/admin/bouton-action";
+import { NotificationsTelephone } from "@/components/compte/notifications-telephone";
 import { Panneau } from "@/components/admin/entete-admin";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
 import { Champ, Saisie } from "@/components/ui/champs";
@@ -139,6 +140,13 @@ export async function MonCompte({
           Un appareil que vous ne reconnaissez pas ? Déconnectez les autres appareils, puis changez
           votre mot de passe.
         </p>
+      </Panneau>
+
+      <Panneau
+        titre="Notifications sur ce téléphone"
+        description="Recevez les nouveaux messages, commentaires, notes publiées et annonces même quand le site est fermé. Chaque appareil s'active séparément ; la déconnexion les coupe."
+      >
+        <NotificationsTelephone />
       </Panneau>
 
       <Panneau titre="Aide" description="Guides d'utilisation de chaque espace, pas à pas.">

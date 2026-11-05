@@ -55,6 +55,19 @@ test("l'étudiant retrouve son identité dans « Mon compte »", async ({ browse
   await expect(a.getByRole("definition").filter({ hasText: D.comptes.etudiantA })).toBeVisible();
 });
 
+test("les notifications sur le téléphone se règlent dans « Mon compte »", async ({ browser }) => {
+  const a = await session(browser, D.comptes.etudiantA);
+  await a.goto("/etudiant/compte");
+  await expect(a.getByRole("heading", { name: "Notifications sur ce téléphone" })).toBeVisible();
+  // Sans clés VAPID (base de test), l'option est annoncée indisponible plutôt que cassée.
+  await expect(
+    a.getByText(/ne permet pas les notifications|Activer sur cet appareil|bloquées/),
+  ).toBeVisible();
+  // Le lien d'une notification de message conduit à la conversation dans l'espace de chacun.
+  const r = await a.request.get("/messages/aller/inconnue", { maxRedirects: 0 });
+  expect(r.headers().location).toBe("/etudiant/messages/inconnue");
+});
+
 test("la purge planifiée refuse tout appel sans le secret", async ({ request }) => {
   const essais: Record<string, string>[] = [{}, { authorization: "Bearer devine" }];
   for (const headers of essais) {

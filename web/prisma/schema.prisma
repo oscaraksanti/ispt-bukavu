@@ -64,6 +64,7 @@ model Utilisateur {
   reactions            ReactionPublication[]
   enregistrements      EnregistrementPublication[]
   signalementsCampus   SignalementCampus[]         @relation("SignalementsCampusAuteur")
+  abonnementsPush      AbonnementPush[]
 }
 
 model Role {
@@ -1379,6 +1380,8 @@ model Publication {
   supprimeLe         DateTime?
   /// Masquée par la modération, ou automatiquement après plusieurs signalements.
   masqueLe           DateTime?
+  /// Personnes mentionnées (« @Prénom Nom »), prévenues à la publication.
+  mentions           String[]                    @default([])
   medias             PublicationMedia[]
   reactions          ReactionPublication[]
   commentaires       Commentaire[]
@@ -1426,6 +1429,7 @@ model Commentaire {
   modifieLe     DateTime?
   supprimeLe    DateTime?
   masqueLe      DateTime?
+  mentions      String[]            @default([])
   signalements  SignalementCampus[]
 
   @@index([publicationId, creeLe])
@@ -1461,4 +1465,20 @@ model SignalementCampus {
 
   @@unique([cible, auteurId])
   @@index([traiteLe])
+}
+
+/// Abonnement aux notifications sur le téléphone (Web Push), un par appareil.
+model AbonnementPush {
+  id             String      @id @default(cuid())
+  utilisateurId  String
+  utilisateur    Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  /// Adresse fournie par le service de notification du navigateur (unique par appareil).
+  endpoint       String      @unique
+  p256dh         String
+  auth           String
+  agent          String?
+  creeLe         DateTime    @default(now())
+  dernierEnvoiLe DateTime?
+
+  @@index([utilisateurId])
 }

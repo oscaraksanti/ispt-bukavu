@@ -6,7 +6,7 @@
  *   « hors ligne » ;
  * - l'administration, les actions et les fichiers privés ne sont jamais mis en cache.
  */
-const VERSION = "v6";
+const VERSION = "v7";
 const STATIQUE = `ispt-statique-${VERSION}`;
 const PAGES = `ispt-pages-${VERSION}`;
 const ESPACES = "ispt-espaces";
@@ -113,4 +113,37 @@ self.addEventListener("fetch", (e) => {
         .catch(async () => (await caches.match(req)) ?? (await caches.match(HORS_LIGNE))),
     );
   }
+});
+
+// Notifications sur le téléphone (Web Push) : affichage, puis ouverture de la page concernée.
+self.addEventListener("push", (e) => {
+  let d = {};
+  try {
+    d = e.data ? e.data.json() : {};
+  } catch {
+    d = {};
+  }
+  e.waitUntil(
+    self.registration.showNotification(d.titre || "ISPT-Bukavu", {
+      body: d.corps || "",
+      icon: "/brand/icon-192.png",
+      tag: d.tag,
+      renotify: Boolean(d.tag),
+      lang: "fr",
+      data: { lien: d.lien || "/" },
+    }),
+  );
+});
+
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  const cible = new URL((e.notification.data && e.notification.data.lien) || "/", self.location.origin);
+  if (cible.origin !== self.location.origin) return;
+  e.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((fenetres) => {
+      const ouverte = fenetres.find((f) => f.url.startsWith(self.location.origin));
+      if (ouverte) return ouverte.focus().then((f) => f.navigate(cible.href));
+      return self.clients.openWindow(cible.href);
+    }),
+  );
 });

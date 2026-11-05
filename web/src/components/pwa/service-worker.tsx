@@ -16,6 +16,12 @@ export function ViderEspacesHorsLigne() {
   useEffect(() => {
     navigator.serviceWorker?.controller?.postMessage("vider-espaces");
     if ("caches" in window) caches.delete("ispt-espaces").catch(() => undefined);
+    // Appareil partagé : plus aucune notification du compte précédent.
+    navigator.serviceWorker
+      ?.getRegistration()
+      .then((r) => r?.pushManager?.getSubscription())
+      .then((a) => a?.unsubscribe())
+      .catch(() => undefined);
   }, []);
   return null;
 }

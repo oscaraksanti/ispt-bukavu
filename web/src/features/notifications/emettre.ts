@@ -1,4 +1,6 @@
 import "server-only";
+import { after } from "next/server";
+import { envoyerPush } from "@/features/push/envoi";
 import { db } from "@/lib/db";
 import type { Prisma } from "@/generated/prisma/client";
 import { lienSur, type TypeNotification } from "./regles";
@@ -24,6 +26,19 @@ export async function notifier(utilisateurIds: Iterable<string>, c: Contenu) {
       await db.notification.createMany({
         data: ids.slice(i, i + 1000).map((utilisateurId) => ({ ...donnees, utilisateurId })),
       });
+    // Aussi sur le téléphone des personnes abonnées, après la réponse.
+    const push = () =>
+      envoyerPush(ids, {
+        titre: donnees.titre,
+        corps: donnees.message,
+        lien: donnees.lien ?? "/",
+        tag: c.type,
+      });
+    try {
+      after(push);
+    } catch {
+      void push();
+    }
     return ids.length;
   } catch (e) {
     console.error("[notifications] émission impossible", e);
