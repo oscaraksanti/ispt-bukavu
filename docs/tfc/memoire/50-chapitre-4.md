@@ -12,7 +12,7 @@ Le code de la plateforme est conservé dans un dépôt Git hébergé sur GitHub.
 
 La qualité du code est contrôlée par des outils automatiques : un formateur impose une présentation uniforme, un analyseur statique signale les erreurs courantes, et le compilateur TypeScript, en mode strict, vérifie la cohérence des types [@typescript-handbook]. À chaque envoi de code sur GitHub, un processus d'intégration continue enchaîne ces contrôles, les tests unitaires, la préparation d'une base de données éphémère, la compilation de l'application et les tests de bout en bout dans un navigateur. Une modification qui fait échouer l'une de ces étapes est immédiatement signalée.
 
-Le schéma de la base de données a évolué en dix migrations successives, appliquées automatiquement lors de chaque déploiement. Une instance de démonstration, alimentée par un script qui ne s'exécute jamais sur la base de production, permet de présenter la plateforme et de former les utilisateurs sans exposer de données réelles.
+Le schéma de la base de données a évolué en quatorze migrations successives, appliquées automatiquement lors de chaque déploiement. Une instance de démonstration, alimentée par un script qui ne s'exécute jamais sur la base de production, permet de présenter la plateforme et de former les utilisateurs sans exposer de données réelles.
 
 ## 4.2. Présentation de la plateforme
 
@@ -96,7 +96,7 @@ La planification des examens (figure 4.11) détecte automatiquement les conflits
 
 ::source Plateforme ISPT-Bukavu, données fictives de test.
 
-L'administration couvre enfin la gestion du site (pages, filières, autorités, partenaires, médiathèque, galerie), la valve, les admissions, la structure académique et l'horaire, les finances, les stages et les offres, les comptes, les rôles et le journal d'activité. Une page de mise en service liste les informations que l'institut doit encore fournir, comme les montants des frais ou le programme officiel des cours.
+L'administration couvre enfin la gestion du site (pages, filières, autorités, partenaires, médiathèque, galerie), la valve, les admissions, la structure académique et l'horaire, les finances, les stages et les offres, les exports de données, les comptes, les rôles et le journal d'activité. Une page de mise en service liste les informations que l'institut doit encore fournir, comme les montants des frais ou le programme officiel des cours.
 
 ### 4.2.6. Documents officiels vérifiables
 
@@ -105,6 +105,16 @@ Les documents officiels (attestations, relevés de notes, bulletins) sont produi
 ![Figure 4.12 : Bulletin vérifiable (à gauche) et page publique de vérification d'un document (à droite)](figures/ch4-bulletin-verification.jpg){largeur=15.5}
 
 ::source Plateforme ISPT-Bukavu, données fictives.
+
+### 4.2.7. Communication et vie de la communauté
+
+La valve reste le canal des annonces officielles. La plateforme y ajoute trois outils d'échange, qui répondent à l'usage informel des groupes de messagerie relevé au chapitre 1.
+
+La **messagerie** crée automatiquement un groupe par promotion et un groupe par cours, dont les membres sont recalculés à partir des inscriptions et des affectations ; un étudiant qui abandonne ou un enseignant retiré d'un cours n'y a plus accès. Les conversations privées suivent des règles explicites : un étudiant écrit aux membres de sa promotion, à ses enseignants et aux services de l'institut, mais pas à n'importe quel autre étudiant. Chacun peut joindre une photo, réduite avant l'envoi, ou un document PDF, mettre une conversation en sourdine, bloquer une personne ou signaler un message. L'enseignant peut réserver l'écriture de son groupe de cours aux annonces.
+
+Le **Campus** est un fil de publications ouvert à la communauté de l'institut. Chaque publication, avec ou sans photos, est destinée à tout l'institut, à une filière ou à une promotion ; on peut y réagir, la commenter, y répondre, la partager, l'enregistrer et y mentionner une personne. Avant sa première publication, chaque utilisateur accepte des règles de conduite, proposées ici et à faire valider par l'institut. Un contenu signalé par trois personnes est masqué en attendant l'examen de la modération, et l'institut peut exiger la validation préalable des publications des étudiants. Les modérateurs ne voient que les contenus signalés, jamais le reste des conversations.
+
+Enfin, chaque utilisateur peut recevoir les **notifications sur son téléphone**, même lorsque le site est fermé : nouvelles notes, résultats, communiqués, messages et mentions. Ce réglage se fait appareil par appareil ; il est coupé à la déconnexion, ce qui protège les appareils partagés. Sur téléphone, une barre de navigation en bas de l'écran donne accès aux rubriques principales d'un seul geste. La page « Mon compte » permet de changer son mot de passe et de déconnecter les autres appareils, et la page « Mes données » remet à chaque utilisateur, sur demande, l'ensemble des données qui le concernent, conformément au droit d'accès prévu par le Code du numérique [@code-numerique2023].
 
 ## 4.3. Tests et validation
 
@@ -115,8 +125,8 @@ Un logiciel n'est jamais prouvé correct par des tests ; les tests ont pour but 
 ::tableau Tableau 4.1 : Stratégie de test
 | Niveau | Outil | Objet | Volume |
 |---|---|---|---|
-| Tests unitaires | Vitest | Règles métier : moyennes, délibérations, soldes, transitions d'état, conflits d'examens, sécurité des mots de passe et des redirections | 150 tests, 16 fichiers |
-| Tests de bout en bout | Playwright | Parcours complets dans un vrai navigateur et tentatives d'accès interdites entre rôles | 95 tests, 9 fichiers |
+| Tests unitaires | Vitest | Règles métier : moyennes, délibérations, soldes, transitions d'état, conflits d'examens, droits de la messagerie et du Campus, sécurité des mots de passe et des redirections | 198 tests, 23 fichiers |
+| Tests de bout en bout | Playwright | Parcours complets dans un vrai navigateur et tentatives d'accès interdites entre rôles | 115 tests, 13 fichiers |
 | Accessibilité | axe-core | Règles WCAG 2.2 niveau AA, sur ordinateur et sur téléphone | Inclus dans les tests de bout en bout |
 | Performance | Lighthouse et mesures du navigateur | Poids des pages et temps d'affichage en réseau mobile lent simulé | 7 pages publiques |
 
@@ -126,27 +136,30 @@ Tous ces tests, à l'exception des mesures de performance, s'exécutent automati
 
 ### 4.3.2. Tests unitaires
 
-Les règles métier ont été isolées dans des fonctions sans accès à la base de données, ce qui permet de les tester rapidement et de manière reproductible [@vitest-docs]. Les 150 tests unitaires réussissent. Ils vérifient notamment :
+Les règles métier ont été isolées dans des fonctions sans accès à la base de données, ce qui permet de les tester rapidement et de manière reproductible [@vitest-docs]. Les 198 tests unitaires réussissent. Ils vérifient notamment :
 
 - le calcul de la moyenne pondérée d'un cours à partir de ses évaluations publiées, et l'arrondi au demi-point ;
 - le moteur de délibération, testé sur les notes réelles d'une promotion, préalablement anonymisées : il reproduit les seize décisions prises par le jury ;
 - le calcul du solde des frais, en tenant compte des paiements et des exonérations ;
 - les transitions autorisées pour les candidatures et les évaluations ;
 - la détection des conflits d'examens et la production du calendrier au format iCalendar [@rfc5545] ;
+- les règles de la messagerie et du Campus : qui peut écrire à qui, qui voit quelle publication, retenue des seules mentions valides ;
+- la neutralisation des formules dans les exports de tableur et le masquage des jetons secrets dans les rapports d'erreur ;
 - les règles de sécurité : limitation des tentatives de connexion, validation des adresses de redirection, attribution des rôles.
 
 ### 4.3.3. Tests de bout en bout et contrôle des accès
 
-Les tests de bout en bout pilotent un navigateur réel sur la version compilée de l'application, connectée à une base de test dédiée [@playwright-docs]. Les 95 tests réussissent. Ils rejouent les parcours critiques (dépôt et instruction d'une candidature, circuit des notes, délibération et proclamation, planification des examens, devoirs et présences, notifications) et tentent délibérément des accès interdits, par exemple :
+Les tests de bout en bout pilotent un navigateur réel sur la version compilée de l'application, connectée à une base de test dédiée [@playwright-docs]. Les 115 tests réussissent. Ils rejouent les parcours critiques (dépôt et instruction d'une candidature, circuit des notes, délibération et proclamation, planification des examens, devoirs et présences, notifications, messagerie, Campus, exports et gestion du compte) et tentent délibérément des accès interdits, par exemple :
 
 - un étudiant qui tente d'ouvrir le reçu, le relevé ou le bulletin d'un autre étudiant ;
 - un enseignant qui tente de saisir des notes dans un cours qui ne lui est pas confié ;
 - un agent sans la permission requise qui tente d'atteindre un écran d'administration ;
-- un visiteur non connecté qui tente d'atteindre un espace personnel ou un fichier privé.
+- un visiteur non connecté qui tente d'atteindre un espace personnel ou un fichier privé ;
+- un étudiant qui tente de lire une conversation dont il n'est pas membre ou une publication réservée à une autre promotion.
 
 Dans chaque cas, le refus est vérifié côté serveur, et pas seulement par l'absence d'un bouton dans l'interface.
 
-Une revue de sécurité de l'ensemble du code a complété ces tests. Elle a relevé douze constats : un de gravité élevée, cinq de gravité moyenne et six de faible gravité. Le constat de gravité élevée concernait la possibilité, pour un gestionnaire de comptes, d'obtenir un lien de réinitialisation pour un compte déjà actif ; il a été corrigé, comme dix autres constats. Le douzième, relatif au cloisonnement du stockage des fichiers, a été vérifié sans nécessiter de correction. L'analyse des dépendances ne signale aucune vulnérabilité dans le code déployé.
+Une revue de sécurité de l'ensemble du code a complété ces tests. Elle a relevé douze constats : un de gravité élevée, cinq de gravité moyenne et six de faible gravité. Le constat de gravité élevée concernait la possibilité, pour un gestionnaire de comptes, d'obtenir un lien de réinitialisation pour un compte déjà actif ; il a été corrigé, comme dix autres constats. Le douzième, relatif au cloisonnement du stockage des fichiers, a été vérifié sans nécessiter de correction. Une seconde revue, menée sur les modules ajoutés ensuite (messagerie, Campus, notifications sur téléphone, exports, gestion du compte, surveillance des erreurs), a relevé neuf constats : un de gravité élevée, quatre de gravité moyenne et quatre de faible gravité, tous corrigés. Le constat de gravité élevée concernait les notifications sur téléphone, qui restaient actives sur un appareil après la déconnexion ; chaque abonnement est désormais rattaché à la session qui l'a activé et disparaît avec elle. L'analyse des dépendances ne signale aucune vulnérabilité dans le code déployé.
 
 ### 4.3.4. Accessibilité
 
@@ -173,6 +186,8 @@ Les pages publiques ont été mesurées sur le site en ligne avec un profil de r
 
 La première visite comprend les polices et le code commun, téléchargés une seule fois. La page la plus lourde, l'accueil, pèse 602 Ko, soit environ quatre fois moins que la page d'accueil mobile médiane du web, qui atteignait 2 559 Ko en 2025 [@httparchive2025]. Les visites suivantes ne transfèrent que quelques kilo-octets. Le contenu principal s'affiche en moins de trois secondes sur toutes les pages mesurées ; la page des admissions, la plus lente, dépasse toutefois de peu 2,5 secondes. Enfin, les pages des espaces personnels déjà consultées restent lisibles sans connexion grâce au *service worker*.
 
+Un test de charge léger a complété ces mesures le 5 novembre 2026 : 280 requêtes vers les sept pages publiques, dix à la fois, envoyées vers le site en production. Aucune requête n'a échoué. Lorsque les pages étaient déjà en cache sur le réseau de l'hébergeur, la moitié des réponses sont arrivées en moins de 165 ms et 95 % en moins de 0,6 s, pour un débit d'environ quarante pages par seconde ; une page dynamique qui interroge la base de données a répondu en 0,43 s en moyenne. Ces volumes dépassent largement la fréquentation attendue d'un institut, mais ce test ne remplace pas une mesure en période d'affluence réelle, comme une publication de résultats.
+
 ## 4.4. Déploiement et exploitation
 
 ### 4.4.1. Hébergement
@@ -187,11 +202,15 @@ La plateforme est accessible à l'adresse www.isptbukavu.org, en HTTPS. Les cour
 
 ### 4.4.3. Sauvegardes et restauration
 
-Une tâche planifiée sur GitHub est configurée pour sauvegarder chaque nuit la totalité de la base de données et des fichiers déposés. La sauvegarde est chiffrée avant de quitter la machine qui la produit, puis conservée trente jours. La fréquence prévue dépasse l'exigence minimale exprimée par l'institut, qui est d'une sauvegarde hebdomadaire.
+Une tâche planifiée sur GitHub sauvegarde chaque nuit la totalité de la base de données et des fichiers déposés. La sauvegarde est chiffrée avant de quitter la machine qui la produit, puis conservée trente jours. La fréquence prévue dépasse l'exigence minimale exprimée par l'institut, qui est d'une sauvegarde hebdomadaire.
 
-La restauration a été testée : une sauvegarde complète a été restaurée dans une base neuve, puis comparée ligne par ligne à l'originale au moyen d'une empreinte de chaque ligne. La comparaison n'a révélé aucune différence, et les fichiers restaurés étaient identiques octet pour octet. Une seconde restauration sur une base non vide a été refusée, comme prévu, pour éviter d'écraser des données par erreur. À la date de rédaction, la tâche nocturne attend encore la saisie de ses paramètres secrets par l'administrateur pour s'exécuter en production.
+La restauration a été testée : une sauvegarde complète a été restaurée dans une base neuve, puis comparée ligne par ligne à l'originale au moyen d'une empreinte de chaque ligne. La comparaison n'a révélé aucune différence, et les fichiers restaurés étaient identiques octet pour octet. Une seconde restauration sur une base non vide a été refusée, comme prévu, pour éviter d'écraser des données par erreur. La sauvegarde de production est active depuis le 5 novembre 2026 : la première exécution a sauvegardé 77 tables, et l'archive chiffrée qu'elle a produite a été téléchargée puis déchiffrée avec succès, tandis qu'une phrase secrète erronée était refusée. Elle se connecte avec un compte de base de données qui lui est réservé et qui ne peut que lire : une fuite de ce paramètre ne permettrait aucune modification des données.
 
-### 4.4.4. Coûts d'exploitation
+### 4.4.4. Surveillance des erreurs
+
+Les erreurs qui surviennent en production, sur le serveur comme dans le navigateur des utilisateurs, sont transmises au service Sentry, qui les regroupe et prévient l'administrateur. Pour respecter la vie privée des usagers, aucune donnée personnelle ne lui est transmise : ni identité, ni cookie, ni contenu de formulaire, ni paramètre d'adresse, et les jetons secrets présents dans certaines adresses, comme ceux des liens de réinitialisation, sont masqués avant l'envoi. Le module chargé dans le navigateur, d'environ 30 Ko compressés, n'est téléchargé qu'après l'affichage de la page, pour ne pas pénaliser les connexions lentes. La surveillance de la disponibilité du site, qui doit alerter en cas d'interruption, reste à mettre en place.
+
+### 4.4.5. Coûts d'exploitation
 
 L'exploitation repose essentiellement sur des offres gratuites, suffisantes pour le trafic d'un institut, et sur des logiciels libres. Le tableau 4.3 en fait la synthèse.
 
@@ -201,13 +220,14 @@ L'exploitation repose essentiellement sur des offres gratuites, suffisantes pour
 | Hébergement de l'application | Vercel | Offre gratuite |
 | Base de données et fichiers | Supabase | Offre gratuite |
 | Code, intégration continue et sauvegardes | GitHub | Offre gratuite |
+| Surveillance des erreurs | Sentry | Offre gratuite |
 | Courrier électronique | Resend | Compte de l'auteur |
 | Nom de domaine isptbukavu.org | Vercel | Abonnement annuel |
 | Logiciels (Next.js, PostgreSQL, Prisma, etc.) | Communautés libres | Gratuits |
 
 ::source Production personnelle.
 
-Les offres gratuites comportent des limites : la base gratuite est suspendue après une semaine sans activité, ce que la sauvegarde nocturne empêchera, une fois activée, en l'interrogeant chaque nuit. Si la fréquentation venait à croître fortement, le passage à des offres payantes resterait possible sans modifier l'application.
+Les offres gratuites comportent des limites : la base gratuite est suspendue après une semaine sans activité, ce que la sauvegarde nocturne empêche en l'interrogeant chaque nuit. Si la fréquentation venait à croître fortement, le passage à des offres payantes resterait possible sans modifier l'application.
 
 ## 4.5. Vérification des hypothèses
 
@@ -217,8 +237,8 @@ Le tableau 4.4 confronte les résultats aux trois hypothèses formulées en intr
 | Hypothèse | Résultats | Conclusion |
 |---|---|---|
 | 1. Une application web progressive, légère et consultable hors connexion, convient au contexte de Bukavu | Premières visites de 320 à 602 Ko ; visites suivantes de 7 à 18 Ko ; contenu principal affiché en moins de 3 s en réseau mobile lent simulé ; pages personnelles lisibles hors connexion ; installation sans magasin d'applications | Vérifiée en conditions simulées ; à confirmer sur le réseau d'un opérateur local, avec de vrais téléphones |
-| 2. Une plateforme unique, organisée autour de la valve et de circuits de validation, couvre les processus de l'institut avec des droits vérifiés côté serveur | Admissions, valve, horaires, notes, délibérations, examens, frais, documents et stages réunis dans un même outil ; 150 tests unitaires et 95 tests de bout en bout réussis, dont des tentatives d'accès interdites ; revue de sécurité corrigée | Vérifiée sur le plan technique ; l'adoption par les usagers reste à évaluer après la mise en service |
-| 3. Une architecture portable, complémentaire de la plateforme ministérielle, respecte le cadre réglementaire | Base PostgreSQL standard et stockage d'objets remplaçable ; sauvegarde restaurée sans perte dans une base neuve ; exports des candidatures et des résultats de délibération | Partiellement vérifiée : la portabilité est démontrée, mais les exports au format attendu par la plateforme ministérielle et l'hébergement en RDC restent à réaliser |
+| 2. Une plateforme unique, organisée autour de la valve et de circuits de validation, couvre les processus de l'institut avec des droits vérifiés côté serveur | Admissions, valve, horaires, notes, délibérations, examens, frais, documents et stages réunis dans un même outil ; 198 tests unitaires et 115 tests de bout en bout réussis, dont des tentatives d'accès interdites ; deux revues de sécurité, constats corrigés | Vérifiée sur le plan technique ; l'adoption par les usagers reste à évaluer après la mise en service |
+| 3. Une architecture portable, complémentaire de la plateforme ministérielle, respecte le cadre réglementaire | Base PostgreSQL standard et stockage d'objets remplaçable ; sauvegarde restaurée sans perte dans une base neuve ; exports en tableur du registre des inscriptions, des effectifs, des notes et des résultats proclamés | Partiellement vérifiée : la portabilité est démontrée, mais les exports au format attendu par la plateforme ministérielle et l'hébergement en RDC restent à réaliser |
 
 ::source Production personnelle.
 
@@ -232,11 +252,12 @@ Ce travail présente plusieurs limites, qu'il convient d'énoncer clairement :
 - **les données officielles en attente** : les montants des frais, le programme officiel des cours, les règles d'évaluation fixées par l'arrêté en vigueur et les textes juridiques de la plateforme doivent être fournis par l'institut ; les règles de délibération reprennent la pratique observée dans un classeur de bulletins, en attendant leur confirmation ;
 - **l'interopérabilité avec la plateforme ministérielle**, limitée à des exports tabulaires, sans échange automatique ;
 - **le paiement par monnaie mobile**, non intégré : les paiements sont enregistrés par la caisse ;
-- **la surveillance de la disponibilité et des erreurs**, prévue dès la conception mais pas encore installée ;
+- **la surveillance de la disponibilité**, prévue dès la conception mais pas encore installée, alors que celle des erreurs est en service ;
+- **les règles de la communauté** (règles de conduite du Campus, droits d'écriture de la messagerie, choix des modérateurs), proposées par la plateforme mais à faire valider par l'institut ;
 - **une politique de sécurité du contenu** qui autorise les scripts intégrés aux pages, compromis nécessaire au fonctionnement du cadre d'application et au maintien du cache.
 
 ## Conclusion partielle
 
-Ce chapitre a présenté la plateforme réalisée : un site institutionnel administrable, des admissions en ligne de bout en bout, une valve numérique ciblée, des espaces pour les candidats, les étudiants et les enseignants, la gestion des notes, des délibérations, des examens et des frais, des documents vérifiables par code QR et une administration complète. Les tests automatisés, la revue de sécurité, l'analyse d'accessibilité et les mesures de performance montrent que la plateforme répond pour l'essentiel aux exigences fixées au chapitre 3. Elle est en ligne à l'adresse www.isptbukavu.org ; pour entrer pleinement en service, elle attend les données officielles de l'institut, ainsi que l'activation des sauvegardes et de la surveillance.
+Ce chapitre a présenté la plateforme réalisée : un site institutionnel administrable, des admissions en ligne de bout en bout, une valve numérique ciblée, une messagerie et un espace d'échange modérés, des espaces pour les candidats, les étudiants et les enseignants, la gestion des notes, des délibérations, des examens et des frais, des documents vérifiables par code QR et une administration complète. Les tests automatisés, la revue de sécurité, l'analyse d'accessibilité et les mesures de performance montrent que la plateforme répond pour l'essentiel aux exigences fixées au chapitre 3. Elle est en ligne à l'adresse www.isptbukavu.org, sauvegardée chaque nuit et surveillée ; pour entrer pleinement en service, elle attend les données officielles de l'institut.
 
 Les deux premières hypothèses sont vérifiées sur le plan technique, la troisième partiellement. Les limites relevées, en particulier l'absence d'évaluation par les usagers et l'hébergement hors de la RDC, ouvrent les perspectives présentées dans la conclusion générale.

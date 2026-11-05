@@ -182,18 +182,18 @@ Chaque entretien donne une fiche (fonction, date, processus décrits, difficult�
 
 ## Annexe 3. Rôles par défaut et permissions
 
-La plateforme définit 21 permissions élémentaires, regroupées dans des rôles calqués sur l'organigramme de l'institut. Les rôles du personnel restent modifiables dans l'administration ; un rôle ne peut être attribué que par une personne qui détient déjà toutes ses permissions. Conformément aux indications de l'institut, le niveau le plus élevé, celui d'administrateur technique, est destiné au Directeur Général ; c'est ce qui lui permet notamment d'enregistrer les paiements.
+La plateforme définit 22 permissions élémentaires, regroupées dans des rôles calqués sur l'organigramme de l'institut. Les rôles du personnel restent modifiables dans l'administration ; un rôle ne peut être attribué que par une personne qui détient déjà toutes ses permissions. Conformément aux indications de l'institut, le niveau le plus élevé, celui d'administrateur technique, est destiné au Directeur Général ; c'est ce qui lui permet notamment d'enregistrer les paiements.
 
 ::tableau Tableau A.3 : Rôles par défaut et permissions associées
 | Rôle | Mission | Permissions |
 |---|---|---|
 | Administrateur technique | Accès complet, y compris les rôles et permissions | Toutes les permissions |
-| Direction générale | Pilotage, validation et lecture globale | Consulter le tableau de bord de pilotage ; Consulter le journal d'activité ; Publier des communiqués pour son périmètre ; Publier des communiqués pour tout l'institut ; Valider les communiqués ; Consulter les candidatures ; Consulter la situation financière ; Émettre les documents officiels |
+| Direction générale | Pilotage, validation et lecture globale | Consulter le tableau de bord de pilotage ; Consulter le journal d'activité ; Publier des communiqués pour son périmètre ; Publier des communiqués pour tout l'institut ; Valider les communiqués ; Consulter les candidatures ; Consulter la situation financière ; Émettre les documents officiels ; Modérer la messagerie et le Campus |
 | Secrétariat général académique | Structure académique, notes, documents officiels | Gérer filières, années, promotions et cours ; Construire et publier les horaires ; Valider et publier les notes ; Gérer les étudiants et inscriptions ; Émettre les documents officiels ; Gérer les stages ; Publier des communiqués pour son périmètre ; Publier des communiqués pour tout l'institut ; Valider les communiqués ; Consulter les candidatures |
 | Secrétariat général administratif | Comptes du personnel et réglages institutionnels | Gérer les comptes ; Modifier les pages et réglages du site ; Consulter le journal d'activité ; Consulter la situation financière |
 | Appariteur / secrétariat de section | Admissions, inscriptions, horaires et communiqués de section | Consulter les candidatures ; Instruire et décider des candidatures ; Gérer les étudiants et inscriptions ; Construire et publier les horaires ; Gérer les stages ; Publier des communiqués pour son périmètre |
 | Caisse | Encaissements et situation financière | Consulter la situation financière ; Enregistrer les paiements |
-| Communication | Contenus du site, actualités, galerie et médias | Modifier les pages et réglages du site ; Publier les actualités et événements ; Gérer la médiathèque |
+| Communication | Contenus du site, actualités, galerie, médias et modération du Campus | Modifier les pages et réglages du site ; Publier les actualités et événements ; Gérer la médiathèque ; Modérer la messagerie et le Campus |
 | Support technique | Comptes utilisateurs et assistance | Gérer les comptes |
 | Enseignant | Cours, supports, notes et communiqués de ses cours | Aucune permission d'administration ; droits limités aux cours qui lui sont confiés |
 | Étudiant | Espace étudiant | Aucune ; accès à ses seules données |
@@ -283,11 +283,37 @@ L'onglet « Examens » affiche vos épreuves jour par jour : heure, cours, modal
 2. Le secrétariat traite la demande ; vous êtes notifié quand le document est émis.
 3. Le document s'imprime depuis votre espace. Son code QR permet à quiconque de vérifier son authenticité.
 
+*Conseil :* Le relevé de notes et l'attestation de réussite reprennent les résultats proclamés par le jury : ils ne peuvent être délivrés qu'après la proclamation.
+
 **Stages et emplois.**
 Les offres de stage, d'emploi, de bourse ou de formation relayées par l'institut sont publiées sur la page « Stages et emplois » du site. Celles qui concernent votre filière vous sont signalées par une notification.
 
 **Sur téléphone et sans connexion.**
 La plateforme s'installe sur l'écran d'accueil du téléphone depuis le navigateur (« Ajouter à l'écran d'accueil »). Les pages déjà consultées restent lisibles en cas de coupure ; un bandeau indique alors que vous êtes hors ligne.
+
+**Campus.**
+1. Onglet « Campus » : les publications de l'institut, de votre filière et de votre promotion.
+2. Avant votre première publication, lisez et acceptez les règles du Campus.
+3. Écrivez votre texte, ajoutez jusqu'à quatre photos et choisissez qui le verra : tout l'institut, une filière ou une promotion.
+4. Sous chaque publication : « J'aime », « Commenter » (avec réponses), « Partager » et « Enregistrer » pour la retrouver dans « Enregistrés ».
+5. Le menu « … » permet de modifier ou supprimer vos publications, de fermer leurs commentaires, ou de signaler un contenu.
+
+*Conseil :* Les annonces officielles restent sur la valve. Un contenu signalé plusieurs fois est masqué en attendant l'examen de la modération.
+
+**Messages.**
+1. Icône « Messages » en haut de l'écran : une pastille indique les conversations non lues.
+2. Les groupes de votre promotion et de vos cours apparaissent tout seuls ; « Nouveau » ouvre une conversation privée.
+3. Sur un message : « Répondre » pour le citer, « Supprimer pour tous » pour retirer le vôtre, « Signaler » en cas d'abus.
+4. Le bouton trombone joint une photo ou un PDF (4 Mo au plus) ; les photos sont réduites avant l'envoi.
+
+*Conseil :* Un étudiant écrit à sa promotion, à ses enseignants et aux services de l'institut. Un enseignant peut réserver l'écriture de son groupe de cours aux annonces.
+
+**Mon compte : mot de passe et appareils.**
+1. Cliquez sur votre nom (ou sur l'icône de profil sur téléphone), en haut de l'écran.
+2. « Changer de mot de passe » : saisissez l'actuel, puis deux fois le nouveau.
+3. « Appareils connectés » : vous voyez où votre compte est ouvert et pouvez déconnecter les autres appareils.
+
+*Conseil :* Après un changement de mot de passe, les autres appareils sont déconnectés et un courrier électronique de confirmation est envoyé si une adresse est enregistrée.
 
 ### Guide de l'enseignant
 
@@ -324,6 +350,30 @@ L'onglet « Examens » liste les épreuves de vos cours et celles que vous surve
 **Communiqués.**
 « Valve » › « Nouveau communiqué » permet d'informer les étudiants de vos cours. Selon vos droits, le communiqué est publié directement ou soumis à validation.
 
+**Campus.**
+1. Onglet « Campus » : les publications de l'institut, de votre filière et de votre promotion.
+2. Avant votre première publication, lisez et acceptez les règles du Campus.
+3. Écrivez votre texte, ajoutez jusqu'à quatre photos et choisissez qui le verra : tout l'institut, une filière ou une promotion.
+4. Sous chaque publication : « J'aime », « Commenter » (avec réponses), « Partager » et « Enregistrer » pour la retrouver dans « Enregistrés ».
+5. Le menu « … » permet de modifier ou supprimer vos publications, de fermer leurs commentaires, ou de signaler un contenu.
+
+*Conseil :* Les annonces officielles restent sur la valve. Un contenu signalé plusieurs fois est masqué en attendant l'examen de la modération.
+
+**Messages.**
+1. Icône « Messages » en haut de l'écran : une pastille indique les conversations non lues.
+2. Les groupes de votre promotion et de vos cours apparaissent tout seuls ; « Nouveau » ouvre une conversation privée.
+3. Sur un message : « Répondre » pour le citer, « Supprimer pour tous » pour retirer le vôtre, « Signaler » en cas d'abus.
+4. Le bouton trombone joint une photo ou un PDF (4 Mo au plus) ; les photos sont réduites avant l'envoi.
+
+*Conseil :* Un étudiant écrit à sa promotion, à ses enseignants et aux services de l'institut. Un enseignant peut réserver l'écriture de son groupe de cours aux annonces.
+
+**Mon compte : mot de passe et appareils.**
+1. Cliquez sur votre nom (ou sur l'icône de profil sur téléphone), en haut de l'écran.
+2. « Changer de mot de passe » : saisissez l'actuel, puis deux fois le nouveau.
+3. « Appareils connectés » : vous voyez où votre compte est ouvert et pouvez déconnecter les autres appareils.
+
+*Conseil :* Après un changement de mot de passe, les autres appareils sont déconnectés et un courrier électronique de confirmation est envoyé si une adresse est enregistrée.
+
 ### Guide du candidat
 
 *Pour : Futurs étudiants.* Créer un compte, constituer et déposer son dossier, suivre la décision.
@@ -344,6 +394,13 @@ L'onglet « Examens » liste les épreuves de vos cours et celles que vous surve
 
 **Suivre sa candidature.**
 Le suivi indique chaque étape de l'instruction. La caisse vérifie votre paiement : votre reçu apparaît alors dans votre espace ; si la référence n'est pas reconnue, vous pouvez la corriger. Si une pièce est refusée, vous êtes prévenu avec le motif. La décision vous est notifiée dans votre espace et par courrier électronique ; une fois inscrit, vous vous connectez avec le même mot de passe à votre espace étudiant.
+
+**Mon compte : mot de passe et appareils.**
+1. Cliquez sur votre nom (ou sur l'icône de profil sur téléphone), en haut de l'écran.
+2. « Changer de mot de passe » : saisissez l'actuel, puis deux fois le nouveau.
+3. « Appareils connectés » : vous voyez où votre compte est ouvert et pouvez déconnecter les autres appareils.
+
+*Conseil :* Après un changement de mot de passe, les autres appareils sont déconnectés et un courrier électronique de confirmation est envoyé si une adresse est enregistrée.
 
 ### Guide de l'administration
 
@@ -399,6 +456,29 @@ La page « Mise en service » liste ce qui reste à saisir et renvoie à l'écra
 **Documents officiels.**
 « Documents » traite les demandes des étudiants et permet d'émettre directement une attestation ou un relevé. En bas de la page, « Paramètres des documents » fixe le signataire et les formules, à confirmer par l'institut.
 
+**Campus.**
+1. Onglet « Campus » : les publications de l'institut, de votre filière et de votre promotion.
+2. Avant votre première publication, lisez et acceptez les règles du Campus.
+3. Écrivez votre texte, ajoutez jusqu'à quatre photos et choisissez qui le verra : tout l'institut, une filière ou une promotion.
+4. Sous chaque publication : « J'aime », « Commenter » (avec réponses), « Partager » et « Enregistrer » pour la retrouver dans « Enregistrés ».
+5. Le menu « … » permet de modifier ou supprimer vos publications, de fermer leurs commentaires, ou de signaler un contenu.
+
+*Conseil :* Les annonces officielles restent sur la valve. Un contenu signalé plusieurs fois est masqué en attendant l'examen de la modération.
+
+**Messages.**
+1. Icône « Messages » en haut de l'écran : une pastille indique les conversations non lues.
+2. Les groupes de votre promotion et de vos cours apparaissent tout seuls ; « Nouveau » ouvre une conversation privée.
+3. Sur un message : « Répondre » pour le citer, « Supprimer pour tous » pour retirer le vôtre, « Signaler » en cas d'abus.
+4. Le bouton trombone joint une photo ou un PDF (4 Mo au plus) ; les photos sont réduites avant l'envoi.
+
+*Conseil :* Un étudiant écrit à sa promotion, à ses enseignants et aux services de l'institut. Un enseignant peut réserver l'écriture de son groupe de cours aux annonces.
+
+**Mon compte : mot de passe et appareils.**
+1. Cliquez sur votre nom (ou sur l'icône de profil sur téléphone), en haut de l'écran.
+2. « Changer de mot de passe » : saisissez l'actuel, puis deux fois le nouveau.
+3. « Appareils connectés » : vous voyez où votre compte est ouvert et pouvez déconnecter les autres appareils.
+
+*Conseil :* Après un changement de mot de passe, les autres appareils sont déconnectés et un courrier électronique de confirmation est envoyé si une adresse est enregistrée.
 
 ::saut
 

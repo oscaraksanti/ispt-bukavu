@@ -249,11 +249,13 @@ Le modèle de classes est traduit en un schéma de base de données relationnell
 | Finances | BaremeFrais, Paiement, Exoneration | 3 |
 | Documents et stages | DemandeDocument, DocumentOfficiel, LieuStage, Stage | 4 |
 | Insertion | Ancien, OffreInsertion | 2 |
-| Total | | 63 |
+| Messagerie | Conversation, ParticipantConversation, Message, SignalementMessage, Blocage | 5 |
+| Campus et téléphone | Publication, PublicationMedia, ReactionPublication, Commentaire, EnregistrementPublication, SignalementCampus, AbonnementPush | 7 |
+| Total | | 75 |
 
 ::source Production personnelle, d'après le schéma de la base de données.
 
-À ces 63 tables s'ajoutent deux tables de liaison créées automatiquement par l'outil d'accès aux données pour des relations simples entre campagnes et filières, et entre offres et filières.
+À ces 75 tables s'ajoutent deux tables de liaison créées automatiquement par l'outil d'accès aux données pour des relations simples entre campagnes et filières, et entre offres et filières.
 
 Plusieurs choix de conception protègent l'intégrité des données :
 
@@ -305,7 +307,7 @@ La sécurité a été conçue à partir des risques recensés par l'OWASP [@owas
 
 ::source Production personnelle.
 
-**Le modèle de droits.** La plateforme définit 21 permissions élémentaires (par exemple « valider et publier les notes » ou « enregistrer les paiements ») regroupées dans 11 rôles par défaut, calqués sur l'organigramme : administrateur technique, direction générale, secrétariat général académique, secrétariat général administratif, appariteur ou secrétariat de section, caisse, communication, support technique, enseignant, étudiant et candidat. Les rôles du personnel restent modifiables dans l'administration. Pour éviter qu'un gestionnaire ne s'accorde plus de pouvoir qu'il n'en a, un rôle ne peut être attribué que par une personne qui détient déjà toutes ses permissions, et nul ne peut modifier ses propres rôles.
+**Le modèle de droits.** La plateforme définit 22 permissions élémentaires (par exemple « valider et publier les notes » ou « enregistrer les paiements ») regroupées dans 11 rôles par défaut, calqués sur l'organigramme : administrateur technique, direction générale, secrétariat général académique, secrétariat général administratif, appariteur ou secrétariat de section, caisse, communication, support technique, enseignant, étudiant et candidat. Les rôles du personnel restent modifiables dans l'administration. Pour éviter qu'un gestionnaire ne s'accorde plus de pouvoir qu'il n'en a, un rôle ne peut être attribué que par une personne qui détient déjà toutes ses permissions, et nul ne peut modifier ses propres rôles.
 
 **Les droits sur les ressources.** La permission ne suffit pas : un enseignant qui peut saisir des notes ne peut le faire que pour les cours qui lui sont confiés, et un étudiant ne voit que ses propres notes, frais et documents. Ces vérifications de propriété sont faites sur le serveur à partir de l'identité de la session, jamais à partir d'une valeur fournie par le navigateur.
 
@@ -340,6 +342,6 @@ Ces exigences sont vérifiées par les tests automatiques et manuels présentés
 
 ## Conclusion partielle
 
-Ce chapitre a présenté la conception de la plateforme. La démarche itérative et le langage UML ont permis de passer des besoins à un modèle précis : 17 diagrammes décrivent les acteurs, les processus critiques, le cycle de vie des objets, les données, l'architecture et le déploiement. Le modèle de données compte 63 tables principales, protégées par des contraintes d'intégrité et des copies figées là où l'historique doit être conservé. La sécurité repose sur un contrôle d'accès basé sur les rôles, vérifié côté serveur jusqu'au niveau de chaque ressource. L'interface, enfin, part de l'identité de l'institut et intègre l'accessibilité dès la conception.
+Ce chapitre a présenté la conception de la plateforme. La démarche itérative et le langage UML ont permis de passer des besoins à un modèle précis : 17 diagrammes décrivent les acteurs, les processus critiques, le cycle de vie des objets, les données, l'architecture et le déploiement. Le modèle de données compte 75 tables principales, protégées par des contraintes d'intégrité et des copies figées là où l'historique doit être conservé. La sécurité repose sur un contrôle d'accès basé sur les rôles, vérifié côté serveur jusqu'au niveau de chaque ressource. L'interface, enfin, part de l'identité de l'institut et intègre l'accessibilité dès la conception.
 
 Le chapitre suivant présente la réalisation de ce modèle, les tests qui en vérifient la conformité et la mise en production de la plateforme.
