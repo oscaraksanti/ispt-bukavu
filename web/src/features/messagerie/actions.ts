@@ -6,6 +6,7 @@ import sharp from "sharp";
 import { exigerPermission } from "@/features/auth/acces";
 import { TAILLE_MAX_PIECE, TYPES_PIECES } from "@/features/admissions/fichiers";
 import { notifier } from "@/features/notifications/emettre";
+import { contexteEtudiant, filtreEnLigne } from "@/features/valve/donnees";
 import { db } from "@/lib/db";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
 import { journaliser } from "@/lib/journal";
@@ -279,6 +280,36 @@ export async function ouvrirConversation(cibleId: string, base: string) {
     skipDuplicates: true,
   });
   redirect(`${retour}/${conversation.id}`);
+}
+
+/**
+ * Valve : l'étudiant pose une question sur un communiqué à son auteur, en
+ * conversation privée (la valve reste officielle, sans commentaires publics).
+ */
+export async function poserQuestion(communiqueId: string) {
+  const { u, profil } = await exigerMessagerie("/etudiant/valve");
+  const c = await db.communique.findFirst({
+    where: { id: communiqueId, ...filtreEnLigne(await contexteEtudiant(u.id)) },
+    select: { id: true, auteurId: true },
+  });
+  if (!c) redirect("/etudiant/valve");
+  const auteur = (await profilsMessagerie([c.auteurId])).get(c.auteurId);
+  if (!auteur || !peutEcrireA(profil, auteur))
+    redirect(`/etudiant/valve/${c.id}?question=impossible`);
+  const cle = clePrivee(profil.id, auteur.id);
+  const conversation = await db.conversation.upsert({
+    where: { cle },
+    update: {},
+    create: { cle, type: "PRIVEE" },
+  });
+  await db.participantConversation.createMany({
+    data: [
+      { conversationId: conversation.id, utilisateurId: profil.id },
+      { conversationId: conversation.id, utilisateurId: auteur.id },
+    ],
+    skipDuplicates: true,
+  });
+  redirect(`/etudiant/messages/${conversation.id}?communique=${c.id}`);
 }
 
 /* ---------- Modération ---------- */

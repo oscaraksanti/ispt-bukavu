@@ -171,10 +171,13 @@ export async function EcranConversation({
   base,
   suite,
   id,
+  communique,
 }: {
   base: string;
   suite: string;
   id: string;
+  /** Question posée depuis un communiqué de la valve : le message est pré-rempli. */
+  communique?: string;
 }) {
   const { profil } = await exigerMessagerie(suite);
   const acces = await accesConversation(profil, id);
@@ -189,6 +192,7 @@ export async function EcranConversation({
   let titre = conversation.titre ?? "Groupe";
   let sousTitre = "Conversation privée";
   let bloque = false;
+  let autreId: string | null = null;
   if (conversation.type === "PRIVEE") {
     const autre = await db.participantConversation.findFirst({
       where: { conversationId: id, utilisateurId: { not: profil.id } },
@@ -206,6 +210,7 @@ export async function EcranConversation({
     });
     if (autre) {
       const u = autre.utilisateur;
+      autreId = u.id;
       titre = [u.prenom, u.nom].filter(Boolean).join(" ");
       sousTitre =
         u.profilEtudiant?.matricule ??
@@ -235,6 +240,15 @@ export async function EcranConversation({
         : 0) + (co?._count.enseignants ?? 0);
     sousTitre = `Groupe du cours${conversation.annoncesSeulement ? " · annonces" : ""} · ${n} membre${n > 1 ? "s" : ""}`;
   }
+
+  // Seulement si l'interlocuteur est l'auteur du communiqué (pas de titre divulgué au hasard).
+  const sujet =
+    communique && autreId
+      ? await db.communique.findFirst({
+          where: { id: communique, auteurId: autreId },
+          select: { titre: true },
+        })
+      : null;
 
   const menu = (
     <details className="relative">
@@ -285,6 +299,7 @@ export async function EcranConversation({
         peutEcrire={peutPublier(conversation, animateur) && !bloque}
         annoncesSeulement={conversation.annoncesSeulement}
         menu={menu}
+        brouillon={sujet ? `À propos du communiqué « ${sujet.titre} » : ` : ""}
       />
     </Cadre>
   );

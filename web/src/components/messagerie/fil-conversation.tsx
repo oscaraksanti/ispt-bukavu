@@ -69,6 +69,7 @@ export function FilConversation({
   peutEcrire,
   annoncesSeulement,
   menu,
+  brouillon = "",
 }: {
   conversationId: string;
   base: string;
@@ -80,9 +81,11 @@ export function FilConversation({
   annoncesSeulement: boolean;
   /** Actions de la conversation (sourdine, annonces, blocage), rendues par le serveur. */
   menu: React.ReactNode;
+  /** Début de message proposé (question sur un communiqué). */
+  brouillon?: string;
 }) {
   const [messages, setMessages] = useState(initial);
-  const [texte, setTexte] = useState("");
+  const [texte, setTexte] = useState(brouillon);
   const [fichier, setFichier] = useState<File | null>(null);
   const [reponse, setReponse] = useState<MessageClient | null>(null);
   const [erreur, setErreur] = useState<string | null>(null);
