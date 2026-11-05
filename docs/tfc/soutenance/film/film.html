@@ -1,0 +1,69 @@
+<!doctype html>
+<!--
+  Film de présentation de la plateforme (1920 × 1080).
+  Rendu image par image : render(t) place chaque élément pour l'instant t (secondes).
+  Les captures sont dans le dossier indiqué par ?captures=… ; la chronologie est dans film.js.
+-->
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="polices.css">
+<style>
+  :root { --encre:#141B4A; --bleu:#283890; --jaune:#FEF200; --papier:#F7F6F2; --pierre:#6B675E; --texte:#1C1B18; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { width:1920px; height:1080px; overflow:hidden; background:var(--papier); }
+  body { font-family:"IBM Plex Sans", sans-serif; color:var(--texte); -webkit-font-smoothing:antialiased; }
+  #scene { position:absolute; inset:0; overflow:hidden; }
+  .fond { position:absolute; inset:0; background:
+      radial-gradient(1200px 700px at 78% 18%, rgba(40,56,144,.07), transparent 70%),
+      radial-gradient(900px 600px at 10% 95%, rgba(254,242,0,.10), transparent 70%), var(--papier); }
+  .couche { position:absolute; inset:0; opacity:0; will-change:opacity, transform; }
+  .sombre { background: radial-gradient(1400px 900px at 70% 20%, #1d2668, var(--encre) 70%); color:#fff; }
+
+  /* Fenêtre de navigateur */
+  .fenetre { position:absolute; left:134px; top:118px; width:1652px; height:930px; border-radius:18px;
+             background:#fff; overflow:hidden; box-shadow:0 30px 80px rgba(20,27,74,.18), 0 2px 8px rgba(20,27,74,.08); }
+  .barre { height:44px; background:#EFEDE7; display:flex; align-items:center; gap:10px; padding:0 18px; border-bottom:1px solid #E2DFD6; }
+  .pt { width:12px; height:12px; border-radius:50%; background:#D6D2C8; }
+  .url { margin-left:18px; flex:1; max-width:620px; height:28px; border-radius:8px; background:#fff; color:#55524A;
+         font:500 15px/28px "IBM Plex Sans"; padding:0 14px; white-space:nowrap; overflow:hidden; }
+  .url b { color:var(--texte); font-weight:500; }
+  .vue { position:absolute; left:0; top:44px; width:1652px; height:886px; overflow:hidden; background:#fff; }
+  .vue img { position:absolute; left:0; top:0; transform-origin:0 0; will-change:transform; }
+
+  /* Téléphones */
+  .tel { position:absolute; width:372px; height:788px; border-radius:54px; background:#0f1330; padding:14px;
+         box-shadow:0 40px 90px rgba(20,27,74,.28), inset 0 0 0 2px #2a2f55; }
+  .tel .ecran { width:344px; height:760px; border-radius:42px; overflow:hidden; position:relative; background:#fff; padding-top:38px; }
+  .tel .ecran img { width:344px; position:absolute; left:0; top:38px; will-change:transform; }
+  .tel .encoche { position:absolute; left:50%; top:10px; width:92px; height:24px; margin-left:-46px; border-radius:14px; background:#0f1330; z-index:2; }
+
+  /* Titres de chapitre */
+  .chapitre { position:absolute; left:134px; top:38px; display:flex; align-items:baseline; gap:18px; opacity:0; }
+  .chapitre .num { font:500 16px/1 "IBM Plex Mono"; letter-spacing:.12em; color:var(--bleu); background:var(--jaune); padding:7px 10px 6px; border-radius:6px; }
+  .chapitre .tit { font:500 38px/1 "Newsreader", serif; color:var(--encre); letter-spacing:-.01em; }
+
+  /* Textes */
+  .kicker { font:500 18px/1 "IBM Plex Mono"; letter-spacing:.18em; text-transform:uppercase; }
+  .grand { font:500 92px/1.02 "Newsreader", serif; letter-spacing:-.02em; }
+  .moyen { font:400 44px/1.15 "Newsreader", serif; }
+  .corps { font:400 26px/1.45 "IBM Plex Sans"; }
+  .puces { list-style:none; }
+  .puces li { font:400 30px/1.3 "IBM Plex Sans"; padding:18px 0 18px 46px; position:relative; border-bottom:1px solid rgba(20,27,74,.12); opacity:0; }
+  .puces li::before { content:""; position:absolute; left:6px; top:31px; width:14px; height:14px; border-radius:4px; background:var(--jaune); box-shadow:0 0 0 2px var(--bleu); }
+  .sombre .puces li { border-color:rgba(255,255,255,.14); }
+  .chiffre { position:absolute; width:520px; height:250px; border-radius:22px; background:#fff; padding:34px 38px; opacity:0;
+             box-shadow:0 20px 50px rgba(20,27,74,.10); }
+  .chiffre .n { font:500 84px/1 "Newsreader", serif; color:var(--bleu); letter-spacing:-.02em; }
+  .chiffre .l { font:400 24px/1.35 "IBM Plex Sans"; margin-top:18px; color:var(--texte); }
+  .pastille { display:inline-block; font:500 26px/1 "IBM Plex Sans"; padding:16px 24px; border-radius:40px; background:rgba(255,255,255,.1);
+              border:1px solid rgba(255,255,255,.25); margin:0 14px 14px 0; opacity:0; }
+  .noir { position:absolute; inset:0; background:#000; opacity:0; pointer-events:none; }
+</style>
+</head>
+<body>
+<div id="scene"><div class="fond"></div></div>
+<div class="noir" id="noir"></div>
+<script src="film.js"></script>
+</body>
+</html>
