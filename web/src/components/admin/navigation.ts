@@ -37,13 +37,15 @@ export type IconeNavigation =
   | "GalleryHorizontalEnd"
   | "UserCog"
   | "ShieldCheck"
-  | "History";
+  | "History"
+  | "FileSpreadsheet";
 
 export type EntreeNavigation = {
   libelle: string;
   href: string;
   icone: IconeNavigation;
-  permission?: CodePermission;
+  /** Permission exigée ; avec une liste, l'une d'elles suffit. */
+  permission?: CodePermission | CodePermission[];
   /** Mots supplémentaires pour la recherche rapide (⌘K). */
   motsCles?: string;
 };
@@ -314,6 +316,13 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
         permission: "roles.gerer",
       },
       {
+        libelle: "Exports",
+        href: "/admin/exports",
+        icone: "FileSpreadsheet",
+        permission: ["etudiants.gerer", "academique.notes.valider"],
+        motsCles: "excel csv tableur optsolution ministère effectifs inscriptions",
+      },
+      {
         libelle: "Journal d'activité",
         href: "/admin/journal",
         icone: "History",
@@ -323,3 +332,10 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
     ],
   },
 ];
+
+/** L'utilisateur peut-il voir cette entrée ? */
+export function entreeAccessible(e: EntreeNavigation, permissions: Set<string>) {
+  if (!e.permission) return true;
+  const liste = Array.isArray(e.permission) ? e.permission : [e.permission];
+  return liste.some((p) => permissions.has(p));
+}

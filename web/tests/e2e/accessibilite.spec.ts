@@ -90,6 +90,7 @@ test("administration", async ({ page }) => {
     "/admin/notes",
     "/admin/notifications",
     "/admin/compte",
+    "/admin/exports",
     "/admin/deliberations",
     "/admin/deliberations/reglement",
     "/admin/admissions",

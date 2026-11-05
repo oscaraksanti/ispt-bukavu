@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { BarreLaterale } from "@/components/admin/barre-laterale";
-import { NAVIGATION_ADMIN } from "@/components/admin/navigation";
+import { entreeAccessible, NAVIGATION_ADMIN } from "@/components/admin/navigation";
 import { LienEvitement, Squelette } from "@/components/ui/elements";
 import { exigerPersonnel } from "@/features/auth/acces";
 import { compterNonLues } from "@/features/notifications/requetes";
@@ -17,7 +17,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
   const u = await exigerPersonnel();
   const groupes = NAVIGATION_ADMIN.map((g) => ({
     ...g,
-    entrees: g.entrees.filter((e) => !e.permission || u.permissions.has(e.permission)),
+    entrees: g.entrees.filter((e) => entreeAccessible(e, u.permissions)),
   })).filter((g) => g.entrees.length > 0);
   return (
     <>
