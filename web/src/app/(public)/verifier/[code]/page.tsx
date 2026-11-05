@@ -74,6 +74,23 @@ async function Resultat({ params }: { params: PageProps<"/verifier/[code]">["par
               ["Promotion", r.titulaire.promotion],
               ["Année académique", r.titulaire.annee],
               ...(r.titulaire.periode ? [["Période", r.titulaire.periode]] : []),
+              ...(r.titulaire.resultat
+                ? [
+                    [
+                      "Moyenne",
+                      r.titulaire.resultat.moyenne === null
+                        ? "—"
+                        : `${r.titulaire.resultat.moyenne.toLocaleString("fr-FR")}/20`,
+                    ],
+                    ...(r.titulaire.resultat.mention
+                      ? [["Mention", r.titulaire.resultat.mention]]
+                      : []),
+                    ["Crédits validés", r.titulaire.resultat.credits],
+                    ...(r.titulaire.resultat.decision
+                      ? [["Décision du jury", r.titulaire.resultat.decision]]
+                      : []),
+                  ]
+                : []),
               ["Délivré le", formatJour.format(new Date(r.emisLe))],
             ].map(([k, v]) => (
               <div key={k} className="grid grid-cols-[10rem_1fr] gap-4 py-2.5">

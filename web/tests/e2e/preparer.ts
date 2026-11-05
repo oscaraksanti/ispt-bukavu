@@ -148,28 +148,35 @@ async function main() {
       },
     }));
 
+  // Remises à leur état initial à chaque préparation : le scénario des
+  // délibérations fait publier l'évaluation en brouillon.
   const evaluation = async (intitule: string, statut: "PUBLIEE" | "BROUILLON", notes: number[]) => {
-    const ev =
-      (await db.evaluation.findFirst({ where: { coursOffertId: offert.id, intitule } })) ??
-      (await db.evaluation.create({
-        data: {
-          coursOffertId: offert.id,
-          intitule,
-          type: "INTERROGATION",
-          ponderation: 50,
-          statut,
-        },
-      }));
+    const existante = await db.evaluation.findFirst({
+      where: { coursOffertId: offert.id, intitule },
+    });
+    const ev = existante
+      ? await db.evaluation.update({ where: { id: existante.id }, data: { statut } })
+      : await db.evaluation.create({
+          data: {
+            coursOffertId: offert.id,
+            intitule,
+            type: "INTERROGATION",
+            ponderation: 50,
+            statut,
+          },
+        });
     for (const [i, e] of [a, b].entries())
       await db.note.upsert({
         where: { evaluationId_etudiantId: { evaluationId: ev.id, etudiantId: e.id } },
-        update: {},
+        update: { valeur: notes[i], absent: false },
         create: { evaluationId: ev.id, etudiantId: e.id, valeur: notes[i] },
       });
     return ev;
   };
+  // Mêmes notes dans les deux évaluations : la moyenne du cours ne change pas
+  // quand la seconde est publiée (A : 14, B : 9).
   const publiee = await evaluation("Interrogation publiée E2E", "PUBLIEE", [14, 9]);
-  const brouillon = await evaluation("Interrogation brouillon E2E", "BROUILLON", [3, 3]);
+  const brouillon = await evaluation("Interrogation brouillon E2E", "BROUILLON", [14, 9]);
 
   const recuA =
     (await db.paiement.findFirst({ where: { etudiantId: a.id } })) ??
@@ -231,6 +238,7 @@ async function main() {
       promotion: promotion.id,
       etudiantB: b.id,
       seance: seance.id,
+      niveau: niveau.id,
       promotionLibelle: `${niveau.code} ${filiere.nomCourt}`,
     },
   };

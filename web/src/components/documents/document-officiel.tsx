@@ -81,7 +81,22 @@ export function DocumentOfficiel({
             <strong>{d.filiere}</strong>, pour l&apos;année académique <strong>{d.annee}</strong>.
           </p>
         )}
-        {type === "ATTESTATION_REUSSITE" && (
+        {type === "ATTESTATION_REUSSITE" && d.resultat && (
+          <p className="text-justify">
+            Il est attesté que {civilite(d.sexe)} <strong>{d.nom}</strong>, matricule{" "}
+            <strong>{d.matricule}</strong>
+            {naissance}, {inscrit} en {d.niveau}, filière {d.filiere}, pour l&apos;année académique{" "}
+            {d.annee}, a obtenu une moyenne annuelle de{" "}
+            <strong>{d.resultat.moyenne === null ? "—" : `${fmt(d.resultat.moyenne)}/20`}</strong>
+            {d.resultat.mention ? `, mention ${d.resultat.mention.libelle}` : ""}, et validé{" "}
+            <strong>
+              {d.resultat.creditsValides} crédits sur {d.resultat.creditsTotal}
+            </strong>
+            . Décision du jury, proclamée le {formatJour.format(new Date(d.resultat.proclameLe))} :{" "}
+            <strong>{d.resultat.decision?.libelle ?? "—"}</strong>.
+          </p>
+        )}
+        {type === "ATTESTATION_REUSSITE" && !d.resultat && (
           <p className="text-justify">
             Il est attesté que {civilite(d.sexe)} <strong>{d.nom}</strong>, matricule{" "}
             <strong>{d.matricule}</strong>
@@ -136,7 +151,11 @@ export function DocumentOfficiel({
                         {c.note === null ? "—" : fmt(c.note)}
                       </td>
                       <td className="border border-black px-2 py-1 text-center">
-                        {c.note === null ? "—" : c.note >= d.seuil ? "Validé" : "Non validé"}
+                        {(c.valide ?? (c.note !== null && c.note >= d.seuil))
+                          ? "Validé"
+                          : c.note === null
+                            ? "—"
+                            : "Non validé"}
                       </td>
                     </tr>
                   ))}
@@ -155,8 +174,29 @@ export function DocumentOfficiel({
                 </tbody>
               </table>
             ))}
+            {d.resultat && (
+              <p className="mt-5 text-[10pt]">
+                {d.resultat.periode} : moyenne{" "}
+                <strong>
+                  {d.resultat.moyenne === null ? "—" : `${fmt(d.resultat.moyenne)}/20`}
+                </strong>
+                {d.resultat.mention
+                  ? ` (${d.resultat.mention.lettre} · ${d.resultat.mention.libelle})`
+                  : ""}
+                , {d.resultat.creditsValides} crédits validés sur {d.resultat.creditsTotal}
+                {d.resultat.decision ? (
+                  <>
+                    {" "}
+                    · décision du jury : <strong>{d.resultat.decision.libelle}</strong>
+                  </>
+                ) : null}
+                .
+              </p>
+            )}
             <p className="mt-3 text-[9pt]">
               Seuil de validation d&apos;un cours : {fmt(d.seuil)}/20.
+              {d.resultat &&
+                ` Résultats proclamés par le jury le ${formatJour.format(new Date(d.resultat.proclameLe))}.`}
             </p>
           </>
         )}

@@ -51,9 +51,9 @@ async function emettre(
   demandeId: string | null,
   auteurId: string,
 ) {
-  const donnees = await figerDonnees(etudiantId, type);
-  if (!donnees)
-    return { erreur: "L'étudiant n'est inscrit dans aucune promotion de l'année courante." };
+  const figees = await figerDonnees(etudiantId, type);
+  if ("erreur" in figees) return { erreur: figees.erreur };
+  const { donnees } = figees;
   for (let essai = 0; essai < 5; essai++) {
     try {
       const doc = await db.documentOfficiel.create({

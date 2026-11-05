@@ -43,6 +43,17 @@ export type DonneesBulletin = {
   echelle: { seuil: number; lettre: string; libelle: string }[];
 };
 
+/** Résultat proclamé par le jury, repris sur un relevé ou une attestation de réussite. */
+export type ResultatProclame = {
+  periode: string;
+  moyenne: number | null;
+  mention: { lettre: string; libelle: string } | null;
+  decision: { code: string; libelle: string } | null;
+  creditsValides: number;
+  creditsTotal: number;
+  proclameLe: string;
+};
+
 /** Contenu figé au moment de l'émission : il ne change plus, même si la base évolue. */
 export type DonneesDocument = {
   nom: string;
@@ -56,12 +67,16 @@ export type DonneesDocument = {
   annee: string;
   seuil: number;
   bulletin?: DonneesBulletin;
+  /** Relevé et attestation de réussite émis depuis une délibération proclamée. */
+  resultat?: ResultatProclame;
   semestres?: {
     numero: number;
     moyenne: number | null;
+    mention?: string | null;
     creditsAcquis: number;
     creditsTotal: number;
-    cours: { intitule: string; credits: number; note: number | null }[];
+    /** `valide` : décision figée du jury (absente des documents plus anciens). */
+    cours: { intitule: string; credits: number; note: number | null; valide?: boolean }[];
   }[];
 };
 
@@ -75,14 +90,27 @@ export function formatCodeValide(code: string) {
   return /^[A-Z2-9]{4}-[A-Z2-9]{4}-[A-Z2-9]{4}$/.test(code);
 }
 
-/** Ce qu'un tiers voit en vérifiant : l'essentiel, sans les notes détaillées. */
+/**
+ * Ce qu'un tiers voit en vérifiant : l'identité, et pour un document de
+ * résultats, la moyenne, la mention, les crédits et la décision du jury (de
+ * quoi détecter une moyenne retouchée sur papier), sans les notes détaillées.
+ */
 export function resumeVerification(d: DonneesDocument) {
+  const r = d.bulletin ?? d.resultat ?? null;
   return {
     nom: d.nom,
     matricule: d.matricule,
     promotion: `${d.niveau} · ${d.filiere}`,
     annee: d.annee,
-    periode: d.bulletin?.periode ?? null,
+    periode: r?.periode ?? null,
+    resultat: r
+      ? {
+          moyenne: r.moyenne,
+          mention: r.mention ? `${r.mention.lettre} · ${r.mention.libelle}` : null,
+          credits: `${r.creditsValides} sur ${r.creditsTotal}`,
+          decision: r.decision?.libelle ?? null,
+        }
+      : null,
   };
 }
 

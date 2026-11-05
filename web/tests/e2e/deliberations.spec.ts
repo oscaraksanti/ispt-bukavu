@@ -20,8 +20,26 @@ let bulletinA = "";
 
 const ligne = (page: Page, nom: string) => page.getByRole("row", { name: new RegExp(nom) });
 
+/** Émission directe d'un document depuis /admin/documents ; renvoie le message affiché. */
+async function emettre(admin: Page, matricule: string, type: string) {
+  await admin.goto("/admin/documents");
+  await admin.waitForLoadState("networkidle");
+  const formulaire = admin.locator("form", { has: admin.locator("#matricule") });
+  await formulaire.locator("#matricule").fill(matricule);
+  await formulaire.locator("#type").selectOption(type);
+  await formulaire.getByRole("button", { name: "Émettre" }).click();
+  const message = admin.getByRole("status").locator("p").first();
+  await expect(message).toBeVisible();
+  return (await message.textContent()) ?? "";
+}
+
 test("le secrétariat prépare la délibération annuelle", async ({ browser }) => {
   const admin = await session(browser, D.comptes.admin);
+  // Avant toute proclamation, pas d'attestation de réussite.
+  expect(await emettre(admin, D.comptes.etudiantA, "ATTESTATION_REUSSITE")).toMatch(
+    /Aucun résultat annuel proclamé/,
+  );
+
   await admin.goto("/admin/deliberations/reglement");
   await admin.waitForLoadState("networkidle");
   await admin.getByRole("button", { name: "Enregistrer le règlement" }).click();
@@ -64,12 +82,50 @@ test("une décision du jury exige un motif, puis le jury est clôturé et procla
   await admin.locator("#presidentJury").fill("Président de test");
   await admin.getByRole("button", { name: "Enregistrer", exact: true }).click();
   await expect(admin.getByText(/Composition du jury enregistrée/)).toBeVisible();
+
+  // Le cours n'a que 50 % de ses évaluations publiées : la clôture est refusée.
+  await admin.getByRole("button", { name: "Clôturer le jury" }).click();
+  await admin
+    .getByRole("button", { name: "Confirmer" })
+    .click()
+    .catch(() => undefined);
+  await expect(admin.getByText(/ne totalisent pas 100 %/).first()).toBeVisible();
+
+  // L'enseignant transmet la seconde évaluation ; le secrétariat la valide et la publie.
+  const prof = await session(browser, D.comptes.prof);
+  await prof.goto(
+    `/enseignant/cours/${D.ids.coursOffert}/evaluations/${D.ids.evaluationBrouillon}`,
+  );
+  await prof.waitForLoadState("networkidle");
+  await prof.getByRole("button", { name: "Transmettre au secrétariat" }).click();
+  await prof.getByRole("button", { name: "Confirmer" }).click();
+  await expect(prof.getByText("Notes transmises", { exact: true })).toBeVisible();
+  await admin.goto(`/admin/notes/${D.ids.evaluationBrouillon}`);
+  await admin.waitForLoadState("networkidle");
+  await admin.getByRole("button", { name: "Valider", exact: true }).click();
+  await expect(admin.getByRole("button", { name: "Publier aux étudiants" })).toBeVisible();
+  await admin.getByRole("button", { name: "Publier aux étudiants" }).click();
+  await admin.getByRole("button", { name: "Confirmer" }).click();
+  await expect(admin.getByRole("button", { name: "Retirer la publication" })).toBeVisible();
+
+  await admin.goto(`/admin/deliberations/${deliberation}`);
+  await admin.waitForLoadState("networkidle");
   await admin.getByRole("button", { name: "Clôturer le jury" }).click();
   await admin
     .getByRole("button", { name: "Confirmer" })
     .click()
     .catch(() => undefined);
   await expect(admin.getByText(/Jury clôturé/).first()).toBeVisible();
+  await expect(ligne(admin, "ETUDIANT-A")).toContainText("ADM");
+
+  // Jury clôturé : les notes publiées du cours sont figées.
+  await admin.goto(`/admin/notes/${D.ids.evaluationPubliee}`);
+  await admin.waitForLoadState("networkidle");
+  await admin.getByRole("button", { name: "Retirer la publication" }).click();
+  await admin.getByRole("button", { name: "Confirmer" }).click();
+  await expect(admin.getByText(/notes publiées sont figées/)).toBeVisible();
+  await admin.goto(`/admin/deliberations/${deliberation}`);
+  await admin.waitForLoadState("networkidle");
 
   const pv = await admin.request.get(`/deliberations/${deliberation}/pv`);
   expect(pv.status()).toBe(200);
@@ -106,6 +162,23 @@ test("l'étudiant consulte son résultat et télécharge un bulletin vérifiable
   await a.goto(`/verifier/${code}`);
   await expect(a.getByRole("heading", { name: /Document authentique/ })).toBeVisible();
   await expect(a.getByText("Résultat annuel")).toBeVisible();
+});
+
+test("relevé et attestation reprennent le résultat proclamé, vérifiable en ligne", async ({
+  browser,
+}) => {
+  const admin = await session(browser, D.comptes.admin);
+  const releve = await emettre(admin, D.comptes.etudiantA, "RELEVE_NOTES");
+  const code = releve.match(/code ([A-Z0-9-]{14})/)?.[1];
+  expect(code, releve).toBeTruthy();
+  await admin.goto(`/verifier/${code}`);
+  await expect(admin.getByRole("heading", { name: /Document authentique/ })).toBeVisible();
+  await expect(admin.getByText("14/20")).toBeVisible();
+  await expect(admin.getByText("Décision du jury")).toBeVisible();
+  // B a été admis par décision motivée du jury : l'attestation de réussite est délivrée.
+  expect(await emettre(admin, D.comptes.etudiantB, "ATTESTATION_REUSSITE")).toMatch(
+    /Attestation de réussite émis/,
+  );
 });
 
 test("les résultats restent cloisonnés", async ({ browser }) => {

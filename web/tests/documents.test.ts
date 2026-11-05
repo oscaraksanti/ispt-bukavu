@@ -44,8 +44,50 @@ describe("contenu affiché", () => {
       promotion: "BAC 1 · Génie Informatique",
       annee: "2026-2027",
       periode: null,
+      resultat: null,
     });
     expect(civilite("F")).toBe("Madame");
+  });
+
+  it("montre le résultat proclamé (sans le détail des notes) pour un relevé", () => {
+    const r = resumeVerification({
+      nom: "BAHATI Grâce",
+      matricule: "GI26001",
+      sexe: "F",
+      dateNaissance: null,
+      lieuNaissance: null,
+      promotion: "BAC1 GI",
+      filiere: "Génie Informatique",
+      niveau: "BAC 1",
+      annee: "2026-2027",
+      seuil: 10,
+      resultat: {
+        periode: "Résultat annuel",
+        moyenne: 13.5,
+        mention: { lettre: "C", libelle: "Bien" },
+        decision: { code: "ADM", libelle: "Admis" },
+        creditsValides: 60,
+        creditsTotal: 60,
+        proclameLe: "2027-07-10T10:00:00.000Z",
+      },
+      semestres: [
+        {
+          numero: 1,
+          moyenne: 13.5,
+          creditsAcquis: 30,
+          creditsTotal: 30,
+          cours: [{ intitule: "Analyse I", credits: 5, note: 14, valide: true }],
+        },
+      ],
+    });
+    expect(r.periode).toBe("Résultat annuel");
+    expect(r.resultat).toEqual({
+      moyenne: 13.5,
+      mention: "C · Bien",
+      credits: "60 sur 60",
+      decision: "Admis",
+    });
+    expect(JSON.stringify(r)).not.toContain("Analyse I");
   });
 });
 

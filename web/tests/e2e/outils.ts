@@ -20,6 +20,7 @@ type Donnees = {
     | "promotion"
     | "etudiantB"
     | "seance"
+    | "niveau"
     | "promotionLibelle",
     string
   >;

@@ -88,11 +88,13 @@ export default async function Documents() {
             </Champ>
             <Champ id="type" libelle="Document">
               <Liste id="type" name="type" defaultValue="ATTESTATION_FREQUENTATION">
-                {Object.entries(LIBELLES_DOCUMENT).map(([v, l]) => (
-                  <option key={v} value={v}>
-                    {l}
-                  </option>
-                ))}
+                {Object.entries(LIBELLES_DOCUMENT)
+                  .filter(([v]) => v !== "BULLETIN") // émis à la proclamation des résultats
+                  .map(([v, l]) => (
+                    <option key={v} value={v}>
+                      {l}
+                    </option>
+                  ))}
               </Liste>
             </Champ>
           </FormulaireAction>

@@ -44,11 +44,13 @@ export default async function DocumentsEtudiant() {
             <div className="grid gap-4 sm:grid-cols-2">
               <Champ id="type" libelle="Document">
                 <Liste id="type" name="type" defaultValue="ATTESTATION_FREQUENTATION">
-                  {Object.entries(LIBELLES_DOCUMENT).map(([v, l]) => (
-                    <option key={v} value={v}>
-                      {l}
-                    </option>
-                  ))}
+                  {Object.entries(LIBELLES_DOCUMENT)
+                    .filter(([v]) => v !== "BULLETIN") // émis à la proclamation des résultats
+                    .map(([v, l]) => (
+                      <option key={v} value={v}>
+                        {l}
+                      </option>
+                    ))}
                 </Liste>
               </Champ>
               <Champ id="motif" libelle="Motif (facultatif)">
