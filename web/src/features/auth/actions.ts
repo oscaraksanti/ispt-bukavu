@@ -22,6 +22,8 @@ import {
   normaliserEmail,
   verifierMotDePasse,
 } from "./regles";
+import { profilsMessagerie, synchroniserGroupes } from "@/features/messagerie/acces";
+import { aAccesMessagerie } from "@/features/messagerie/regles";
 import { fermerSession, ipDuClient, ouvrirSession } from "./session";
 
 export type EtatFormulaire = { erreur?: string; succes?: string } | undefined;
@@ -85,6 +87,17 @@ export async function seConnecter(_: EtatFormulaire, donnees: FormData): Promise
     if (!accepte) return { erreur: MESSAGE_IDENTIFIANTS };
 
     await ouvrirSession(utilisateur.id);
+    // Groupes de messagerie (promotion, cours) prêts dès la connexion : la pastille
+    // des messages non lus en tient compte sans attendre la première visite.
+    const id = utilisateur.id;
+    after(async () => {
+      try {
+        const profil = (await profilsMessagerie([id])).get(id);
+        if (profil && aAccesMessagerie(profil)) await synchroniserGroupes(profil);
+      } catch (e) {
+        console.error("[messagerie] synchronisation des groupes", e);
+      }
+    });
     await db.utilisateur.update({
       where: { id: utilisateur.id },
       data: { derniereConnexion: new Date() },

@@ -41,17 +41,22 @@ model Utilisateur {
   jetons               JetonReinitialisation[]
   profilEtudiant       ProfilEtudiant?
   profilEnseignant     ProfilEnseignant?
-  candidatures         Candidature[]           @relation("CandidaturesDuCandidat")
-  communiques          Communique[]            @relation("CommuniquesAuteur")
-  communiquesValides   Communique[]            @relation("CommuniquesValidateur")
+  candidatures         Candidature[]             @relation("CandidaturesDuCandidat")
+  communiques          Communique[]              @relation("CommuniquesAuteur")
+  communiquesValides   Communique[]              @relation("CommuniquesValidateur")
   lectures             Lecture[]
   notifications        Notification[]
   journal              JournalActivite[]
   medias               Media[]
   actualites           Actualite[]
-  paiementsEnregistres Paiement[]              @relation("PaiementsEnregistrePar")
-  stagesEncadres       Stage[]                 @relation("StagesEncadreur")
-  decisions            Candidature[]           @relation("CandidaturesDecideur")
+  paiementsEnregistres Paiement[]                @relation("PaiementsEnregistrePar")
+  stagesEncadres       Stage[]                   @relation("StagesEncadreur")
+  decisions            Candidature[]             @relation("CandidaturesDecideur")
+  participations       ParticipantConversation[]
+  messages             Message[]                 @relation("MessagesAuteur")
+  signalements         SignalementMessage[]      @relation("SignalementsAuteur")
+  blocages             Blocage[]                 @relation("BlocagesFaits")
+  bloquePar            Blocage[]                 @relation("BlocagesSubis")
 }
 
 model Role {
@@ -200,6 +205,7 @@ model Media {
   rapportsDeStage Stage[]
   enoncesDevoirs  Devoir[]       @relation("EnonceDevoir")
   remises         Remise[]       @relation("FichierRemise")
+  messages        Message[]      @relation("PieceMessage")
 }
 
 model Page {
@@ -399,6 +405,7 @@ model Promotion {
   cours         CoursOffert[]
   communiques   Communique[]
   deliberations Deliberation[]
+  conversations Conversation[]
 
   @@unique([filiereId, niveauId, anneeId])
 }
@@ -496,13 +503,14 @@ model CoursOffert {
   cours       Cours     @relation(fields: [coursId], references: [id])
   promotion   Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
 
-  enseignants CoursEnseignant[]
-  seances     Seance[]
-  supports    Support[]
-  devoirs     Devoir[]
-  evaluations Evaluation[]
-  communiques Communique[]
-  epreuves    Epreuve[]
+  enseignants   CoursEnseignant[]
+  seances       Seance[]
+  supports      Support[]
+  devoirs       Devoir[]
+  evaluations   Evaluation[]
+  communiques   Communique[]
+  epreuves      Epreuve[]
+  conversations Conversation[]
 
   @@unique([coursId, promotionId])
 }
@@ -1223,4 +1231,105 @@ model OffreInsertion {
   majLe            DateTime    @updatedAt
 
   @@index([statut, publieeLe])
+}
+
+/**
+ * ---------- Messagerie (lot A de la communauté) ----------
+ */
+
+enum TypeConversation {
+  PRIVEE
+  PROMOTION
+  COURS
+}
+
+/// Conversation privée (deux personnes) ou groupe automatique (promotion, cours).
+/// L'appartenance aux groupes est recalculée à partir des inscriptions et des
+/// affectations : la ligne ParticipantConversation ne sert qu'au suivi de lecture.
+model Conversation {
+  id                String                    @id @default(cuid())
+  type              TypeConversation
+  /// « privee:<a>:<b> », « promotion:<id> » ou « cours:<id> » : une seule conversation par paire ou par groupe.
+  cle               String                    @unique
+  titre             String?
+  promotionId       String?
+  promotion         Promotion?                @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  coursOffertId     String?
+  coursOffert       CoursOffert?              @relation(fields: [coursOffertId], references: [id], onDelete: Cascade)
+  /// Groupe de cours : seuls les enseignants écrivent.
+  annoncesSeulement Boolean                   @default(false)
+  dernierMessageLe  DateTime?
+  creeLe            DateTime                  @default(now())
+  participants      ParticipantConversation[]
+  messages          Message[]
+
+  @@index([dernierMessageLe])
+}
+
+model ParticipantConversation {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  utilisateurId  String
+  utilisateur    Utilisateur  @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  animateur      Boolean      @default(false)
+  /// Messages lus jusqu'à cet instant.
+  luJusquA       DateTime?
+  sourdine       Boolean      @default(false)
+  /// Sorti du groupe (changement de promotion, fin d'affectation).
+  quitteLe       DateTime?
+  creeLe         DateTime     @default(now())
+
+  @@unique([conversationId, utilisateurId])
+  @@index([utilisateurId])
+}
+
+model Message {
+  id             String               @id @default(cuid())
+  conversationId String
+  conversation   Conversation         @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  auteurId       String?
+  auteur         Utilisateur?         @relation("MessagesAuteur", fields: [auteurId], references: [id], onDelete: SetNull)
+  contenu        String
+  reponseAId     String?
+  reponseA       Message?             @relation("Reponses", fields: [reponseAId], references: [id], onDelete: SetNull)
+  reponses       Message[]            @relation("Reponses")
+  mediaId        String?
+  media          Media?               @relation("PieceMessage", fields: [mediaId], references: [id], onDelete: SetNull)
+  creeLe         DateTime             @default(now())
+  supprimeLe     DateTime?
+  /// Masqué par la modération après un signalement.
+  masqueLe       DateTime?
+  signalements   SignalementMessage[]
+
+  @@index([conversationId, creeLe])
+  @@index([auteurId, creeLe])
+}
+
+model SignalementMessage {
+  id          String      @id @default(cuid())
+  messageId   String
+  message     Message     @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  auteurId    String
+  auteur      Utilisateur @relation("SignalementsAuteur", fields: [auteurId], references: [id], onDelete: Cascade)
+  motif       String
+  creeLe      DateTime    @default(now())
+  traiteLe    DateTime?
+  traiteParId String?
+  /// MASQUE (message retiré) ou CLASSE (rien à reprocher).
+  decision    String?
+
+  @@unique([messageId, auteurId])
+  @@index([traiteLe])
+}
+
+/// Une personne qui ne veut plus recevoir de messages privés d'une autre.
+model Blocage {
+  bloqueurId String
+  bloqueur   Utilisateur @relation("BlocagesFaits", fields: [bloqueurId], references: [id], onDelete: Cascade)
+  bloqueId   String
+  bloque     Utilisateur @relation("BlocagesSubis", fields: [bloqueId], references: [id], onDelete: Cascade)
+  creeLe     DateTime    @default(now())
+
+  @@id([bloqueurId, bloqueId])
 }

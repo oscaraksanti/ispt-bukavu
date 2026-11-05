@@ -28,6 +28,10 @@ const db = new PrismaClient({
 });
 
 async function permissionsEtRoles() {
+  // Permissions apparues depuis le dernier déploiement : ajoutées une seule fois
+  // aux rôles par défaut existants (un retrait ultérieur par l'institut est respecté).
+  const connues = new Set((await db.permission.findMany({ select: { code: true } })).map((p) => p.code));
+  const nouvelles = Object.keys(PERMISSIONS).filter((c) => !connues.has(c));
   for (const [code, p] of Object.entries(PERMISSIONS)) {
     await db.permission.upsert({
       where: { code },
@@ -47,12 +51,20 @@ async function permissionsEtRoles() {
           permissions: { create: r.permissions.map((permissionCode) => ({ permissionCode })) },
         },
       });
-    } else if (r.code === "enseignant") {
+    } else if (connues.size > 0 && r.permissions.some((c) => nouvelles.includes(c))) {
+      for (const permissionCode of r.permissions.filter((c) => nouvelles.includes(c)))
+        await db.rolePermission.upsert({
+          where: { roleId_permissionCode: { roleId: existant.id, permissionCode } },
+          update: {},
+          create: { roleId: existant.id, permissionCode },
+        });
+    }
+    if (existant && r.code === "enseignant") {
       // Correctif : un enseignant ne publie que pour ses cours, sans droit général sur la valve.
       await db.rolePermission.deleteMany({
         where: { roleId: existant.id, permissionCode: "valve.publier" },
       });
-    } else if (r.code === "super_admin") {
+    } else if (existant && r.code === "super_admin") {
       // L'administrateur technique conserve toujours toutes les permissions.
       for (const permissionCode of r.permissions) {
         await db.rolePermission.upsert({

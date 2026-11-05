@@ -37,6 +37,11 @@ export const PERMISSIONS = {
   "finances.consulter": { libelle: "Consulter la situation financière", domaine: "Finances" },
   "finances.encaisser": { libelle: "Enregistrer les paiements", domaine: "Finances" },
   // Administration
+  // Communauté
+  "messagerie.moderer": {
+    libelle: "Modérer la messagerie (signalements)",
+    domaine: "Communauté",
+  },
   "utilisateurs.gerer": { libelle: "Gérer les comptes", domaine: "Administration" },
   "roles.gerer": { libelle: "Gérer les rôles et permissions", domaine: "Administration" },
   "journal.consulter": { libelle: "Consulter le journal d'activité", domaine: "Administration" },
@@ -75,6 +80,7 @@ export const ROLES_PAR_DEFAUT: {
       "admissions.consulter",
       "finances.consulter",
       "documents.emettre",
+      "messagerie.moderer",
     ],
   },
   {
@@ -128,7 +134,7 @@ export const ROLES_PAR_DEFAUT: {
     code: "communication",
     libelle: "Communication",
     description: "Contenus du site, actualités, galerie et médias.",
-    permissions: ["contenu.modifier", "actualites.gerer", "medias.gerer"],
+    permissions: ["contenu.modifier", "actualites.gerer", "medias.gerer", "messagerie.moderer"],
   },
   {
     code: "support",

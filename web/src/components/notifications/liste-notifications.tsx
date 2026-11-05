@@ -1,4 +1,5 @@
 import {
+  Flag,
   CalendarCheck,
   ClipboardCheck,
   FileBadge,
@@ -27,6 +28,7 @@ const ICONES: Record<IconeNotification, LucideIcon> = {
   stage: HardHat,
   devoir: NotebookPen,
   examen: CalendarCheck,
+  moderation: Flag,
 };
 
 const heure = new Intl.DateTimeFormat("fr-FR", {

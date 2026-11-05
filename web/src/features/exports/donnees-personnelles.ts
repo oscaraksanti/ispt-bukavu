@@ -88,6 +88,30 @@ export async function donneesPersonnelles(utilisateurId: string) {
       stages: true,
     },
   });
+  const [messages, conversations] = await Promise.all([
+    db.message.findMany({
+      where: { auteurId: utilisateurId },
+      orderBy: { creeLe: "desc" },
+      take: 5000,
+      select: {
+        contenu: true,
+        creeLe: true,
+        supprimeLe: true,
+        masqueLe: true,
+        media: { select: { nomFichier: true } },
+        conversation: { select: { type: true, titre: true } },
+      },
+    }),
+    db.participantConversation.findMany({
+      where: { utilisateurId },
+      select: {
+        creeLe: true,
+        quitteLe: true,
+        sourdine: true,
+        conversation: { select: { type: true, titre: true } },
+      },
+    }),
+  ]);
   const journal = await db.journalActivite.findMany({
     where: { auteurId: utilisateurId },
     orderBy: { creeLe: "desc" },
@@ -171,6 +195,23 @@ export async function donneesPersonnelles(utilisateurId: string) {
       : null,
     candidatures,
     notifications,
+    messagerie: {
+      conversations: conversations.map((c) => ({
+        type: c.conversation.type,
+        groupe: c.conversation.titre,
+        depuis: c.creeLe,
+        quitteLe: c.quitteLe,
+        sourdine: c.sourdine,
+      })),
+      messagesEnvoyes: messages.map((m) => ({
+        conversation: m.conversation.type === "PRIVEE" ? "privée" : m.conversation.titre,
+        envoyeLe: m.creeLe,
+        contenu: m.supprimeLe ? null : m.contenu,
+        pieceJointe: m.media?.nomFichier ?? null,
+        supprimeLe: m.supprimeLe,
+        masqueLe: m.masqueLe,
+      })),
+    },
     appareilsConnectes: sessions,
     actionsTracees: journal,
   });

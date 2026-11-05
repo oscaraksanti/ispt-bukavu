@@ -32,6 +32,7 @@ const JAMAIS = [
   // « Mon compte » (appareils connectés) n'est jamais conservé sur l'appareil.
   /^\/(etudiant|enseignant)\/compte/,
   /^\/compte\//,
+  /^\/messages\//,
   /^\/candidat/,
   /^\/confirmer-email/,
   /^\/affiche/,

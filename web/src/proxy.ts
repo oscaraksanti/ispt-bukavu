@@ -27,5 +27,6 @@ export const config = {
     "/documents/:path*",
     "/deliberations/:path*",
     "/compte/:path*",
+    "/messages/:path*",
   ],
 };

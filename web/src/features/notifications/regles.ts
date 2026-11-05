@@ -14,6 +14,7 @@ export const TYPES_NOTIFICATION = {
   EXAMEN: { libelle: "Examens", icone: "examen" },
   ANCIEN: { libelle: "Anciens", icone: "candidature" },
   OFFRE: { libelle: "Stages et emplois", icone: "stage" },
+  MODERATION: { libelle: "Modération", icone: "moderation" },
 } as const;
 
 export type TypeNotification = keyof typeof TYPES_NOTIFICATION;
