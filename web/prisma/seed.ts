@@ -30,7 +30,9 @@ const db = new PrismaClient({
 async function permissionsEtRoles() {
   // Permissions apparues depuis le dernier déploiement : ajoutées une seule fois
   // aux rôles par défaut existants (un retrait ultérieur par l'institut est respecté).
-  const connues = new Set((await db.permission.findMany({ select: { code: true } })).map((p) => p.code));
+  const connues = new Set(
+    (await db.permission.findMany({ select: { code: true } })).map((p) => p.code),
+  );
   const nouvelles = Object.keys(PERMISSIONS).filter((c) => !connues.has(c));
   for (const [code, p] of Object.entries(PERMISSIONS)) {
     await db.permission.upsert({
@@ -273,9 +275,7 @@ async function albums(ids: Record<string, string>, nouvelles: Set<string>) {
         description: a.description,
         publie: true,
         medias: {
-          create: a.photos
-            .filter((p) => ids[p])
-            .map((p, ordre) => ({ mediaId: ids[p], ordre })),
+          create: a.photos.filter((p) => ids[p]).map((p, ordre) => ({ mediaId: ids[p], ordre })),
         },
       },
     });

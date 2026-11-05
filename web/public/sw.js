@@ -137,7 +137,10 @@ self.addEventListener("push", (e) => {
 
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
-  const cible = new URL((e.notification.data && e.notification.data.lien) || "/", self.location.origin);
+  const cible = new URL(
+    (e.notification.data && e.notification.data.lien) || "/",
+    self.location.origin,
+  );
   if (cible.origin !== self.location.origin) return;
   e.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((fenetres) => {
