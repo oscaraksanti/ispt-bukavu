@@ -107,6 +107,21 @@ describe("rôles et permissions", () => {
       compteModifiable({ id: "a", roles: ["super_admin"] }, { id: "a", roles: ["super_admin"] }),
     ).toBe(true);
   });
+
+  it("refuse d'agir sur un compte qui détient un rôle que l'on ne peut pas attribuer", () => {
+    const gestionnaire = { id: "a", roles: ["secretariat_administratif"] };
+    const attribuables = ["enseignant", "caisse"];
+    expect(
+      compteModifiable(gestionnaire, { id: "b", roles: ["secretariat_academique"] }, attribuables),
+    ).toBe(false);
+    expect(
+      compteModifiable(gestionnaire, { id: "b", roles: ["enseignant", "caisse"] }, attribuables),
+    ).toBe(true);
+    // Les rôles étudiant et candidat viennent des inscriptions : ils ne protègent pas le compte.
+    expect(compteModifiable(gestionnaire, { id: "b", roles: ["etudiant"] }, attribuables)).toBe(
+      true,
+    );
+  });
 });
 
 describe("médiathèque", () => {

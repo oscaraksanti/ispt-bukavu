@@ -6,7 +6,7 @@
  *   « hors ligne » ;
  * - l'administration, les actions et les fichiers privés ne sont jamais mis en cache.
  */
-const VERSION = "v4";
+const VERSION = "v5";
 const STATIQUE = `ispt-statique-${VERSION}`;
 const PAGES = `ispt-pages-${VERSION}`;
 const ESPACES = "ispt-espaces";
@@ -25,6 +25,10 @@ const JAMAIS = [
   /^\/deliberations\//,
   /^\/medias\//,
   /^\/connexion/,
+  // Liens à usage unique (jeton dans l'adresse) : ni copie sur l'appareil, ni page rejouée.
+  /^\/reinitialiser/,
+  /^\/activer/,
+  /^\/mot-de-passe-oublie/,
   /^\/candidat/,
   /^\/confirmer-email/,
   /^\/affiche/,

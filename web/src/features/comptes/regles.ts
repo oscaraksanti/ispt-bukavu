@@ -24,14 +24,24 @@ export function rolesAttribuables(
   });
 }
 
-/** Un gestionnaire peut-il modifier ce compte (rôles, invitation, statut) ? */
+/**
+ * Un gestionnaire peut-il modifier ce compte (rôles, invitation, statut) ?
+ * Avec `attribuables` (résultat de `rolesAttribuables`), il faut en outre
+ * pouvoir attribuer chacun des rôles du personnel que détient la cible :
+ * sinon renvoyer une invitation ou suspendre ce compte reviendrait à agir
+ * sur un pouvoir que l'on n'a pas.
+ */
 export function compteModifiable(
   auteur: { id: string; roles: string[] },
   cible: { id: string; roles: string[] },
+  attribuables?: string[],
 ) {
   if (auteur.roles.includes("super_admin")) return true;
   if (cible.id === auteur.id) return false;
-  return !cible.roles.includes("super_admin");
+  if (cible.roles.includes("super_admin")) return false;
+  if (!attribuables) return true;
+  const personnel = new Set<string>([...ROLES_PERSONNEL, "enseignant"]);
+  return cible.roles.filter((r) => personnel.has(r)).every((r) => attribuables.includes(r));
 }
 
 export const LIBELLES_STATUT: Record<string, string> = {

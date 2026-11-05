@@ -37,7 +37,7 @@ export default async function Compte({ params }: PageProps<"/admin/utilisateurs/
   if (!c) notFound();
   const actuels = new Set(c.roles.map((r) => r.role.code));
   const nomComplet = [c.prenom, c.nom, c.postnom].filter(Boolean).join(" ");
-  const protege = !compteModifiable(auteur, { id: c.id, roles: [...actuels] });
+  const protege = !compteModifiable(auteur, { id: c.id, roles: [...actuels] }, attribuables);
 
   return (
     <>
@@ -113,7 +113,7 @@ export default async function Compte({ params }: PageProps<"/admin/utilisateurs/
             <p className="text-sm text-pierre-600">
               {c.id === auteur.id
                 ? "Vos propres rôles ne peuvent être changés que par un autre gestionnaire."
-                : "Seul un administrateur technique peut modifier ce compte."}
+                : "Ce compte détient un rôle que vous ne pouvez pas attribuer : seul un gestionnaire disposant de ce rôle (ou l'administrateur technique) peut le modifier."}
             </p>
           ) : (
             <FormulaireAction

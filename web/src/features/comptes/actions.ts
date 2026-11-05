@@ -207,8 +207,9 @@ export async function relancerInvitations(): Promise<EtatFormulaire> {
     include: { roles: { include: { role: true } } },
     take: 200,
   });
+  const attribuables = await rolesAttribuablesPar(auteur);
   const cibles = comptes.filter((u) =>
-    compteModifiable(auteur, { id: u.id, roles: u.roles.map((r) => r.role.code) }),
+    compteModifiable(auteur, { id: u.id, roles: u.roles.map((r) => r.role.code) }, attribuables),
   );
   if (cibles.length === 0) return echec("Aucune invitation en attente.");
   let envoyes = 0;
@@ -234,7 +235,13 @@ export async function renvoyerInvitation(id: string): Promise<EtatFormulaire> {
     include: { roles: { include: { role: true } } },
   });
   if (!u) return echec("Ce compte n'existe plus.");
-  if (!compteModifiable(auteur, { id: u.id, roles: u.roles.map((r) => r.role.code) }))
+  if (
+    !compteModifiable(
+      auteur,
+      { id: u.id, roles: u.roles.map((r) => r.role.code) },
+      await rolesAttribuablesPar(auteur),
+    )
+  )
     return echec("Vous ne pouvez pas modifier ce compte.");
   // Seul un compte qui n'a encore jamais choisi de mot de passe reçoit une invitation :
   // sinon le lien permettrait de prendre la place de son titulaire.
@@ -266,13 +273,13 @@ export async function modifierRolesCompte(
   });
   if (!cible) return echec("Ce compte n'existe plus.");
   const actuels = cible.roles.map((r) => r.role.code);
-  if (!compteModifiable(auteur, { id, roles: actuels }))
+  const permis = await rolesAttribuablesPar(auteur);
+  if (!compteModifiable(auteur, { id, roles: actuels }, permis))
     return echec(
       id === auteur.id
         ? "Vos propres rôles ne peuvent être changés que par un autre gestionnaire."
-        : "Seul un administrateur technique peut modifier ce compte.",
+        : "Ce compte détient un rôle que vous ne pouvez pas attribuer : seul un gestionnaire disposant de ce rôle peut le modifier.",
     );
-  const permis = await rolesAttribuablesPar(auteur);
   // Seuls les rôles que l'auteur peut attribuer peuvent changer ; les autres sont conservés.
   const conserves = actuels.filter((c) => !permis.includes(c));
   const nouveaux = [...new Set([...conserves, ...demandes.filter((c) => permis.includes(c))])];
@@ -317,10 +324,15 @@ export async function changerStatutCompte(
   });
   if (!cible) return echec("Ce compte n'existe plus.");
   if (
-    cible.roles.some((r) => r.role.code === "super_admin") &&
-    !auteur.roles.includes("super_admin")
+    !compteModifiable(
+      auteur,
+      { id, roles: cible.roles.map((r) => r.role.code) },
+      await rolesAttribuablesPar(auteur),
+    )
   )
-    return echec("Seul un administrateur technique peut modifier ce compte.");
+    return echec(
+      "Ce compte détient un rôle que vous ne pouvez pas attribuer : vous ne pouvez pas le modifier.",
+    );
 
   // Réactivation : un compte qui n'a jamais défini de mot de passe redevient « invité ».
   const nouveau = statut === "ACTIF" && !cible.motDePasseHash ? "INVITE" : statut;

@@ -261,8 +261,15 @@ export async function joindreFichier(
   communiqueId: string,
   fd: FormData,
 ): Promise<{ ok: true } | { ok: false; message: string }> {
-  const { u, erreur } = await communiqueGerable(communiqueId);
+  const { u, auteur, c, erreur } = await communiqueGerable(communiqueId);
   if (erreur) return { ok: false, message: erreur.message ?? "Action impossible." };
+  // Un communiqué publié après validation ne change pas sans repasser par le validateur.
+  if (c.statut === "PUBLIE" && exigeValidation(c.cible as Cible, auteur))
+    return {
+      ok: false,
+      message:
+        "Ce communiqué a été validé avant publication : renvoyez-le en validation pour y joindre un fichier.",
+    };
   const fichier = fd.get("fichier");
   if (!(fichier instanceof File) || fichier.size === 0)
     return { ok: false, message: "Aucun fichier." };
@@ -310,8 +317,12 @@ export async function joindreFichier(
 export async function retirerFichier(pieceId: string): Promise<EtatFormulaire> {
   const p = await db.pieceJointe.findUnique({ where: { id: pieceId }, include: { media: true } });
   if (!p) return echec("Pièce introuvable.");
-  const { erreur } = await communiqueGerable(p.communiqueId);
+  const { auteur, c, erreur } = await communiqueGerable(p.communiqueId);
   if (erreur) return erreur;
+  if (c.statut === "PUBLIE" && exigeValidation(c.cible as Cible, auteur))
+    return echec(
+      "Ce communiqué a été validé avant publication : renvoyez-le en validation pour modifier ses pièces jointes.",
+    );
   await db.pieceJointe.delete({ where: { id: pieceId } });
   await db.media.delete({ where: { id: p.mediaId } }).catch(() => undefined);
   await stockage()
