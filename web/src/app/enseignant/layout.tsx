@@ -26,6 +26,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
         { libelle: "Horaire", href: "/enseignant/horaire" },
         { libelle: "Examens", href: "/enseignant/examens" },
         { libelle: "Valve", href: "/enseignant/valve" },
+        { libelle: "Campus", href: "/enseignant/campus" },
         { libelle: "Stages", href: "/enseignant/stages" },
       ]}
       notifications={{ href: "/enseignant/notifications", nombre: await compterNonLues(u.id) }}

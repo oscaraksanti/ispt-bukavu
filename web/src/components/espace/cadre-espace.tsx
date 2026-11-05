@@ -54,14 +54,14 @@ export function CadreEspace({
             ))}
             <Link
               href={compte}
-              className="inline-flex size-10 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100 sm:size-auto sm:px-2 sm:py-1 sm:text-right"
+              className="inline-flex size-10 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100 lg:size-auto lg:max-w-56 lg:px-2 lg:py-1 lg:text-right"
             >
               <span className="sr-only">Mon compte, </span>
-              <span className="hidden sm:block">
-                <span className="block text-sm font-medium text-encre">{nom}</span>
-                <span className="block text-xs text-pierre-500">{sousTitre}</span>
+              <span className="hidden min-w-0 lg:block">
+                <span className="block truncate text-sm font-medium text-encre">{nom}</span>
+                <span className="block truncate text-xs text-pierre-500">{sousTitre}</span>
               </span>
-              <CircleUserRound aria-hidden className="size-5 sm:hidden" />
+              <CircleUserRound aria-hidden className="size-5 lg:hidden" />
             </Link>
             {aide && (
               <Link
@@ -81,7 +81,7 @@ export function CadreEspace({
                 className="inline-flex h-10 items-center gap-2 rounded-xs px-3 text-sm text-pierre-700 hover:bg-pierre-100"
               >
                 <LogOut aria-hidden className="size-4" />
-                <span className="sr-only sm:not-sr-only">Se déconnecter</span>
+                <span className="sr-only xl:not-sr-only">Se déconnecter</span>
               </button>
             </form>
           </div>

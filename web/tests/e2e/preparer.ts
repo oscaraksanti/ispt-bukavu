@@ -103,6 +103,10 @@ async function main() {
 
   // Messagerie rejouée à chaque passage : conversations, messages et signalements effacés.
   await db.conversation.deleteMany({});
+  // Campus rejoué lui aussi : publications effacées, règles à accepter de nouveau.
+  await db.publication.deleteMany({});
+  await db.utilisateur.updateMany({ data: { reglesCampusLe: null } });
+  await db.reglage.deleteMany({ where: { cle: "campus" } });
   await db.blocage.deleteMany({});
   // Délibérations rejouées à chaque passage des tests.
   await db.deliberation.deleteMany({ where: { promotionId: promotion.id } });

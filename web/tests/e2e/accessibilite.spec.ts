@@ -57,6 +57,7 @@ test("espace étudiant", async ({ page }) => {
     "/etudiant/resultats",
     "/etudiant/compte",
     "/etudiant/messages",
+    "/etudiant/campus",
     "/etudiant/messages/nouveau",
     `/etudiant/cours/${D.ids.coursOffert}`,
   ]) {
@@ -94,6 +95,7 @@ test("administration", async ({ page }) => {
     "/admin/compte",
     "/admin/exports",
     "/admin/messagerie",
+    "/admin/campus",
     "/admin/messagerie/signalements",
     "/admin/deliberations",
     "/admin/deliberations/reglement",

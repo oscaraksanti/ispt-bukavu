@@ -42,6 +42,20 @@ const MESSAGERIE: SectionGuide = {
     "Un étudiant écrit à sa promotion, à ses enseignants et aux services de l'institut. Un enseignant peut réserver l'écriture de son groupe de cours aux annonces.",
 };
 
+/** Section commune : le Campus, espace d'échange de la communauté. */
+const CAMPUS: SectionGuide = {
+  titre: "Campus",
+  etapes: [
+    "Onglet « Campus » : les publications de l'institut, de votre filière et de votre promotion.",
+    "Avant votre première publication, lisez et acceptez les règles du Campus.",
+    "Écrivez votre texte, ajoutez jusqu'à quatre photos et choisissez qui le verra : tout l'institut, une filière ou une promotion.",
+    "Sous chaque publication : « J'aime », « Commenter » (avec réponses), « Partager » et « Enregistrer » pour la retrouver dans « Enregistrés ».",
+    "Le menu « … » permet de modifier ou supprimer vos publications, de fermer leurs commentaires, ou de signaler un contenu.",
+  ],
+  conseil:
+    "Les annonces officielles restent sur la valve. Un contenu signalé plusieurs fois est masqué en attendant l'examen de la modération.",
+};
+
 export const GUIDES: Guide[] = [
   {
     slug: "etudiant",
@@ -119,6 +133,7 @@ export const GUIDES: Guide[] = [
         texte:
           "La plateforme s'installe sur l'écran d'accueil du téléphone depuis le navigateur (« Ajouter à l'écran d'accueil »). Les pages déjà consultées restent lisibles en cas de coupure ; un bandeau indique alors que vous êtes hors ligne.",
       },
+      CAMPUS,
       MESSAGERIE,
       MON_COMPTE,
     ],
@@ -179,6 +194,7 @@ export const GUIDES: Guide[] = [
         texte:
           "« Valve » › « Nouveau communiqué » permet d'informer les étudiants de vos cours. Selon vos droits, le communiqué est publié directement ou soumis à validation.",
       },
+      CAMPUS,
       MESSAGERIE,
       MON_COMPTE,
     ],
@@ -304,6 +320,7 @@ export const GUIDES: Guide[] = [
         texte:
           "« Documents » traite les demandes des étudiants et permet d'émettre directement une attestation ou un relevé. En bas de la page, « Paramètres des documents » fixe le signataire et les formules, à confirmer par l'institut.",
       },
+      CAMPUS,
       MESSAGERIE,
       MON_COMPTE,
     ],

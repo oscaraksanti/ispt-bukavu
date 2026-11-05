@@ -25,6 +25,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
       sousTitre={`${profil.matricule}${promotion ? ` · ${libellePromotion(promotion)}` : ""}`}
       liens={[
         { libelle: "Accueil", href: "/etudiant" },
+        { libelle: "Campus", href: "/etudiant/campus" },
         { libelle: "Valve", href: "/etudiant/valve" },
         { libelle: "Horaire", href: "/etudiant/horaire" },
         { libelle: "Examens", href: "/etudiant/examens" },

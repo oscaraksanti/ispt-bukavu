@@ -34,6 +34,7 @@ import {
   Settings2,
   ShieldCheck,
   UserCog,
+  UsersRound,
   Wallet,
   type LucideIcon,
 } from "lucide-react";
@@ -66,6 +67,7 @@ export const ICONES: Record<IconeNavigation, LucideIcon> = {
   FileSpreadsheet,
   MessageCircle,
   Flag,
+  UsersRound,
   Images,
   Inbox,
   Landmark,
