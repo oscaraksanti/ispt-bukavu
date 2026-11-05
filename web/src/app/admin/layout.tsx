@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { BarreLaterale } from "@/components/admin/barre-laterale";
 import { NAVIGATION_ADMIN } from "@/components/admin/navigation";
-import { Squelette } from "@/components/ui/elements";
+import { LienEvitement, Squelette } from "@/components/ui/elements";
 import { exigerPersonnel } from "@/features/auth/acces";
 import { compterNonLues } from "@/features/notifications/requetes";
 
@@ -21,6 +21,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
   })).filter((g) => g.entrees.length > 0);
   return (
     <>
+      <LienEvitement />
       <BarreLaterale
         groupes={groupes}
         nom={u.nomComplet}
@@ -28,7 +29,9 @@ async function Cadre({ children }: { children: React.ReactNode }) {
         notifications={await compterNonLues(u.id)}
       />
       <div className="lg:pl-64">
-        <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8 lg:py-12">{children}</main>
+        <main id="contenu" className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8 lg:py-12">
+          {children}
+        </main>
       </div>
     </>
   );
