@@ -6,6 +6,8 @@ import { EntetePage } from "@/components/public/entete-page";
 import { TransitionPage } from "@/components/public/transition-page";
 import { Etiquette, EtatVide } from "@/components/ui/elements";
 import { formatJour } from "@/features/actualites/dates";
+import { lecteur } from "@/features/contenu/lecteur";
+import { lirePage } from "@/features/contenu/lecture";
 import { lireOffres } from "@/features/offres/lecture";
 import { TYPES_OFFRE } from "@/features/offres/regles";
 import { cn } from "@/lib/cn";
@@ -16,14 +18,17 @@ export const metadata: Metadata = {
     "Offres de stage, d'emploi, de bourse et de formation relayées par l'ISPT-Bukavu pour ses étudiants et ses diplômés.",
 };
 
-export default function Offres({ searchParams }: PageProps<"/offres">) {
+export default async function Offres({ searchParams }: PageProps<"/offres">) {
+  const entete = lecteur((await lirePage("offres")).entete);
   return (
     <TransitionPage>
       <EntetePage
         ariane={[{ libelle: "Accueil", href: "/" }, { libelle: "Stages et emplois" }]}
         surtitre="Insertion professionnelle"
-        titre="Stages et emplois"
-        intro="Les offres relayées par l'institut et ses partenaires, pour les étudiants et les diplômés."
+        titre={entete.texte("titre") || "Stages et emplois"}
+        intro={entete.texte("intro")}
+        photo={entete.image("photo")}
+        legende={entete.texte("legende")}
       />
       <Suspense fallback={<section className="conteneur min-h-[40vh] py-14" />}>
         <ListeOffres searchParams={searchParams} />

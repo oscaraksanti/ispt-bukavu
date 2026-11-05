@@ -180,6 +180,14 @@ async function contenus(ids: Record<string, string>) {
     });
   }
 
+  // Nouvelle photo par défaut de la filière Électronique et Télécommunications :
+  // appliquée seulement si l'institut n'en a pas choisi une autre entre-temps.
+  if (ids["tp-electronique.jpg"] && ids["telecoms-antenne-toit-bukavu.jpg"])
+    await db.filiere.updateMany({
+      where: { slug: "electronique-telecommunications", photoId: ids["tp-electronique.jpg"] },
+      data: { photoId: ids["telecoms-antenne-toit-bukavu.jpg"] },
+    });
+
   if ((await db.autorite.count()) === 0) {
     await db.autorite.createMany({
       data: autorites.map((a, ordre) => ({ fonction: a.fonction, nom: a.nom, ordre })),

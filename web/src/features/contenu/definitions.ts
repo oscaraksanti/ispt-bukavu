@@ -380,6 +380,30 @@ export const PAGES: DefinitionPage[] = [
     ],
   },
   {
+    slug: "offres",
+    titre: "Stages et emplois",
+    chemin: "/offres",
+    blocs: [
+      {
+        cle: "entete",
+        titre: "En-tête",
+        champs: [
+          { type: "texte", cle: "titre", libelle: "Titre" },
+          { type: "texteLong", cle: "intro", libelle: "Introduction", max: 320 },
+          { type: "image", cle: "photo", libelle: "Photo" },
+          { type: "texte", cle: "legende", libelle: "Légende de la photo" },
+        ],
+        defaut: {
+          titre: "Stages et emplois",
+          intro:
+            "Les offres relayées par l'institut et ses partenaires, pour les étudiants et les diplômés.",
+          photo: photo("telecoms-parabole-hauteur.jpg"),
+          legende: "Sur le terrain",
+        },
+      },
+    ],
+  },
+  {
     slug: "admissions",
     titre: "Admissions",
     chemin: "/admissions",

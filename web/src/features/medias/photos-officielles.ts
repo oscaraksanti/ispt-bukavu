@@ -36,6 +36,10 @@ export const PHOTOS_OFFICIELLES: Record<string, string> = {
     "Étudiants en tenue de travail et casque devant les installations d'une centrale électrique.",
   "stage-genie-civil-chantier.jpg":
     "Étudiants en casque et gilet de sécurité sur un chantier routier.",
+  "telecoms-antenne-toit-bukavu.jpg":
+    "Technicien harnaché installant des équipements de télécommunication sur un mât, au-dessus d'une rue de Bukavu.",
+  "telecoms-parabole-hauteur.jpg":
+    "Technicien en casque et harnais, en hauteur devant une antenne parabolique, au-dessus d'une plaine.",
   "tp-electronique.jpg":
     "Étudiants soudant des composants électroniques, multimètre à portée de main.",
   "tp-topographie-1.jpg": "Étudiant en gilet réfléchissant réglant un niveau topographique.",

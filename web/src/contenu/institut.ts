@@ -157,8 +157,8 @@ export const filieres: Filiere[] = [
     entreprendre:
       "Atelier de réparation électronique, installation de fibre optique, vidéosurveillance, maintenance d'équipements de communication, sous réserve des autorisations requises.",
     photo: {
-      src: "/photos/tp-electronique.jpg",
-      alt: "Étudiants soudant des composants sur une plaque, avec un multimètre et une boîte de composants.",
+      src: "/photos/telecoms-antenne-toit-bukavu.jpg",
+      alt: "Technicien harnaché installant des équipements de télécommunication sur un mât, au-dessus d'une rue de Bukavu.",
     },
   },
   {
