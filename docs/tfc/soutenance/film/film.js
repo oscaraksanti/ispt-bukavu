@@ -31,7 +31,7 @@ const plans = [
   { type: "ecran", t0: 32, t1: 45, img: "accueil.jpg", url: "/", de: { x: 0, y: 0, w: 2880 }, a: { x: 0, y: 3900, w: 2880 } },
   { type: "ecran", t0: 45, t1: 53.5, img: "filiere.jpg", url: "/formations/genie-informatique", de: { x: 0, y: 0, w: 2880 }, a: { x: 240, y: 1350, w: 2400 } },
   { type: "ecran", t0: 53.5, t1: 62, img: "galerie.jpg", url: "/galerie", de: { x: 0, y: 0, w: 2880 }, a: { x: 120, y: 60, w: 2600 },
-    tel: { img: "accueil-mobile.jpg", x: 1420, y: 250 } },
+    tel: { img: "accueil-mobile.jpg", x: 1420, y: 170 } },
   // 02 Admissions
   { type: "ecran", t0: 62, t1: 71, img: "admissions.jpg", url: "/admissions", de: { x: 0, y: 0, w: 2880 }, a: { x: 0, y: 1750, w: 2880 } },
   { type: "ecran", t0: 71, t1: 90, img: "candidat.jpg", url: "/candidat", de: { x: 260, y: 0, w: 2360 }, a: { x: 360, y: 1500, w: 2160 } },
@@ -65,8 +65,71 @@ const plans = [
   { type: "fin", t0: 292.5, t1: 300 },
 ];
 
+/* Calage sur la voix off enregistrée (voix.wav, 3 min 40) : chaque chapitre écrit pour 5 minutes
+   est ramené, proportionnellement, sur les instants où la voix l'aborde (transcription horodatée). */
+const ANCIEN = [0, 10, 32, 62, 90, 110, 145, 168, 205, 230, 255, 275, 292.5, 300];
+const NOUVEAU = [0, 11.2, 31.0, 53.3, 72.6, 83.2, 106.8, 118.6, 144.5, 160.0, 179.2, 192.8, 214.8, 225];
+const recaler = (t) => {
+  for (let i = 0; i < ANCIEN.length - 1; i++)
+    if (t <= ANCIEN[i + 1]) return NOUVEAU[i] + ((t - ANCIEN[i]) / (ANCIEN[i + 1] - ANCIEN[i])) * (NOUVEAU[i + 1] - NOUVEAU[i]);
+  return NOUVEAU[NOUVEAU.length - 1];
+};
+plans.forEach((p) => { p.t0 = recaler(p.t0); p.t1 = recaler(p.t1); });
+chapitres.forEach((c) => { c[0] = recaler(c[0]); c[1] = recaler(c[1]); });
+
+/* Sous-titres : texte dit par la voix, minuté sur la transcription. */
+const SOUS_TITRES = [
+  [2.9, 7.2, "Monsieur le Directeur général, chers membres de l’administration,"],
+  [7.9, 10.9, "voici la plateforme numérique de l’ISPT-Bukavu."],
+  [11.7, 17.3, "Aujourd’hui, nos communiqués sont affichés à la valve, puis relayés de groupe en groupe."],
+  [17.7, 19.4, "Les dossiers circulent sur papier,"],
+  [19.7, 24.0, "et un étudiant doit souvent se déplacer pour connaître une note ou son solde."],
+  [24.4, 30.9, "J’ai voulu réunir tout cela dans un seul outil : simple, sécurisé, et pensé pour nos connexions."],
+  [31.4, 33.8, "Tout commence par le site de l’institut."],
+  [34.2, 38.8, "Il présente nos sections, nos filières, nos actualités et nos photos."],
+  [39.2, 42.6, "Et surtout, c’est l’institut lui-même qui le met à jour,"],
+  [42.7, 47.1, "depuis son administration, sans dépendre d’un informaticien."],
+  [47.5, 53.2, "Sur téléphone, il reste léger et rapide, même avec une connexion faible."],
+  [53.8, 58.8, "Pour les admissions, le futur étudiant crée son compte, remplit son dossier"],
+  [58.9, 64.2, "et dépose ses pièces en ligne. Il suit l’état de sa candidature sans se déplacer."],
+  [64.5, 68.9, "De leur côté, les services suivent chaque dossier, par filière,"],
+  [69.0, 72.5, "et rendent leurs décisions dans la plateforme."],
+  [73.0, 75.3, "La valve devient numérique."],
+  [75.9, 80.9, "Un communiqué peut viser tout l’institut, une filière ou une seule promotion."],
+  [81.2, 83.1, "Et l’on sait qui l’a lu."],
+  [83.7, 85.7, "Chaque étudiant dispose de son espace,"],
+  [85.8, 90.5, "pensé d’abord pour le téléphone. Il y trouve son horaire de la semaine,"],
+  [90.8, 98.4, "ses notes dès qu’elles sont publiées, sa situation financière et ses reçus, et ses résultats."],
+  [98.9, 103.7, "Les pages déjà consultées restent lisibles, même quand le réseau coupe."],
+  [104.1, 106.6, "Et chacun ne voit que ses propres données."],
+  [107.2, 111.9, "L’enseignant, lui, retrouve ses cours. Il saisit les notes de ses évaluations,"],
+  [112.0, 118.5, "fait l’appel, partage ses supports, puis transmet ses notes au secrétariat académique."],
+  [118.9, 123.4, "Le secrétariat contrôle, valide, puis publie les notes."],
+  [123.9, 127.6, "Une note n’est jamais visible par l’étudiant avant sa publication."],
+  [128.1, 130.1, "Vient ensuite la délibération."],
+  [130.6, 134.3, "La plateforme calcule les moyennes, les crédits et les mentions"],
+  [134.4, 136.9, "selon le règlement que l’institut paramètre,"],
+  [137.3, 139.3, "et signale au jury les cas limites."],
+  [139.4, 144.2, "Après la proclamation, le procès-verbal est prêt à imprimer."],
+  [145.0, 150.8, "Chaque document officiel, attestation ou bulletin, porte un code QR."],
+  [151.2, 155.8, "Un employeur ou une autre université le scanne, et vérifie en quelques secondes"],
+  [155.9, 159.9, "que le document a bien été délivré par l’ISPT-Bukavu."],
+  [160.3, 166.1, "La direction dispose d’un tableau de bord : effectifs, notes publiées,"],
+  [167.1, 171.7, "encaissements, admissions… tout est à jour, en temps réel."],
+  [172.2, 174.7, "Chaque action sensible est enregistrée dans un journal,"],
+  [174.8, 178.9, "et les droits de chacun suivent l’organisation de l’institut."],
+  [179.7, 185.0, "La plateforme a été testée avec soin : près de 250 tests automatiques,"],
+  [185.1, 189.4, "dont des tentatives d’accès interdits, une accessibilité vérifiée,"],
+  [189.5, 192.8, "et des pages légères, adaptées à nos réseaux."],
+  [193.1, 200.3, "Elle est déjà en ligne, à l’adresse www.isptbukavu.org."],
+  [200.8, 205.0, "Pour l’ouvrir aux étudiants, il nous reste à y intégrer les données officielles :"],
+  [205.3, 209.2, "les frais, le programme des cours et les règles d’évaluation."],
+  [209.4, 213.2, "Je reste à votre disposition pour la présenter en détail."],
+  [213.6, 215.0, "Merci."],
+];
+
 plans.forEach((p, i) => { p.prev = plans[i - 1]; p.next = plans[i + 1]; });
-const DUREE = 300;
+const DUREE = NOUVEAU[NOUVEAU.length - 1];
 const scene = document.getElementById("scene");
 const el = (tag, cls, parent, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; (parent || scene).appendChild(e); return e; };
 
@@ -94,9 +157,9 @@ for (const p of plans) {
     const n = p.imgs.length, larg = 372, ecart = 80;
     const total = n * larg + (n - 1) * ecart;
     const x0 = p.texte ? 250 : (1920 - total) / 2;
-    p.tels = p.imgs.map((im, k) => { const t = construireTel(p.c, im); t.style.left = x0 + k * (larg + ecart) + "px"; t.style.top = "200px"; return t; });
+    p.tels = p.imgs.map((im, k) => { const t = construireTel(p.c, im); t.style.left = x0 + k * (larg + ecart) + "px"; t.style.top = "150px"; return t; });
     if (p.texte) {
-      const u = el("ul", "puces", p.c); u.style.cssText = `position:absolute; left:${x0 + total + 140}px; top:380px; width:${1920 - (x0 + total + 140) - 160}px`;
+      const u = el("ul", "puces", p.c); u.style.cssText = `position:absolute; left:${x0 + total + 140}px; top:330px; width:${1920 - (x0 + total + 140) - 160}px`;
       p.lis = p.texte.map((tx) => el("li", null, u, tx));
     }
   }
@@ -105,7 +168,7 @@ for (const p of plans) {
     p.blason = i;
     p.a = el("div", "kicker", p.c, "Institut Supérieur Pédagogique et Technique de Bukavu"); p.a.style.cssText = "position:absolute; left:0; right:0; top:600px; text-align:center; color:#C9CCE0";
     p.b = el("div", "grand", p.c, "La plateforme numérique<br>de l’ISPT-Bukavu"); p.b.style.cssText = "position:absolute; left:0; right:0; top:650px; text-align:center";
-    p.d = el("div", "kicker", p.c, "Démonstration · données fictives"); p.d.style.cssText = "position:absolute; left:0; right:0; top:1000px; text-align:center; color:#8F94BB; font-size:15px";
+    p.d = el("div", "kicker", p.c, "Démonstration · données fictives"); p.d.style.cssText = "position:absolute; left:0; right:0; top:56px; text-align:center; color:#8F94BB; font-size:15px";
   }
   if (p.type === "constat") {
     p.a = el("div", "kicker", p.c, "Aujourd’hui"); p.a.style.cssText = "position:absolute; left:200px; top:210px; color:var(--jaune)";
@@ -135,6 +198,8 @@ for (const p of plans) {
 }
 const chap = chapitres.map(([t0, t1, num, tit]) => { const c = el("div", "chapitre", scene, `<span class="num">${num}</span><span class="tit">${tit}</span>`); return { t0, t1, c }; });
 const noir = document.getElementById("noir");
+const st = document.getElementById("sous-titre");
+const stTexte = st.querySelector("span");
 
 /* ---------- Rendu de l’instant t ---------- */
 function camera(img, r) {
@@ -175,15 +240,15 @@ window.render = function (t) {
     }
     if (p.type === "constat") {
       p.a.style.opacity = lisse((t - p.t0 - 0.3) / 1);
-      p.lis.forEach((li, i) => { const e = lisse((t - p.t0 - 1.5 - i * 3.6) / 1.1); li.style.opacity = e; li.style.transform = `translateX(${(1 - e) * 30}px)`; });
-      const e = lisse((t - p.t0 - 14.5) / 1.4); p.b.style.opacity = e; p.b.style.transform = `translateY(${(1 - e) * 26}px)`;
+      p.lis.forEach((li, i) => { const e = lisse((t - p.t0 - [0.4, 6.4, 8.4][i]) / 0.9); li.style.opacity = e; li.style.transform = `translateX(${(1 - e) * 30}px)`; });
+      const e = lisse((t - p.t0 - 13.0) / 1.4); p.b.style.opacity = e; p.b.style.transform = `translateY(${(1 - e) * 26}px)`;
     }
     if (p.type === "chiffres") p.cartes.forEach((c, i) => { const e = lisse((t - p.t0 - 0.4 - i * 0.55) / 1.0); c.style.opacity = e; c.style.transform = `translateY(${(1 - e) * 40}px)`; });
     if (p.type === "chiffres") p.note.style.opacity = lisse((t - p.t0 - 4) / 1);
     if (p.type === "suite") {
       p.a.style.opacity = lisse((t - p.t0 - 0.2) / 1); const b = lisse((t - p.t0 - 0.6) / 1.2); p.b.style.opacity = b; p.b.style.transform = `translateY(${(1 - b) * 24}px)`;
-      p.d.style.opacity = lisse((t - p.t0 - 5.5) / 1.2);
-      p.pastilles.forEach((x, i) => { const e = lisse((t - p.t0 - 8 - i * 1.2) / 0.9); x.style.opacity = e; x.style.transform = `translateY(${(1 - e) * 20}px)`; });
+      p.d.style.opacity = lisse((t - p.t0 - 7.8) / 1.0);
+      p.pastilles.forEach((x, i) => { const e = lisse((t - p.t0 - [12.4, 13.6, 14.6, 15.8][i]) / 0.8); x.style.opacity = e; x.style.transform = `translateY(${(1 - e) * 20}px)`; });
     }
     if (p.type === "fin") { const e = lisse((t - p.t0 - 0.3) / 1.4); p.b.style.opacity = e; p.d.style.opacity = e; p.e.style.opacity = e; }
   }
@@ -191,6 +256,11 @@ window.render = function (t) {
     const o = Math.min(lisse((t - c.t0 - 0.15) / 0.7), lisse((c.t1 - 0.05 - t) / 0.5));
     c.c.style.opacity = o; c.c.style.transform = `translateX(${(1 - lisse((t - c.t0) / 1.2)) * -20}px)`;
   }
+  const q = SOUS_TITRES.find(([a, b]) => t >= a - 0.12 && t <= b + 0.12);
+  if (q) {
+    if (stTexte.textContent !== q[2]) stTexte.textContent = q[2];
+    st.style.opacity = Math.min(lisse((t - q[0] + 0.12) / 0.2), lisse((q[1] + 0.12 - t) / 0.2));
+  } else st.style.opacity = 0;
   noir.style.opacity = Math.max(lisse((0.8 - t) / 0.8), lisse((t - (DUREE - 2.2)) / 2.2));
 };
 

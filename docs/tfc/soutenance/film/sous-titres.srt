@@ -1,0 +1,187 @@
+1
+00:00:02,900 --> 00:00:07,200
+Monsieur le Directeur général, chers membres de l’administration,
+
+2
+00:00:07,900 --> 00:00:10,900
+voici la plateforme numérique de l’ISPT-Bukavu.
+
+3
+00:00:11,700 --> 00:00:17,300
+Aujourd’hui, nos communiqués sont affichés à la valve, puis relayés de groupe en groupe.
+
+4
+00:00:17,700 --> 00:00:19,400
+Les dossiers circulent sur papier,
+
+5
+00:00:19,700 --> 00:00:24,000
+et un étudiant doit souvent se déplacer pour connaître une note ou son solde.
+
+6
+00:00:24,400 --> 00:00:30,900
+J’ai voulu réunir tout cela dans un seul outil : simple, sécurisé, et pensé pour nos connexions.
+
+7
+00:00:31,400 --> 00:00:33,800
+Tout commence par le site de l’institut.
+
+8
+00:00:34,200 --> 00:00:38,800
+Il présente nos sections, nos filières, nos actualités et nos photos.
+
+9
+00:00:39,200 --> 00:00:42,600
+Et surtout, c’est l’institut lui-même qui le met à jour,
+
+10
+00:00:42,700 --> 00:00:47,100
+depuis son administration, sans dépendre d’un informaticien.
+
+11
+00:00:47,500 --> 00:00:53,200
+Sur téléphone, il reste léger et rapide, même avec une connexion faible.
+
+12
+00:00:53,800 --> 00:00:58,800
+Pour les admissions, le futur étudiant crée son compte, remplit son dossier
+
+13
+00:00:58,900 --> 00:01:04,200
+et dépose ses pièces en ligne. Il suit l’état de sa candidature sans se déplacer.
+
+14
+00:01:04,500 --> 00:01:08,900
+De leur côté, les services suivent chaque dossier, par filière,
+
+15
+00:01:09,000 --> 00:01:12,500
+et rendent leurs décisions dans la plateforme.
+
+16
+00:01:13,000 --> 00:01:15,300
+La valve devient numérique.
+
+17
+00:01:15,900 --> 00:01:20,900
+Un communiqué peut viser tout l’institut, une filière ou une seule promotion.
+
+18
+00:01:21,200 --> 00:01:23,100
+Et l’on sait qui l’a lu.
+
+19
+00:01:23,700 --> 00:01:25,700
+Chaque étudiant dispose de son espace,
+
+20
+00:01:25,800 --> 00:01:30,500
+pensé d’abord pour le téléphone. Il y trouve son horaire de la semaine,
+
+21
+00:01:30,800 --> 00:01:38,400
+ses notes dès qu’elles sont publiées, sa situation financière et ses reçus, et ses résultats.
+
+22
+00:01:38,900 --> 00:01:43,700
+Les pages déjà consultées restent lisibles, même quand le réseau coupe.
+
+23
+00:01:44,100 --> 00:01:46,600
+Et chacun ne voit que ses propres données.
+
+24
+00:01:47,200 --> 00:01:51,900
+L’enseignant, lui, retrouve ses cours. Il saisit les notes de ses évaluations,
+
+25
+00:01:52,000 --> 00:01:58,500
+fait l’appel, partage ses supports, puis transmet ses notes au secrétariat académique.
+
+26
+00:01:58,900 --> 00:02:03,400
+Le secrétariat contrôle, valide, puis publie les notes.
+
+27
+00:02:03,900 --> 00:02:07,600
+Une note n’est jamais visible par l’étudiant avant sa publication.
+
+28
+00:02:08,100 --> 00:02:10,100
+Vient ensuite la délibération.
+
+29
+00:02:10,600 --> 00:02:14,300
+La plateforme calcule les moyennes, les crédits et les mentions
+
+30
+00:02:14,400 --> 00:02:16,900
+selon le règlement que l’institut paramètre,
+
+31
+00:02:17,300 --> 00:02:19,300
+et signale au jury les cas limites.
+
+32
+00:02:19,400 --> 00:02:24,200
+Après la proclamation, le procès-verbal est prêt à imprimer.
+
+33
+00:02:25,000 --> 00:02:30,800
+Chaque document officiel, attestation ou bulletin, porte un code QR.
+
+34
+00:02:31,200 --> 00:02:35,800
+Un employeur ou une autre université le scanne, et vérifie en quelques secondes
+
+35
+00:02:35,900 --> 00:02:39,900
+que le document a bien été délivré par l’ISPT-Bukavu.
+
+36
+00:02:40,300 --> 00:02:46,100
+La direction dispose d’un tableau de bord : effectifs, notes publiées,
+
+37
+00:02:47,100 --> 00:02:51,700
+encaissements, admissions… tout est à jour, en temps réel.
+
+38
+00:02:52,200 --> 00:02:54,700
+Chaque action sensible est enregistrée dans un journal,
+
+39
+00:02:54,800 --> 00:02:58,900
+et les droits de chacun suivent l’organisation de l’institut.
+
+40
+00:02:59,700 --> 00:03:05,000
+La plateforme a été testée avec soin : près de 250 tests automatiques,
+
+41
+00:03:05,100 --> 00:03:09,400
+dont des tentatives d’accès interdits, une accessibilité vérifiée,
+
+42
+00:03:09,500 --> 00:03:12,800
+et des pages légères, adaptées à nos réseaux.
+
+43
+00:03:13,100 --> 00:03:20,300
+Elle est déjà en ligne, à l’adresse www.isptbukavu.org.
+
+44
+00:03:20,800 --> 00:03:25,000
+Pour l’ouvrir aux étudiants, il nous reste à y intégrer les données officielles :
+
+45
+00:03:25,300 --> 00:03:29,200
+les frais, le programme des cours et les règles d’évaluation.
+
+46
+00:03:29,400 --> 00:03:33,200
+Je reste à votre disposition pour la présenter en détail.
+
+47
+00:03:33,600 --> 00:03:35,000
+Merci.

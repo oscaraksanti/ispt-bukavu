@@ -58,11 +58,15 @@
   .chiffre .l { font:400 24px/1.35 "IBM Plex Sans"; margin-top:18px; color:var(--texte); }
   .pastille { display:inline-block; font:500 26px/1 "IBM Plex Sans"; padding:16px 24px; border-radius:40px; background:rgba(255,255,255,.1);
               border:1px solid rgba(255,255,255,.25); margin:0 14px 14px 0; opacity:0; }
+  #sous-titre { position:absolute; left:0; right:0; bottom:58px; text-align:center; opacity:0; pointer-events:none; z-index:5; }
+  #sous-titre span { display:inline-block; max-width:1240px; padding:12px 26px 13px; border-radius:12px; background:rgba(15,19,48,.9);
+    color:#fff; font:500 32px/1.36 "IBM Plex Sans", sans-serif; letter-spacing:.005em; text-wrap:balance; box-shadow:0 8px 30px rgba(0,0,0,.18); }
   .noir { position:absolute; inset:0; background:#000; opacity:0; pointer-events:none; }
 </style>
 </head>
 <body>
 <div id="scene"><div class="fond"></div></div>
+<div id="sous-titre"><span></span></div>
 <div class="noir" id="noir"></div>
 <script src="film.js"></script>
 </body>
