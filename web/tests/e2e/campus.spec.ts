@@ -87,6 +87,25 @@ test("un camarade aime, commente, enregistre ; l'auteur est prévenu et répond"
   await expect(a.getByText("Merci beaucoup !")).toBeVisible();
 });
 
+test("une mention propose la personne et la prévient", async ({ browser }) => {
+  const b = await session(browser, D.comptes.etudiantB);
+  await b.goto(`/etudiant/campus/${publication}`);
+  await b.waitForLoadState("networkidle");
+  const champ = b.getByLabel("Écrire un commentaire");
+  await champ.pressSequentially("Merci @Test TIT", { delay: 30 });
+  const option = b.getByRole("option", { name: /Test TITULAIRE/ });
+  await expect(option).toBeVisible();
+  await option.click();
+  await expect(champ).toHaveValue(/@Test TITULAIRE $/);
+  await champ.pressSequentially("pour le TP.");
+  await b.getByRole("button", { name: "Publier" }).last().click();
+  await expect(b.getByText("@Test TITULAIRE", { exact: true })).toBeVisible();
+
+  const prof = await session(browser, D.comptes.prof);
+  await prof.goto("/enseignant/notifications");
+  await expect(prof.getByText(/vous a mentionné dans un commentaire/).first()).toBeVisible();
+});
+
 test("hors de la promotion, la publication et sa photo restent invisibles", async ({ browser }) => {
   const autre = await session(browser, D.comptes.autreProf);
   await autre.goto("/enseignant/campus");

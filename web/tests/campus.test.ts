@@ -121,3 +121,41 @@ describe("texte", () => {
     expect(libelleJaime(4, true)).toBe("Vous et 3 autres");
   });
 });
+
+import {
+  decouperTexte,
+  lireMentions,
+  mentionEnCours,
+  mentionsRetenues,
+} from "@/features/campus/regles";
+
+describe("mentions", () => {
+  const jean = { id: "cjean0000000000001", nom: "Jean Bahati" };
+  const grace = { id: "cgrace000000000001", nom: "Grâce M." };
+
+  it("ne garde que les mentions encore présentes dans le texte, sans doublon", () => {
+    expect(mentionsRetenues("Merci @Jean Bahati !", [jean, grace, jean])).toEqual([jean]);
+  });
+
+  it("refuse un champ caché altéré", () => {
+    expect(lireMentions("pas du json")).toEqual([]);
+    expect(lireMentions(JSON.stringify([{ id: "x; DROP", nom: "a" }, jean]))).toEqual([jean]);
+  });
+
+  it("met en valeur les mentions et garde les liens", () => {
+    expect(
+      decouperTexte("Bravo @Jean Bahati, voir https://isptbukavu.org", ["Jean Bahati"]),
+    ).toEqual([
+      { texte: "Bravo " },
+      { texte: "@Jean Bahati", mention: true },
+      { texte: ", voir " },
+      { texte: "https://isptbukavu.org", lien: "https://isptbukavu.org" },
+    ]);
+  });
+
+  it("repère le nom en cours de saisie après « @ »", () => {
+    expect(mentionEnCours("Salut @Ja", 9)).toEqual({ debut: 6, requete: "Ja" });
+    expect(mentionEnCours("courriel a@b", 12)).toBeNull();
+    expect(mentionEnCours("@Jean Pierre Paul", 17)).toBeNull();
+  });
+});

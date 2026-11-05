@@ -25,23 +25,37 @@ import {
   supprimerCommentaire,
   supprimerPublication,
 } from "@/features/campus/actions";
-import { decouperLiens } from "@/features/campus/regles";
+import { decouperTexte } from "@/features/campus/regles";
 import { MOTIFS_SIGNALEMENT } from "@/features/messagerie/regles";
 import { cn } from "@/lib/cn";
+import { ChampMentions } from "./champ-mentions";
 import { ETAT_INITIAL } from "@/lib/etat-formulaire";
 
 const bouton =
   "inline-flex h-9 items-center gap-1.5 rounded-xs px-2.5 text-detail font-medium text-pierre-600 transition-colors hover:bg-pierre-100 hover:text-encre";
 
 /** Texte d'une publication : liens cliquables, « Voir plus » au-delà de 500 caractères. */
-export function TexteCampus({ texte, court = false }: { texte: string; court?: boolean }) {
+export function TexteCampus({
+  texte,
+  court = false,
+  noms = [],
+}: {
+  texte: string;
+  court?: boolean;
+  /** Noms des personnes mentionnées, mis en valeur. */
+  noms?: string[];
+}) {
   const [ouvert, setOuvert] = useState(false);
   const long = texte.length > 500;
   const affiche = long && !ouvert ? `${texte.slice(0, 460).trimEnd()}…` : texte;
   return (
     <div className={cn("break-words whitespace-pre-wrap", court ? "text-detail" : "text-corps")}>
-      {decouperLiens(affiche).map((s, i) =>
-        s.lien ? (
+      {decouperTexte(affiche, noms).map((s, i) =>
+        s.mention ? (
+          <span key={i} className="font-medium text-ispt-700">
+            {s.texte}
+          </span>
+        ) : s.lien ? (
           <a
             key={i}
             href={s.lien}
@@ -345,6 +359,7 @@ export function FormCommentaire({
   const id = `commentaire-${publicationId}-${parentId ?? "racine"}`;
   return (
     <form
+      method="post"
       ref={formulaire}
       onSubmit={(e) => {
         e.preventDefault();
@@ -355,24 +370,16 @@ export function FormCommentaire({
       className="flex items-start gap-2"
     >
       {parentId && <input type="hidden" name="parentId" value={parentId} />}
-      <label htmlFor={id} className="sr-only">
-        {repondA ? `Répondre à ${repondA}` : "Écrire un commentaire"}
-      </label>
       <div className="min-w-0 flex-1">
-        <textarea
+        <ChampMentions
           id={id}
           name="contenu"
-          rows={1}
+          libelle={repondA ? `Répondre à ${repondA}` : "Écrire un commentaire"}
           maxLength={1000}
-          required
+          hauteurMax={140}
           autoFocus={autoFocus}
           value={texte}
-          onChange={(e) => {
-            setTexte(e.target.value);
-            const t = e.target;
-            t.style.height = "auto";
-            t.style.height = `${Math.min(t.scrollHeight, 140)}px`;
-          }}
+          onChange={setTexte}
           placeholder={repondA ? `Répondre à ${repondA}` : "Écrire un commentaire"}
           className="block min-h-9 w-full resize-none rounded-2xl border border-pierre-300 bg-pierre-50 px-3.5 py-1.5 text-detail outline-none focus:border-ispt-600 focus:bg-white focus:ring-2 focus:ring-ispt-600/20"
         />

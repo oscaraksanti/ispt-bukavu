@@ -257,16 +257,21 @@ export async function contactsPossibles(profil: ProfilComplet, q: string) {
       for (const e of enseignants) ids.add(e.enseignant.utilisateurId);
     }
   } else if (recherche.length >= 2) {
+    // « Jean Bah » : chaque mot doit se retrouver dans le prénom, le nom, le post-nom,
+    // l'adresse ou le matricule.
+    const mots = recherche.split(/\s+/).filter(Boolean).slice(0, 4);
     const trouves = await db.utilisateur.findMany({
       where: {
         statut: "ACTIF",
-        OR: [
-          { nom: { contains: recherche, mode: "insensitive" } },
-          { postnom: { contains: recherche, mode: "insensitive" } },
-          { prenom: { contains: recherche, mode: "insensitive" } },
-          { email: { contains: recherche, mode: "insensitive" } },
-          { profilEtudiant: { matricule: { contains: recherche, mode: "insensitive" } } },
-        ],
+        AND: mots.map((mot) => ({
+          OR: [
+            { nom: { contains: mot, mode: "insensitive" as const } },
+            { postnom: { contains: mot, mode: "insensitive" as const } },
+            { prenom: { contains: mot, mode: "insensitive" as const } },
+            { email: { contains: mot, mode: "insensitive" as const } },
+            { profilEtudiant: { matricule: { contains: mot, mode: "insensitive" as const } } },
+          ],
+        })),
       },
       select: { id: true },
       take: 80,

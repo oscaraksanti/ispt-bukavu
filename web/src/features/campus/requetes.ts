@@ -99,7 +99,18 @@ function qualiteAuteur(a: PublicationBrute["auteur"]) {
   return roles.map((r) => r.libelle).join(", ");
 }
 
-function versCarte(p: PublicationBrute, l: Lecteur) {
+/** Noms affichés des personnes mentionnées (« Prénom Nom »). */
+async function nomsMentionnes(ids: string[]) {
+  const uniques = [...new Set(ids)];
+  if (!uniques.length) return new Map<string, string>();
+  const comptes = await db.utilisateur.findMany({
+    where: { id: { in: uniques } },
+    select: { id: true, prenom: true, nom: true },
+  });
+  return new Map(comptes.map((c) => [c.id, [c.prenom, c.nom].filter(Boolean).join(" ")]));
+}
+
+function versCarte(p: PublicationBrute, l: Lecteur, noms: Map<string, string>) {
   return {
     id: p.id,
     auteurId: p.auteurId,
@@ -135,6 +146,7 @@ function versCarte(p: PublicationBrute, l: Lecteur) {
     aime: p.reactions.length > 0,
     enregistre: p.enregistrements.length > 0,
     commentaires: p._count.commentaires,
+    mentions: p.mentions.map((id) => noms.get(id)).filter((n): n is string => !!n),
   };
 }
 
@@ -175,8 +187,10 @@ export async function fil(l: Lecteur, filtre: FiltreFil, avant?: Date) {
   ]);
   const suite = publications.length > PAR_PAGE;
   const page = publications.slice(0, PAR_PAGE);
+  const toutes = [...epinglees, ...page];
+  const noms = await nomsMentionnes(toutes.flatMap((p) => p.mentions));
   return {
-    publications: [...epinglees, ...page].map((p) => versCarte(p, l)),
+    publications: toutes.map((p) => versCarte(p, l, noms)),
     suivante: suite ? page.at(-1)!.creeLe.toISOString() : null,
   };
 }
@@ -200,7 +214,7 @@ export async function publication(id: string, l: Lecteur) {
     )
   )
     return null;
-  return versCarte(p, l);
+  return versCarte(p, l, await nomsMentionnes(p.mentions));
 }
 
 /** Commentaires d'une publication (réponses rangées sous leur commentaire). */
@@ -213,6 +227,7 @@ export async function commentairesDe(publicationId: string, l: Lecteur, limite?:
     include: { auteur: { select: { prenom: true, nom: true } } },
     orderBy: { creeLe: "asc" },
   });
+  const noms = await nomsMentionnes(liste.flatMap((c) => c.mentions));
   const cartes = liste.map((c) => ({
     id: c.id,
     parentId: c.parentId,
@@ -224,6 +239,7 @@ export async function commentairesDe(publicationId: string, l: Lecteur, limite?:
     masque: !!c.masqueLe,
     creeLe: c.creeLe,
     modifie: !!c.modifieLe,
+    mentions: c.mentions.map((id) => noms.get(id)).filter((n): n is string => !!n),
   }));
   const racines = cartes.filter((c) => !c.parentId);
   const arbre = racines.map((r) => ({

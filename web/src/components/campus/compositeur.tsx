@@ -7,6 +7,7 @@ import { publier } from "@/features/campus/actions";
 import { PHOTOS_MAX } from "@/features/campus/regles";
 import { ETAT_INITIAL } from "@/lib/etat-formulaire";
 import { reduireImage } from "@/lib/reduire-image";
+import { ChampMentions } from "./champ-mentions";
 
 type Choix = { id: string; libelle: string };
 
@@ -27,7 +28,6 @@ export function Compositeur({
   const [photos, setPhotos] = useState<{ fichier: File; apercu: string }[]>([]);
   const [prepare, setPrepare] = useState(false);
   const choix = useRef<HTMLInputElement>(null);
-  const champ = useRef<HTMLTextAreaElement>(null);
 
   // Après une publication réussie, le formulaire est vidé.
   const [vu, setVu] = useState(etat);
@@ -55,6 +55,7 @@ export function Compositeur({
 
   return (
     <form
+      method="post"
       onSubmit={async (e) => {
         e.preventDefault();
         setPrepare(true);
@@ -76,23 +77,16 @@ export function Compositeur({
           {initiales}
         </span>
         <div className="min-w-0 flex-1">
-          <label htmlFor="publication-contenu" className="sr-only">
-            Votre publication
-          </label>
-          <textarea
-            ref={champ}
+          <ChampMentions
             id="publication-contenu"
             name="contenu"
+            libelle="Votre publication"
             rows={2}
             maxLength={3000}
+            hauteurMax={320}
             value={texte}
-            onChange={(e) => {
-              setTexte(e.target.value);
-              const t = e.target;
-              t.style.height = "auto";
-              t.style.height = `${Math.min(t.scrollHeight, 320)}px`;
-            }}
-            placeholder="Partagez une information, une question, une réussite…"
+            onChange={setTexte}
+            placeholder="Partagez une information, une question, une réussite… (@ pour mentionner)"
             className="block w-full resize-none border-0 bg-transparent px-0 py-2 text-corps leading-relaxed outline-none placeholder:text-pierre-400"
           />
           {photos.length > 0 && (

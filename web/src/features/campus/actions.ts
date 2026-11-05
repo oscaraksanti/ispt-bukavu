@@ -3,7 +3,7 @@
 import { refresh } from "next/cache";
 import sharp from "sharp";
 import { exigerPermission } from "@/features/auth/acces";
-import { exigerMessagerie, moderateurs } from "@/features/messagerie/acces";
+import { exigerMessagerie, moderateurs, profilsMessagerie } from "@/features/messagerie/acces";
 import { MOTIFS_SIGNALEMENT } from "@/features/messagerie/regles";
 import { notifier } from "@/features/notifications/emettre";
 import { db } from "@/lib/db";
@@ -19,6 +19,8 @@ import {
   COMMENTAIRES_PAR_HEURE,
   LONGUEUR_COMMENTAIRE,
   LONGUEUR_PUBLICATION,
+  lireMentions,
+  mentionsRetenues,
   peutVoir,
   PHOTOS_MAX,
   PUBLICATIONS_PAR_HEURE,
@@ -71,6 +73,45 @@ async function baseDe(utilisateurId: string) {
   return "/admin/campus";
 }
 
+/**
+ * Prévient les personnes mentionnées qui peuvent voir la publication
+ * (jamais l'auteur lui-même).
+ */
+async function notifierMentions(
+  ids: string[],
+  auteur: { id: string; nomComplet: string },
+  publicationId: string,
+  dans: "publication" | "commentaire",
+  extrait: string,
+) {
+  const cibles = ids.filter((id) => id !== auteur.id);
+  if (!cibles.length) return;
+  const p = await db.publication.findUnique({ where: { id: publicationId } });
+  if (!p) return;
+  const profils = await profilsMessagerie(cibles);
+  for (const [id, profil] of profils) {
+    const voit = peutVoir(
+      {
+        auteurId: p.auteurId,
+        audience: p.audience,
+        filiereId: p.filiereId,
+        promotionId: p.promotionId,
+        statut: p.statut,
+        supprime: !!p.supprimeLe,
+        masque: !!p.masqueLe,
+      },
+      lecteurDe(profil, new Set()),
+    );
+    if (!voit) continue;
+    await notifier([id], {
+      type: "CAMPUS",
+      titre: `${auteur.nomComplet} vous a mentionné dans ${dans === "publication" ? "une publication" : "un commentaire"}`,
+      message: extrait,
+      lien: lien(await baseDe(id), publicationId),
+    });
+  }
+}
+
 export async function accepterRegles(): Promise<EtatFormulaire> {
   const { u } = await lecteur();
   await db.utilisateur.update({ where: { id: u.id }, data: { reglesCampusLe: new Date() } });
@@ -114,10 +155,12 @@ export async function publier(_e: EtatFormulaire, fd: FormData): Promise<EtatFor
   // Validation préalable : s'applique aux étudiants ; le personnel et les enseignants publient directement.
   const enAttente = validationPrealable && !profil.personnel && !profil.enseignant;
 
+  const mentions = mentionsRetenues(contenu, lireMentions(fd.get("mentions")));
   const p = await db.publication.create({
     data: {
       auteurId: u.id,
       contenu,
+      mentions: mentions.map((m) => m.id),
       audience,
       filiereId: audience === "FILIERE" ? cible : null,
       promotionId: audience === "PROMOTION" ? cible : null,
@@ -156,6 +199,14 @@ export async function publier(_e: EtatFormulaire, fd: FormData): Promise<EtatFor
       // Une photo illisible n'empêche pas la publication du texte.
     }
   }
+  if (!enAttente)
+    await notifierMentions(
+      mentions.map((m) => m.id),
+      u,
+      p.id,
+      "publication",
+      contenu.slice(0, 120),
+    );
   if (enAttente)
     await notifier(await moderateurs(), {
       type: "MODERATION",
@@ -183,7 +234,18 @@ export async function modifierPublication(
   const avecPhotos = (await db.publicationMedia.count({ where: { publicationId: id } })) > 0;
   const probleme = verifierTexte(contenu, LONGUEUR_PUBLICATION, avecPhotos);
   if (probleme) return echec(probleme);
-  await db.publication.update({ where: { id }, data: { contenu, modifieLe: new Date() } });
+  // Les mentions déjà notifiées restent valables si leur nom figure encore dans le texte.
+  const restantes = await db.utilisateur.findMany({
+    where: { id: { in: p.mentions } },
+    select: { id: true, prenom: true, nom: true },
+  });
+  const mentions = restantes
+    .filter((m) => contenu.includes(`@${[m.prenom, m.nom].filter(Boolean).join(" ")}`))
+    .map((m) => m.id);
+  await db.publication.update({
+    where: { id },
+    data: { contenu, modifieLe: new Date(), mentions },
+  });
   refresh();
   return succes("Publication modifiée.");
 }
@@ -271,9 +333,17 @@ export async function commenter(
     parentId = parent.parentId ?? parent.id;
     parentAuteur = parent.auteurId;
   }
+  const mentions = mentionsRetenues(contenu, lireMentions(fd.get("mentions")));
   await db.commentaire.create({
-    data: { publicationId, auteurId: u.id, contenu, parentId },
+    data: { publicationId, auteurId: u.id, contenu, parentId, mentions: mentions.map((m) => m.id) },
   });
+  await notifierMentions(
+    mentions.map((m) => m.id).filter((id) => id !== p.auteurId && id !== parentAuteur),
+    u,
+    publicationId,
+    "commentaire",
+    contenu.slice(0, 120),
+  );
 
   const extrait = contenu.length > 100 ? `${contenu.slice(0, 99)}…` : contenu;
   if (p.auteurId && p.auteurId !== u.id)
@@ -459,6 +529,20 @@ export async function validerPublication(
     entite: "Publication",
     entiteId: id,
   });
+  if (decision === "PUBLIEE" && p.auteurId && p.mentions.length) {
+    const auteur = await db.utilisateur.findUnique({
+      where: { id: p.auteurId },
+      select: { id: true, prenom: true, nom: true },
+    });
+    if (auteur)
+      await notifierMentions(
+        p.mentions,
+        { id: auteur.id, nomComplet: [auteur.prenom, auteur.nom].filter(Boolean).join(" ") },
+        id,
+        "publication",
+        p.contenu.slice(0, 120),
+      );
+  }
   if (p.auteurId)
     await notifier([p.auteurId], {
       type: "CAMPUS",

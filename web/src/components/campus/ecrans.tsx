@@ -113,7 +113,7 @@ function Commentaires({
               Commentaire masqué par la modération
             </p>
           ) : (
-            <TexteCampus texte={c.contenu} court />
+            <TexteCampus texte={c.contenu} court noms={c.mentions} />
           )}
         </div>
         <p className="mt-0.5 px-1 text-legende text-pierre-500">
@@ -230,7 +230,7 @@ function Carte({
         </header>
         {p.contenu && (
           <div className="mt-3 text-pierre-900">
-            <TexteCampus texte={p.contenu} />
+            <TexteCampus texte={p.contenu} noms={p.mentions} />
           </div>
         )}
         <Photos photos={p.photos} />
