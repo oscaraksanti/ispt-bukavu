@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { Signature } from "@/components/marque/blason";
 import { seDeconnecter } from "@/features/auth/actions";
+import { IconeMessages } from "@/components/messagerie/icone-messages";
 import { Cloche } from "@/components/notifications/cloche";
 import { cn } from "@/lib/cn";
 import { ICONES } from "./icones";
@@ -117,11 +118,13 @@ export function BarreLaterale({
   nom,
   email,
   notifications,
+  messages,
 }: {
   groupes: GroupeNavigation[];
   nom: string;
   email: string;
   notifications: number;
+  messages: number;
 }) {
   const menu = useRef<HTMLDialogElement>(null);
   const fermer = () => menu.current?.close();
@@ -132,7 +135,10 @@ export function BarreLaterale({
           <Link href="/admin">
             <Signature clair compacte />
           </Link>
-          <Cloche href="/admin/notifications" nombre={notifications} clair />
+          <div className="flex items-center">
+            <IconeMessages href="/admin/messagerie" nombre={messages} clair />
+            <Cloche href="/admin/notifications" nombre={notifications} clair />
+          </div>
         </div>
         <div className="mt-6">
           <BoutonRecherche />
@@ -149,6 +155,7 @@ export function BarreLaterale({
         </Link>
         <div className="flex items-center">
           <BoutonRecherche compact />
+          <IconeMessages href="/admin/messagerie" nombre={messages} clair />
           <Cloche href="/admin/notifications" nombre={notifications} clair />
           <button
             type="button"

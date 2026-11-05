@@ -7,8 +7,8 @@ import { cn } from "@/lib/cn";
 
 export function NavigationEspace({ liens }: { liens: { libelle: string; href: string }[] }) {
   const chemin = usePathname();
-  // Les notifications s'ouvrent depuis la cloche : aucun onglet n'est alors actif.
-  const horsOnglets = chemin.endsWith("/notifications");
+  // Notifications, messages et « Mon compte » s'ouvrent depuis l'en-tête : aucun onglet n'est alors actif.
+  const horsOnglets = /\/(notifications|messages|compte)(\/|$)/.test(chemin);
   const actif = (href: string) =>
     !horsOnglets &&
     (chemin === href ||

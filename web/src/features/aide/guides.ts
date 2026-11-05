@@ -29,6 +29,19 @@ const MON_COMPTE: SectionGuide = {
     "Après un changement de mot de passe, les autres appareils sont déconnectés et un email de confirmation est envoyé si une adresse est enregistrée.",
 };
 
+/** Section commune : la messagerie existe dans les espaces étudiant, enseignant et administration. */
+const MESSAGERIE: SectionGuide = {
+  titre: "Messages",
+  etapes: [
+    "Icône « Messages » en haut de l'écran : une pastille indique les conversations non lues.",
+    "Les groupes de votre promotion et de vos cours apparaissent tout seuls ; « Nouveau » ouvre une conversation privée.",
+    "Sur un message : « Répondre » pour le citer, « Supprimer pour tous » pour retirer le vôtre, « Signaler » en cas d'abus.",
+    "Le bouton trombone joint une photo ou un PDF (4 Mo au plus) ; les photos sont réduites avant l'envoi.",
+  ],
+  conseil:
+    "Un étudiant écrit à sa promotion, à ses enseignants et aux services de l'institut. Un enseignant peut réserver l'écriture de son groupe de cours aux annonces.",
+};
+
 export const GUIDES: Guide[] = [
   {
     slug: "etudiant",
@@ -106,6 +119,7 @@ export const GUIDES: Guide[] = [
         texte:
           "La plateforme s'installe sur l'écran d'accueil du téléphone depuis le navigateur (« Ajouter à l'écran d'accueil »). Les pages déjà consultées restent lisibles en cas de coupure ; un bandeau indique alors que vous êtes hors ligne.",
       },
+      MESSAGERIE,
       MON_COMPTE,
     ],
   },
@@ -165,6 +179,7 @@ export const GUIDES: Guide[] = [
         texte:
           "« Valve » › « Nouveau communiqué » permet d'informer les étudiants de vos cours. Selon vos droits, le communiqué est publié directement ou soumis à validation.",
       },
+      MESSAGERIE,
       MON_COMPTE,
     ],
   },
@@ -289,6 +304,7 @@ export const GUIDES: Guide[] = [
         texte:
           "« Documents » traite les demandes des étudiants et permet d'émettre directement une attestation ou un relevé. En bas de la page, « Paramètres des documents » fixe le signataire et les formules, à confirmer par l'institut.",
       },
+      MESSAGERIE,
       MON_COMPTE,
     ],
   },

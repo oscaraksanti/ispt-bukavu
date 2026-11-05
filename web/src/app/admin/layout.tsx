@@ -4,6 +4,7 @@ import { BarreLaterale } from "@/components/admin/barre-laterale";
 import { entreeAccessible, NAVIGATION_ADMIN } from "@/components/admin/navigation";
 import { LienEvitement, Squelette } from "@/components/ui/elements";
 import { exigerPersonnel } from "@/features/auth/acces";
+import { compterConversationsNonLues } from "@/features/messagerie/requetes";
 import { compterNonLues } from "@/features/notifications/requetes";
 
 export const instant = false;
@@ -27,6 +28,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
         nom={u.nomComplet}
         email={u.email ?? ""}
         notifications={await compterNonLues(u.id)}
+        messages={await compterConversationsNonLues(u.id)}
       />
       <div className="lg:pl-64">
         <main id="contenu" className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8 lg:py-12">

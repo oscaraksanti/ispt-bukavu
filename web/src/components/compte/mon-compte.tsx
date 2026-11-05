@@ -1,4 +1,5 @@
-import { Download, KeyRound, MonitorSmartphone, ShieldCheck } from "lucide-react";
+import { CircleHelp, Download, KeyRound, MonitorSmartphone, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import { BoutonAction } from "@/components/admin/bouton-action";
 import { Panneau } from "@/components/admin/entete-admin";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
@@ -138,6 +139,17 @@ export async function MonCompte({
           Un appareil que vous ne reconnaissez pas ? Déconnectez les autres appareils, puis changez
           votre mot de passe.
         </p>
+      </Panneau>
+
+      <Panneau titre="Aide" description="Guides d'utilisation de chaque espace, pas à pas.">
+        <Link
+          prefetch={false}
+          href="/aide"
+          className="inline-flex h-10 items-center gap-2 rounded-xs border border-pierre-300 px-4 text-sm font-medium text-encre hover:border-encre"
+        >
+          <CircleHelp aria-hidden className="size-4" />
+          Ouvrir le centre d&apos;aide
+        </Link>
       </Panneau>
 
       <Panneau

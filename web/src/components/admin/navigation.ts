@@ -38,7 +38,9 @@ export type IconeNavigation =
   | "UserCog"
   | "ShieldCheck"
   | "History"
-  | "FileSpreadsheet";
+  | "FileSpreadsheet"
+  | "MessageCircle"
+  | "Flag";
 
 export type EntreeNavigation = {
   libelle: string;
@@ -208,6 +210,19 @@ export const NAVIGATION_ADMIN: GroupeNavigation[] = [
   {
     titre: "Communication",
     entrees: [
+      {
+        libelle: "Messagerie",
+        href: "/admin/messagerie",
+        icone: "MessageCircle",
+        motsCles: "messages conversations discuter écrire",
+      },
+      {
+        libelle: "Signalements",
+        href: "/admin/messagerie/signalements",
+        icone: "Flag",
+        permission: "messagerie.moderer",
+        motsCles: "modération signaler abus",
+      },
       {
         libelle: "Valve",
         href: "/admin/valve",

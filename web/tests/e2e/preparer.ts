@@ -101,6 +101,9 @@ async function main() {
       },
     }));
 
+  // Messagerie rejouée à chaque passage : conversations, messages et signalements effacés.
+  await db.conversation.deleteMany({});
+  await db.blocage.deleteMany({});
   // Délibérations rejouées à chaque passage des tests.
   await db.deliberation.deleteMany({ where: { promotionId: promotion.id } });
   for (const e of [a, b])

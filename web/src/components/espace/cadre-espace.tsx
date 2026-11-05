@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Signature } from "@/components/marque/blason";
 import { seDeconnecter } from "@/features/auth/actions";
+import { IconeMessages } from "@/components/messagerie/icone-messages";
 import { Cloche } from "@/components/notifications/cloche";
 import { BandeauHorsLigne } from "@/components/pwa/bandeau-hors-ligne";
 import { LienEvitement } from "@/components/ui/elements";
@@ -15,6 +16,7 @@ export function CadreEspace({
   liens,
   autresEspaces,
   notifications,
+  messages,
   aide,
   compte,
   children,
@@ -28,6 +30,7 @@ export function CadreEspace({
   liens: { libelle: string; href: string }[];
   autresEspaces?: { libelle: string; href: string }[];
   notifications: { href: string; nombre: number };
+  messages: { href: string; nombre: number };
   children: ReactNode;
 }) {
   return (
@@ -39,7 +42,7 @@ export function CadreEspace({
           <Link href="/" aria-label="Retour au site de l'ISPT-Bukavu">
             <Signature compacte />
           </Link>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1 sm:gap-4">
             {autresEspaces?.map((e) => (
               <Link
                 key={e.href}
@@ -64,12 +67,13 @@ export function CadreEspace({
               <Link
                 prefetch={false}
                 href={aide}
-                className="inline-flex size-10 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100"
+                className="hidden size-10 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100 sm:inline-flex"
               >
                 <CircleHelp aria-hidden className="size-5" />
                 <span className="sr-only">Aide</span>
               </Link>
             )}
+            <IconeMessages href={messages.href} nombre={messages.nombre} />
             <Cloche href={notifications.href} nombre={notifications.nombre} />
             <form action={seDeconnecter}>
               <button

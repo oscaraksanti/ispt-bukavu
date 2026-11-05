@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CadreEspace } from "@/components/espace/cadre-espace";
 import { Squelette } from "@/components/ui/elements";
+import { compterConversationsNonLues } from "@/features/messagerie/requetes";
 import { compterNonLues } from "@/features/notifications/requetes";
 import { libellePromotion } from "@/features/academique/regles";
 import { exigerEtudiant } from "@/features/espaces/acces";
@@ -35,6 +36,10 @@ async function Cadre({ children }: { children: React.ReactNode }) {
         { libelle: "Documents", href: "/etudiant/documents" },
       ]}
       notifications={{ href: "/etudiant/notifications", nombre: await compterNonLues(u.id) }}
+      messages={{
+        href: "/etudiant/messages",
+        nombre: await compterConversationsNonLues(u.id),
+      }}
       autresEspaces={u.estPersonnel ? [{ libelle: "Administration", href: "/admin" }] : undefined}
     >
       {children}

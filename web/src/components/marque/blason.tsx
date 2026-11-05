@@ -51,7 +51,7 @@ export function Signature({
       <span className="flex flex-col leading-none">
         <span
           className={cn(
-            "font-serif text-[1.375rem] font-medium tracking-tight",
+            "font-serif text-[1.375rem] font-medium tracking-tight whitespace-nowrap",
             clair ? "text-white" : "text-encre",
           )}
         >
