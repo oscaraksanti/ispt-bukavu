@@ -1,3 +1,4 @@
+import { CircleUserRound } from "lucide-react";
 import Link from "next/link";
 import { Signature } from "@/components/marque/blason";
 import { LienBouton } from "@/components/ui/bouton";
@@ -57,7 +58,17 @@ export async function Entete() {
             ))}
           </ul>
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
+          {espacesDisponibles && (
+            // Sur téléphone, l'accès aux espaces reste visible dans l'en-tête (icône).
+            <Link
+              href="/connexion"
+              className="inline-flex size-10 shrink-0 items-center justify-center rounded-xs text-encre hover:bg-pierre-100 sm:hidden"
+            >
+              <CircleUserRound aria-hidden className="size-6" />
+              <span className="sr-only">Connexion à votre espace</span>
+            </Link>
+          )}
           {espacesDisponibles && (
             <LienBouton
               href="/connexion"
