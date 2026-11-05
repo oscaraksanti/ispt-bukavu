@@ -325,6 +325,7 @@ export function FilConversation({
           </p>
         ) : (
           <form
+            method="post"
             onSubmit={(e) => {
               e.preventDefault();
               envoyer();

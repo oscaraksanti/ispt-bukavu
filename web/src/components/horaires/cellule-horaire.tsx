@@ -75,6 +75,7 @@ export function CelluleHoraire({
           className="absolute top-full left-1/2 z-20 mt-1 w-64 -translate-x-1/2 rounded-md border border-pierre-200 bg-white p-3 text-left shadow-xl print:hidden"
         >
           <form
+            method="post"
             className="space-y-2"
             onSubmit={(e) => {
               e.preventDefault();

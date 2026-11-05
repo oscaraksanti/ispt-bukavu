@@ -2,7 +2,7 @@ import { ArrowRight, CircleCheck, FileText, Images, type LucideIcon, UserCog } f
 import Link from "next/link";
 import { EnteteAdmin, Panneau } from "@/components/admin/entete-admin";
 import { ICONES } from "@/components/admin/icones";
-import { utilisateurConnecte } from "@/features/auth/acces";
+import { exigerPersonnel } from "@/features/auth/acces";
 import { tachesEnAttente } from "@/features/demarrage/a-traiter";
 import { avancement, construireEtapes } from "@/features/demarrage/regles";
 import { lireEtatPlateforme } from "@/features/demarrage/requetes";
@@ -20,7 +20,8 @@ const formatDate = new Intl.DateTimeFormat("fr-FR", {
 });
 
 export default async function TableauDeBord() {
-  const u = (await utilisateurConnecte())!;
+  // La page se rend en parallèle du cadre : elle vérifie la session elle-même.
+  const u = await exigerPersonnel();
   const [taches, journal, etat] = await Promise.all([
     tachesEnAttente(u.permissions),
     u.permissions.has("journal.consulter")

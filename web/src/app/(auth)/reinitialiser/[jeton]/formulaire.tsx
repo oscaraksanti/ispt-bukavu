@@ -9,7 +9,7 @@ import { BoutonEnvoi, envoyerSansEffacer } from "@/components/ui/formulaire";
 export function FormulaireMotDePasse({ jeton }: { jeton: string }) {
   const [etat, action, enCours] = useActionState(definirMotDePasse, undefined);
   return (
-    <form onSubmit={envoyerSansEffacer(action)} className="space-y-5">
+    <form method="post" onSubmit={envoyerSansEffacer(action)} className="space-y-5">
       {etat?.erreur && <Encadre ton="erreur">{etat.erreur}</Encadre>}
       <input type="hidden" name="jeton" value={jeton} />
       <Champ

@@ -33,6 +33,7 @@ export function FormulaireAction({
 
   return (
     <form
+      method="post"
       ref={formulaire}
       onSubmit={(e) => {
         e.preventDefault();

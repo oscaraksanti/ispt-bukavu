@@ -10,7 +10,7 @@ import { ETAT_INITIAL } from "@/lib/etat-formulaire";
 export function FormulaireActivation() {
   const [etat, envoyer, enCours] = useActionState(activerCompte, ETAT_INITIAL);
   return (
-    <form onSubmit={envoyerSansEffacer(envoyer)} className="space-y-5">
+    <form method="post" onSubmit={envoyerSansEffacer(envoyer)} className="space-y-5">
       {etat.statut === "erreur" && (
         <Encadre ton="erreur" titre="Activation impossible">
           {etat.message}
