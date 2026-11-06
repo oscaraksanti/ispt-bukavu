@@ -69,10 +69,13 @@ test("un camarade aime, commente, enregistre ; l'auteur est prévenu et répond"
   await c.getByRole("button", { name: "Publier" }).click();
   await expect(c.getByText("Je te les envoie ce soir.")).toBeVisible();
 
+  // L'affichage change aussitôt : on attend la réponse du serveur avant de quitter la page.
+  const enregistrement = b.waitForResponse(
+    (r) => r.request().method() === "POST" && r.url().includes("/etudiant/campus"),
+  );
   await c.getByRole("button", { name: "Enregistrer" }).click();
   await expect(c.getByRole("button", { name: "Enregistré" })).toBeVisible();
-  // L'affichage change aussitôt ; on laisse l'enregistrement atteindre le serveur avant de partir.
-  await b.waitForLoadState("networkidle");
+  await enregistrement;
   await b.goto("/etudiant/campus?filtre=enregistres");
   await expect(carte(b, TEXTE)).toBeVisible();
 
