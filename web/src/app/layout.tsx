@@ -1,3 +1,4 @@
+import { cn } from "@/lib/cn";
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, IBM_Plex_Sans, Newsreader } from "next/font/google";
 import { EnregistrementServiceWorker } from "@/components/pwa/service-worker";
@@ -53,7 +54,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="fr"
-      className={`${plexSans.variable} ${plexMono.variable} ${newsreader.variable} h-full antialiased${MODE_DEMO ? "mode-demo" : ""}`}
+      className={cn(
+        plexSans.variable,
+        plexMono.variable,
+        newsreader.variable,
+        "h-full antialiased",
+        MODE_DEMO && "mode-demo",
+      )}
       suppressHydrationWarning
     >
       <head>
