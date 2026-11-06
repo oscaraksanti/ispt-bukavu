@@ -11,6 +11,8 @@ import { hash } from "@node-rs/argon2";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../src/generated/prisma/client";
 import { adapterChaine } from "../../src/lib/connexion";
+import { libellePromotion } from "../../src/features/academique/regles";
+import { clePrivee, clePromotion } from "../../src/features/messagerie/regles";
 import { MOT_DE_PASSE_DEMO } from "../../src/lib/demo";
 
 /** Référence du projet Supabase de production : jamais de données fictives dessus. */
@@ -379,6 +381,8 @@ export async function peupler(db: PrismaClient) {
       },
     });
   }
+  await communaute(db, direction.id, profs[0].utilisateurId);
+
   const candidat = await compte("demo.candidat@example.org", "CANDIDAT", "Démo", ["candidat"]);
   await db.utilisateur.update({ where: { id: candidat.id }, data: { emailVerifieLe: new Date() } });
   if (!(await db.candidature.findFirst({ where: { candidatId: candidat.id } })))
@@ -392,6 +396,157 @@ export async function peupler(db: PrismaClient) {
         prenom: "Démo",
       },
     });
+}
+
+/**
+ * Campus et messagerie de démonstration : quelques publications, commentaires
+ * et « J'aime », un groupe de promotion animé et un message privé d'un
+ * enseignant à l'étudiante DEMO0001 (non lus, pour la démonstration).
+ * Textes fictifs, sans photo de personne. Idempotent.
+ */
+async function communaute(db: PrismaClient, directionId: string, enseignantId: string) {
+  if (
+    await db.publication.findFirst({
+      where: { contenu: { startsWith: "Bienvenue sur le Campus" } },
+    })
+  )
+    return;
+  const parMatricule = async (m: string) =>
+    (await db.profilEtudiant.findUniqueOrThrow({ where: { matricule: m } })).utilisateurId;
+  const [grace, josue, esther, david, rachel] = await Promise.all(
+    ["DEMO0001", "DEMO0002", "DEMO0003", "DEMO0004", "DEMO0005"].map(parMatricule),
+  );
+  const inscription = await db.inscription.findFirstOrThrow({
+    where: { etudiant: { matricule: "DEMO0001" }, promotion: { annee: { courante: true } } },
+    include: { promotion: { include: { filiere: true, niveau: true, annee: true } } },
+  });
+  const promotion = inscription.promotion;
+  const il = (minutes: number) => new Date(Date.now() - minutes * 60_000);
+
+  // Les auteurs ont accepté les règles ; DEMO0001 les acceptera pendant la démonstration.
+  await db.utilisateur.updateMany({
+    where: { id: { in: [directionId, enseignantId, josue, esther, david, rachel] } },
+    data: { reglesCampusLe: il(60 * 24 * 3) },
+  });
+
+  await db.publication.create({
+    data: {
+      auteurId: directionId,
+      contenu:
+        "Bienvenue sur le Campus de démonstration ! Ici, étudiants, enseignants et personnel échangent librement. Les annonces officielles restent publiées sur la valve.",
+      audience: "INSTITUT",
+      epingleLe: il(60 * 24 * 2),
+      creeLe: il(60 * 24 * 2),
+      reactions: { create: [josue, esther, david].map((utilisateurId) => ({ utilisateurId })) },
+    },
+  });
+  const question = await db.publication.create({
+    data: {
+      auteurId: josue,
+      contenu:
+        "Quelqu'un a-t-il pris les notes du dernier cours de Physique générale ? Je l'ai manqué à cause d'une coupure de courant.",
+      audience: "PROMOTION",
+      promotionId: promotion.id,
+      creeLe: il(180),
+      reactions: { create: [esther, rachel].map((utilisateurId) => ({ utilisateurId })) },
+    },
+  });
+  const reponse = await db.commentaire.create({
+    data: {
+      publicationId: question.id,
+      auteurId: esther,
+      contenu: "Oui, je te les envoie ce soir par la messagerie.",
+      creeLe: il(150),
+    },
+  });
+  await db.commentaire.create({
+    data: {
+      publicationId: question.id,
+      auteurId: josue,
+      parentId: reponse.id,
+      contenu: "Merci beaucoup Esther !",
+      creeLe: il(140),
+    },
+  });
+  await db.publication.create({
+    data: {
+      auteurId: enseignantId,
+      contenu:
+        "Rappel pour la promotion : apportez vos calculatrices à la séance de travaux dirigés de jeudi.",
+      audience: "PROMOTION",
+      promotionId: promotion.id,
+      creeLe: il(90),
+      reactions: { create: [josue, david, rachel].map((utilisateurId) => ({ utilisateurId })) },
+    },
+  });
+  await db.publication.create({
+    data: {
+      auteurId: david,
+      contenu:
+        "Bravo à l'équipe qui a présenté son projet de robot suiveur de ligne hier ! Vous nous donnez envie de nous y mettre.",
+      audience: "INSTITUT",
+      creeLe: il(45),
+      reactions: { create: [esther, josue].map((utilisateurId) => ({ utilisateurId })) },
+    },
+  });
+
+  // Groupe de la promotion (même clé et même titre que ceux créés à la connexion).
+  const groupe = await db.conversation.upsert({
+    where: { cle: clePromotion(promotion.id) },
+    update: {},
+    create: {
+      cle: clePromotion(promotion.id),
+      type: "PROMOTION",
+      titre: `${libellePromotion(promotion)} · ${promotion.annee.libelle}`,
+      promotionId: promotion.id,
+    },
+  });
+  const messagesGroupe: [string, string, number][] = [
+    [esther, "Bonjour à tous, la séance de travaux dirigés de jeudi est-elle maintenue ?", 70],
+    [david, "Oui, l'horaire n'a pas changé. Pensez aux calculatrices.", 65],
+    [rachel, "Merci ! Qui veut réviser ensemble à la bibliothèque mercredi après-midi ?", 30],
+  ];
+  for (const [auteurId, contenu, minutes] of messagesGroupe)
+    await db.message.create({
+      data: { conversationId: groupe.id, auteurId, contenu, creeLe: il(minutes) },
+    });
+  // Participants, dont DEMO0001 avec des messages non lus.
+  for (const utilisateurId of [grace, esther, david, rachel, josue])
+    await db.participantConversation.upsert({
+      where: { conversationId_utilisateurId: { conversationId: groupe.id, utilisateurId } },
+      update: {},
+      create: {
+        conversationId: groupe.id,
+        utilisateurId,
+        creeLe: il(60 * 24 * 7),
+        luJusquA: utilisateurId === grace ? null : il(25),
+      },
+    });
+  await db.conversation.update({ where: { id: groupe.id }, data: { dernierMessageLe: il(30) } });
+
+  // Message privé de l'enseignant à DEMO0001.
+  const privee = await db.conversation.create({
+    data: {
+      cle: clePrivee(enseignantId, grace),
+      type: "PRIVEE",
+      dernierMessageLe: il(20),
+      participants: {
+        create: [
+          { utilisateurId: enseignantId, creeLe: il(20), luJusquA: il(20) },
+          { utilisateurId: grace, creeLe: il(20) },
+        ],
+      },
+    },
+  });
+  await db.message.create({
+    data: {
+      conversationId: privee.id,
+      auteurId: enseignantId,
+      contenu:
+        "Bonjour Grâce, votre devoir est bien reçu. Pensez à citer vos sources dans le prochain : c'est pris en compte dans l'évaluation.",
+      creeLe: il(20),
+    },
+  });
 }
 
 if (require.main === module) {
