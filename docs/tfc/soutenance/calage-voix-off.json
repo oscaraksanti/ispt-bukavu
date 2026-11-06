@@ -1,0 +1,12 @@
+{
+  "_": "Calage de l'enregistrement de la voix off (6 novembre 2026) sur les images. debuts : début de chaque passage du script dans l'enregistrement (secondes, fin de la pause qui le précède). sousParties : pour un passage de la démonstration, extraits [début, fin] de la démonstration et instant de la voix où chacun commence ; les secondes de démonstration non citées sont omises.",
+  "debuts": [0, 12.13, 31.27, 64.77, 85.09, 90.57, 106.47, 111.77, 120.41, 132.59, 151.59, 169.41, 181.53, 203.27, 233.15, 243.79, 251.13, 268.43, 278.29, 308.53, 334.37],
+  "sousParties": {
+    "14": [
+      [151, 158.75, 203.27],
+      [158.75, 165, 213.4],
+      [180.5, 183, 218.1],
+      [183, 195.4, 219.5]
+    ]
+  }
+}

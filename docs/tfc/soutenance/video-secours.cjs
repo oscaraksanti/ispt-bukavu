@@ -198,7 +198,9 @@ async function scene(navigateur, nom, identifiant, jouer) {
       await aller(p, "/etudiant/messages");
       await legende(p, "5 · Messages", "Groupes de la promotion et des cours, créés à partir des inscriptions");
       await pause(p, 3000);
-      await p.getByRole("link", { name: /BAC1/ }).first().click();
+      // Le groupe de la promotion dans la liste des conversations (et non le
+      // lien « Mon compte » de l'en-tête, qui contient aussi « BAC1 »).
+      await p.locator("main").getByRole("link", { name: /BAC1 .*20\d\d/ }).first().click();
       await p.waitForLoadState("networkidle");
       await legende(p, "5 · Messages", "Le groupe de la promotion");
       await pause(p, 3500);
