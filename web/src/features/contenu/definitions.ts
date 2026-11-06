@@ -7,6 +7,7 @@
  * reprennent les textes officiels de l'institut.
  */
 
+import { CONFIDENTIALITE, MENTIONS_LEGALES, MISE_A_JOUR_JURIDIQUE } from "../../contenu/juridique";
 export type ChampSimple =
   | { type: "texte"; cle: string; libelle: string; aide?: string; max?: number }
   | { type: "texteLong"; cle: string; libelle: string; aide?: string; max?: number }
@@ -493,7 +494,7 @@ export const PAGES: DefinitionPage[] = [
         cle: "texte",
         titre: "Texte",
         description:
-          "Texte juridique à fournir par l'institut (éditeur du site, responsable de la publication, hébergement, propriété intellectuelle). Tant qu'il est vide, la page indique qu'il est en cours de validation.",
+          "Éditeur du site, directeur de la publication, hébergement, propriété intellectuelle. Texte proposé d'après les informations de l'institut ; à relire et à adapter si besoin. S'il est vidé, la page indique qu'il est en cours de validation.",
         champs: [
           {
             type: "texteLong",
@@ -509,7 +510,7 @@ export const PAGES: DefinitionPage[] = [
             aide: "Exemple : 4 novembre 2026",
           },
         ],
-        defaut: { texte: "", miseAJour: "" },
+        defaut: { texte: MENTIONS_LEGALES, miseAJour: MISE_A_JOUR_JURIDIQUE },
       },
     ],
   },
@@ -522,7 +523,7 @@ export const PAGES: DefinitionPage[] = [
         cle: "texte",
         titre: "Texte",
         description:
-          "Politique de protection des données personnelles, à valider par l'institut (données collectées, finalités, durée de conservation, droits des personnes, contact). Tant qu'elle est vide, la page indique qu'elle est en cours de validation.",
+          "Politique de protection des données personnelles (données collectées, finalités, durées de conservation, hébergement, droits des personnes, contact), rédigée d'après le fonctionnement réel de la plateforme. À relire ; toute évolution des données traitées doit y être reportée.",
         champs: [
           {
             type: "texteLong",
@@ -538,7 +539,7 @@ export const PAGES: DefinitionPage[] = [
             aide: "Exemple : 4 novembre 2026",
           },
         ],
-        defaut: { texte: "", miseAJour: "" },
+        defaut: { texte: CONFIDENTIALITE, miseAJour: MISE_A_JOUR_JURIDIQUE },
       },
     ],
   },

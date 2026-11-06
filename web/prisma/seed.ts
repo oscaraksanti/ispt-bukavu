@@ -173,6 +173,16 @@ async function contenus(ids: Record<string, string>) {
     }
   }
 
+  // Textes juridiques : version proposée tant que l'institut n'a rien saisi
+  // (un texte déjà rempli dans l'administration n'est jamais remplacé).
+  for (const slug of ["mentions-legales", "confidentialite"]) {
+    const defaut = PAGES.find((x) => x.slug === slug)?.blocs.find((b) => b.cle === "texte")?.defaut;
+    const bloc = await db.blocPage.findFirst({ where: { cle: "texte", page: { slug } } });
+    const actuel = (bloc?.donnees as { texte?: unknown } | null)?.texte;
+    if (defaut && bloc && (typeof actuel !== "string" || !actuel.trim()))
+      await db.blocPage.update({ where: { id: bloc.id }, data: { donnees: defaut as object } });
+  }
+
   for (const [ordre, f] of filieres.entries()) {
     const fichier = f.photo.src.split("/").pop()!;
     await db.filiere.upsert({
