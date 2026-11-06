@@ -2,7 +2,7 @@
 
 La démonstration se fait sur l'**instance de démonstration** (données fictives, mode `NEXT_PUBLIC_MODE_DEMO=1`), jamais sur la production. Mot de passe commun : `Demo-ISPT-2026` (voir `docs/exploitation/demonstration.md`).
 
-> **Prérequis :** l'instance de démonstration doit être en ligne (base Neon + projet Vercel `ispt-bukavu-demo`, voir `docs/exploitation/demonstration.md`). Tant qu'elle n'existe pas, passer directement la **vidéo de secours**.
+> **Adresse :** https://demo.isptbukavu.org (en ligne depuis le 6 novembre 2026 ; données remises à zéro chaque nuit à 2 h 30, heure de Bukavu). La veille de la soutenance, ouvrir chaque compte utilisé une fois pour vérifier ; garder la **vidéo de secours** prête en cas de coupure.
 
 ## La veille
 
