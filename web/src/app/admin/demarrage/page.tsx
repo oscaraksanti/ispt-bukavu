@@ -1,4 +1,4 @@
-import { ArrowRight, Check, CircleDashed, CircleDot } from "lucide-react";
+import { ArrowRight, Check, CircleDashed, CircleDot, FileDown } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { EnteteAdmin } from "@/components/admin/entete-admin";
@@ -47,6 +47,16 @@ export default async function MiseEnService() {
         ariane={[{ libelle: "Administration", href: "/admin" }, { libelle: "Mise en service" }]}
         titre="Mise en service"
         description="Ce qui reste à saisir pour que chacun puisse utiliser la plateforme. La liste se met à jour d'elle-même : chaque étape renvoie à l'écran où compléter l'information."
+        actions={
+          <a
+            href="/guides/Guide-creation-des-comptes.pdf"
+            download
+            className="inline-flex h-10 items-center gap-2 rounded-xs border border-pierre-300 bg-white px-4 text-sm font-medium text-encre hover:border-encre"
+          >
+            <FileDown aria-hidden className="size-4" />
+            Guide de création des comptes (PDF)
+          </a>
+        }
       />
 
       <section
