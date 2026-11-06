@@ -30,7 +30,7 @@ Sa qualité a été mesurée : 198 tests unitaires et 115 tests de bout en bout 
 3. **rapatrier l'hébergement des données en République démocratique du Congo** dès qu'une offre adaptée existera, ou obtenir l'autorisation de l'autorité de protection des données ;
 4. **produire des exports au format de la plateforme ministérielle**, puis un échange automatique lorsque son interface sera ouverte aux établissements ;
 5. **intégrer le paiement par monnaie mobile**, en partenariat avec un agrégateur de paiement ;
-6. **compléter la surveillance des erreurs, déjà en service, par une surveillance de la disponibilité**, et faire valider par l'institut les règles de la messagerie et du Campus ;
+6. **faire valider par l'institut les règles de la messagerie et du Campus**, puis lui transférer les comptes des services d'hébergement et de surveillance ;
 7. **étendre l'interface au swahili et à l'anglais**, et évaluer l'intérêt d'une plateforme d'apprentissage en ligne plus complète.
 
 Au-delà de l'ISPT-Bukavu, la démarche suivie peut intéresser d'autres établissements d'enseignement supérieur de la région, confrontés aux mêmes contraintes. Nous espérons que ce travail contribuera, à sa mesure, à la modernisation de la gestion académique et de la communication institutionnelle dans l'enseignement supérieur congolais.

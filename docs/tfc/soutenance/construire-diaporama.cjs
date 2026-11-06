@@ -668,7 +668,7 @@ async function icone(nom, couleur, taille = 256) {
       "Rapatrier l’hébergement en RDC ou obtenir l’autorisation",
       "Exports au format ministériel, puis échange automatique",
       "Paiement par monnaie mobile",
-      "Surveillance de la disponibilité ; règles du Campus validées",
+      "Règles du Campus validées, comptes transférés à l’institut",
       "Interface en swahili et en anglais",
     ];
     carte(s, MX, 1.85, 5.6, 4.7, "Limites");

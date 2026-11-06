@@ -206,21 +206,22 @@ Une tâche planifiée sur GitHub sauvegarde chaque nuit la totalité de la base 
 
 La restauration a été testée : une sauvegarde complète a été restaurée dans une base neuve, puis comparée ligne par ligne à l'originale au moyen d'une empreinte de chaque ligne. La comparaison n'a révélé aucune différence, et les fichiers restaurés étaient identiques octet pour octet. Une seconde restauration sur une base non vide a été refusée, comme prévu, pour éviter d'écraser des données par erreur. La sauvegarde de production est active depuis le 5 novembre 2026 : la première exécution a sauvegardé 77 tables, et l'archive chiffrée qu'elle a produite a été téléchargée puis déchiffrée avec succès, tandis qu'une phrase secrète erronée était refusée. Elle se connecte avec un compte de base de données qui lui est réservé et qui ne peut que lire : une fuite de ce paramètre ne permettrait aucune modification des données.
 
-### 4.4.4. Surveillance des erreurs
+### 4.4.4. Surveillance des erreurs et de la disponibilité
 
-Les erreurs qui surviennent en production, sur le serveur comme dans le navigateur des utilisateurs, sont transmises au service Sentry, qui les regroupe et prévient l'administrateur. Pour respecter la vie privée des usagers, aucune donnée personnelle ne lui est transmise : ni identité, ni cookie, ni contenu de formulaire, ni paramètre d'adresse, et les jetons secrets présents dans certaines adresses, comme ceux des liens de réinitialisation, sont masqués avant l'envoi. Le module chargé dans le navigateur, d'environ 30 Ko compressés, n'est téléchargé qu'après l'affichage de la page, pour ne pas pénaliser les connexions lentes. La surveillance de la disponibilité du site, qui doit alerter en cas d'interruption, reste à mettre en place.
+Les erreurs qui surviennent en production, sur le serveur comme dans le navigateur des utilisateurs, sont transmises au service Sentry, qui les regroupe et prévient l'administrateur par courrier électronique. Pour respecter la vie privée des usagers, aucune donnée personnelle ne lui est transmise : ni identité, ni cookie, ni contenu de formulaire, ni paramètre d'adresse, et les jetons secrets présents dans certaines adresses, comme ceux des liens de réinitialisation, sont masqués avant l'envoi. Le module chargé dans le navigateur, d'environ 30 Ko compressés, n'est téléchargé qu'après l'affichage de la page, pour ne pas pénaliser les connexions lentes. La disponibilité du site est vérifiée toutes les cinq minutes par le service UptimeRobot, qui alerte l'administrateur en cas d'interruption ; une adresse de contrôle propre à la plateforme permet de vérifier, au-delà de l'affichage des pages, que la base de données répond.
 
 ### 4.4.5. Coûts d'exploitation
 
-L'exploitation repose essentiellement sur des offres gratuites, suffisantes pour le trafic d'un institut, et sur des logiciels libres. Le tableau 4.3 en fait la synthèse.
+L'exploitation repose essentiellement sur des offres gratuites, suffisantes pour le trafic d'un institut, et sur des logiciels libres. Seul l'hébergement de l'application utilise une offre payante, l'offre Pro de Vercel souscrite par l'auteur et partagée avec d'autres projets ; lors du transfert à l'institut, celui-ci pourra la conserver ou en choisir une autre. Le tableau 4.3 en fait la synthèse.
 
 ::tableau Tableau 4.3 : Coûts d'exploitation
 | Poste | Fournisseur | Offre retenue |
 |---|---|---|
-| Hébergement de l'application | Vercel | Offre gratuite |
+| Hébergement de l'application | Vercel | Offre Pro du compte de l'auteur |
 | Base de données et fichiers | Supabase | Offre gratuite |
 | Code, intégration continue et sauvegardes | GitHub | Offre gratuite |
 | Surveillance des erreurs | Sentry | Offre gratuite |
+| Surveillance de la disponibilité | UptimeRobot | Offre gratuite |
 | Courrier électronique | Resend | Compte de l'auteur |
 | Nom de domaine isptbukavu.org | Vercel | Abonnement annuel |
 | Logiciels (Next.js, PostgreSQL, Prisma, etc.) | Communautés libres | Gratuits |
@@ -252,7 +253,6 @@ Ce travail présente plusieurs limites, qu'il convient d'énoncer clairement :
 - **les données officielles en attente** : les montants des frais, le programme officiel des cours, les règles d'évaluation fixées par l'arrêté en vigueur et les textes juridiques de la plateforme doivent être fournis par l'institut ; les règles de délibération reprennent la pratique observée dans un classeur de bulletins, en attendant leur confirmation ;
 - **l'interopérabilité avec la plateforme ministérielle**, limitée à des exports tabulaires, sans échange automatique ;
 - **le paiement par monnaie mobile**, non intégré : les paiements sont enregistrés par la caisse ;
-- **la surveillance de la disponibilité**, prévue dès la conception mais pas encore installée, alors que celle des erreurs est en service ;
 - **les règles de la communauté** (règles de conduite du Campus, droits d'écriture de la messagerie, choix des modérateurs), proposées par la plateforme mais à faire valider par l'institut ;
 - **une politique de sécurité du contenu** qui autorise les scripts intégrés aux pages, compromis nécessaire au fonctionnement du cadre d'application et au maintien du cache.
 
