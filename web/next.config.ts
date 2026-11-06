@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs/config";
+import { HSTS } from "./src/lib/hsts";
 
 /**
  * Politique de sécurité du contenu. Next.js insère des scripts en ligne (données
@@ -34,7 +35,9 @@ const entetesSecurite = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
-  { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
+  // Deux ans, sous-domaines compris, inscrit sur la liste de préchargement des navigateurs
+  // (hstspreload.org) : même la toute première visite se fait en HTTPS.
+  { key: "Strict-Transport-Security", value: HSTS },
 ];
 
 const nextConfig: NextConfig = {
@@ -51,7 +54,8 @@ const nextConfig: NextConfig = {
     formats: ["image/avif", "image/webp"],
     qualities: [75],
   },
-  // L'ancienne adresse technique renvoie vers le nom de domaine officiel (un seul site indexé).
+  // L'ancienne adresse technique renvoie vers le nom de domaine officiel (un seul site
+  // indexé). Le domaine nu est redirigé par src/proxy.ts, avec l'en-tête HSTS complet.
   async redirects() {
     const officiel = process.env.NEXT_PUBLIC_SITE_URL;
     if (!officiel || officiel.includes("vercel.app")) return [];
