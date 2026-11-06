@@ -588,3 +588,13 @@
     animation: none;
   }
 }
+
+/* Instance de démonstration : hauteur du bandeau supérieur (deux lignes sur téléphone). */
+.mode-demo {
+  --bandeau-demo: 3.25rem;
+}
+@media (min-width: 40rem) {
+  .mode-demo {
+    --bandeau-demo: 2rem;
+  }
+}

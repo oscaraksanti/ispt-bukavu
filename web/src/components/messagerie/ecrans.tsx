@@ -21,7 +21,9 @@ import {
 } from "@/features/messagerie/requetes";
 import { peutPublier, quandCourt } from "@/features/messagerie/regles";
 import { db } from "@/lib/db";
+import { RappelRegles } from "@/components/campus/regles";
 import { Avatar } from "@/components/ui/avatar";
+import { lireReglagesCampus } from "@/features/campus/reglages";
 import { cn } from "@/lib/cn";
 import { FilConversation } from "./fil-conversation";
 
@@ -36,7 +38,7 @@ function Cadre({
   conversationOuverte: boolean;
 }) {
   return (
-    <div className="-mx-4 grid h-[calc(100svh-11rem)] min-h-[28rem] grid-cols-1 overflow-hidden border-y border-pierre-200 bg-white sm:mx-0 sm:h-[calc(100svh-12rem)] sm:rounded-md sm:border lg:grid-cols-[21rem_minmax(0,1fr)]">
+    <div className="-mx-4 grid h-[calc(100svh-13rem-var(--bandeau-demo,0rem))] min-h-[28rem] grid-cols-1 overflow-hidden border-y border-pierre-200 bg-white sm:mx-0 sm:h-[calc(100svh-13rem-var(--bandeau-demo,0rem))] sm:rounded-md sm:border lg:grid-cols-[21rem_minmax(0,1fr)]">
       <div
         className={cn(
           "min-h-0 min-w-0 flex-col border-r border-pierre-200",
@@ -158,16 +160,27 @@ function Liste({
 export async function EcranMessages({ base, suite }: { base: string; suite: string }) {
   const { profil } = await exigerMessagerie(suite);
   await synchroniserGroupes(profil);
-  const conversations = await listeConversations(profil);
+  const [conversations, reglages] = await Promise.all([
+    listeConversations(profil),
+    lireReglagesCampus(),
+  ]);
   return (
-    <Cadre conversationOuverte={false} liste={<Liste conversations={conversations} base={base} />}>
-      <div className="flex flex-1 flex-col items-center justify-center gap-2 bg-pierre-50 p-8 text-center">
-        <UsersRound aria-hidden className="size-8 text-pierre-300" />
-        <p className="text-sm text-pierre-500">
-          Choisissez une conversation, ou écrivez un nouveau message.
-        </p>
+    <>
+      <Cadre
+        conversationOuverte={false}
+        liste={<Liste conversations={conversations} base={base} />}
+      >
+        <div className="flex flex-1 flex-col items-center justify-center gap-2 bg-pierre-50 p-8 text-center">
+          <UsersRound aria-hidden className="size-8 text-pierre-300" />
+          <p className="text-sm text-pierre-500">
+            Choisissez une conversation, ou écrivez un nouveau message.
+          </p>
+        </div>
+      </Cadre>
+      <div className="mt-4">
+        <RappelRegles texte={reglages.regles} />
       </div>
-    </Cadre>
+    </>
   );
 }
 

@@ -107,11 +107,16 @@ export function libelleJaime(total: number, moi: boolean) {
 }
 
 export const REGLES_PAR_DEFAUT = [
-  "Le Campus est l'espace d'échange des étudiants, des enseignants et du personnel de l'institut. Les annonces officielles restent publiées sur la valve.",
-  "Restez courtois : ni insulte, ni moquerie, ni propos discriminatoire.",
-  "Ne publiez ni les données personnelles d'autrui, ni la photo d'une personne sans son accord.",
-  "Pas de triche, de vente de sujets d'examen ou d'arnaque.",
-  "Les contenus signalés sont examinés par la modération, qui peut les masquer.",
+  "Le Campus et la messagerie servent aux échanges entre étudiants, enseignants et personnel de l'ISPT-Bukavu. Les annonces officielles (horaires, examens, résultats, décisions) sont publiées uniquement sur la valve.",
+  "Restez courtois et respectueux : ni insulte, ni moquerie, ni menace, ni harcèlement, ni propos discriminatoire, notamment en raison de l'origine, de l'ethnie, du sexe, de la religion ou d'un handicap.",
+  "Respectez la vie privée : ne publiez ni les coordonnées, les notes, les résultats ou les documents d'autrui, ni la photo d'une personne sans son accord.",
+  "Préservez l'intégrité des études : ni triche, ni partage ou vente de sujets d'examen, ni travail rédigé à la place d'un autre.",
+  "Pas d'arnaque, de vente, de publicité, de collecte d'argent ni de chaîne de messages.",
+  "Pas de contenu violent, obscène, haineux ou contraire à la loi.",
+  "Vérifiez une information avant de la partager et citez sa source ; ne relayez pas de rumeur.",
+  "Dans la messagerie, écrivez pour des raisons liées aux études ou à la vie de l'institut. Chacun peut mettre une conversation en sourdine ou bloquer une personne.",
+  "Tout contenu peut être signalé. Après trois signalements, il est masqué en attendant l'examen de la modération, qui ne voit que les contenus signalés et peut les retirer définitivement.",
+  "Les manquements graves peuvent être portés à la connaissance des autorités académiques, qui en décident conformément au règlement de l'institut.",
 ].join("\n");
 
 export type Mention = { id: string; nom: string };

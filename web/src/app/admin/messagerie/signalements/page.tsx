@@ -274,7 +274,7 @@ export default async function Signalements() {
           </label>
           <div>
             <label htmlFor="regles" className="text-sm font-medium text-encre">
-              Règles du Campus (une règle par ligne)
+              Règles du Campus et de la messagerie (une règle par ligne)
             </label>
             <textarea
               id="regles"

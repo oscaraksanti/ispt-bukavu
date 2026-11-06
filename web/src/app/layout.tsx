@@ -53,7 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="fr"
-      className={`${plexSans.variable} ${plexMono.variable} ${newsreader.variable} h-full antialiased`}
+      className={`${plexSans.variable} ${plexMono.variable} ${newsreader.variable} h-full antialiased${MODE_DEMO ? "mode-demo" : ""}`}
       suppressHydrationWarning
     >
       <head>
@@ -64,7 +64,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col">
         {MODE_DEMO && (
-          <p className="bg-chantier px-4 py-1.5 text-center text-sm font-medium text-encre">
+          // Hauteur fixe (--bandeau-demo) : les écrans à hauteur d'écran en tiennent compte.
+          <p className="flex h-(--bandeau-demo) items-center justify-center overflow-hidden bg-chantier px-4 text-center text-sm leading-tight font-medium text-encre">
             Version de démonstration : toutes les données sont fictives et réinitialisées chaque
             nuit.
           </p>

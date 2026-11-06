@@ -21,6 +21,7 @@ import { ilYA, LIBELLES_AUDIENCE } from "@/features/campus/regles";
 import { exigerMessagerie } from "@/features/messagerie/acces";
 import { db } from "@/lib/db";
 import { Avatar } from "@/components/ui/avatar";
+import { ListeRegles, RappelRegles } from "./regles";
 import { cn } from "@/lib/cn";
 import { Compositeur } from "./compositeur";
 import {
@@ -282,19 +283,14 @@ function Regles({ texte }: { texte: string }) {
     <section className="rounded-md border border-ispt-200 bg-ispt-50 p-5">
       <h2 className="flex items-center gap-2 font-sans text-base font-semibold text-encre">
         <ShieldCheck aria-hidden className="size-5 text-ispt-600" />
-        Avant votre première publication
+        Règles du Campus et de la messagerie
       </h2>
-      <ul className="mt-3 space-y-1.5 text-detail text-pierre-800">
-        {texte
-          .split("\n")
-          .filter((l) => l.trim())
-          .map((l) => (
-            <li key={l} className="flex gap-2">
-              <span aria-hidden className="mt-2 size-1 shrink-0 rounded-full bg-ispt-600" />
-              {l.replace(/^[-•]\s*/, "")}
-            </li>
-          ))}
-      </ul>
+      <p className="mt-1 text-detail text-pierre-700">
+        Avant votre première publication, lisez et acceptez ces règles.
+      </p>
+      <div className="mt-3">
+        <ListeRegles texte={texte} />
+      </div>
       <div className="mt-4">
         <BoutonAction action={accepterRegles} variante="institutionnel" taille="md">
           J&apos;ai lu et j&apos;accepte les règles
@@ -376,6 +372,11 @@ export async function EcranCampus({
           <Regles texte={reglages.regles} />
         )}
       </div>
+      {compte?.reglesCampusLe && (
+        <div className="mt-3">
+          <RappelRegles texte={reglages.regles} />
+        </div>
+      )}
 
       <div className="mt-6 space-y-4">
         {publications.length === 0 && (
