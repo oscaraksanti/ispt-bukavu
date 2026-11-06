@@ -170,9 +170,50 @@ async function scene(navigateur, nom, identifiant, jouer) {
   );
 
   fichiers.push(
-    await scene(navigateur, "4b-direction", "demo.direction@example.org", async (p) => {
+    await scene(navigateur, "5-etudiant", "DEMO0001", async (p) => {
+      await legende(p, "5 · Étudiante", "Son espace : la cloche signale la note qui vient d’être publiée");
+      await pause(p, 3000);
+      await aller(p, "/etudiant/notes");
+      await legende(p, "5 · Étudiante", "Notes publiées et moyenne de chaque cours : seulement les siennes");
+      await pause(p, 3500);
+      await aller(p, "/etudiant/campus");
+      await legende(p, "5 · Campus", "Avant la première publication : les règles du Campus et de la messagerie");
+      await pause(p, 4000);
+      const accepter = p.getByRole("button", { name: /accepte les règles/ });
+      if (await accepter.count()) {
+        await accepter.click();
+        await p.waitForLoadState("networkidle");
+        await pause(p, 1500);
+      }
+      await legende(p, "5 · Campus", "Publication épinglée par l’institut, questions et réponses entre étudiants");
+      await pause(p, 2500);
+      await defiler(p, 700);
+      const jaime = p.getByRole("button", { name: /J'aime/ }).nth(1);
+      if (await jaime.count()) {
+        await jaime.click();
+        await pause(p, 1500);
+      }
+      await defiler(p, 600);
+      await pause(p, 1500);
+      await aller(p, "/etudiant/messages");
+      await legende(p, "5 · Messages", "Groupes de la promotion et des cours, créés à partir des inscriptions");
+      await pause(p, 3000);
+      await p.getByRole("link", { name: /BAC1/ }).first().click();
+      await p.waitForLoadState("networkidle");
+      await legende(p, "5 · Messages", "Le groupe de la promotion");
+      await pause(p, 3500);
+      await aller(p, "/etudiant/messages");
+      await p.getByRole("link", { name: /ENSEIGNANT/ }).first().click();
+      await p.waitForLoadState("networkidle");
+      await legende(p, "5 · Messages", "Un message privé de l’enseignant");
+      await pause(p, 3500);
+    }),
+  );
+
+  fichiers.push(
+    await scene(navigateur, "5b-direction", "demo.direction@example.org", async (p) => {
       await aller(p, "/admin/pilotage");
-      await legende(p, "4 · Direction", "Tableau de bord de pilotage");
+      await legende(p, "Direction", "Tableau de bord de pilotage");
       await pause(p, 3500);
       await defiler(p, 900);
       await pause(p, 1500);
@@ -180,20 +221,9 @@ async function scene(navigateur, nom, identifiant, jouer) {
   );
 
   fichiers.push(
-    await scene(navigateur, "5-etudiant", "DEMO0001", async (p) => {
-      await legende(p, "5 · Étudiant", "Son espace : notes, horaire, frais, valve");
-      await pause(p, 3000);
-      await aller(p, "/etudiant/notes");
-      await legende(p, "5 · Étudiant", "Notes publiées et moyenne de chaque cours");
-      await pause(p, 3500);
-      await aller(p, "/etudiant/valve");
-      await legende(p, "5 · Étudiant", "Valve : communiqués ciblés sur sa promotion, avec accusé de lecture");
-      await pause(p, 3000);
-      await aller(p, "/etudiant/horaire");
-      await legende(p, "5 · Étudiant", "Horaire de la semaine");
-      await pause(p, 3000);
+    await scene(navigateur, "5c-demande", "DEMO0001", async (p) => {
       await aller(p, "/etudiant/documents");
-      await legende(p, "5 · Étudiant", "Demande d’une attestation de fréquentation");
+      await legende(p, "5 · Étudiante", "Demande d’une attestation de fréquentation");
       await pause(p, 2000);
       const motif = p.locator('[name="motif"]');
       if (await motif.count()) await motif.first().fill("Dossier de bourse");
@@ -218,7 +248,9 @@ async function scene(navigateur, nom, identifiant, jouer) {
       await legende(p, "6 · Document officiel", "Attestation imprimable, avec code QR de vérification");
       await pause(p, 4000);
       const chemin = await p.evaluate(() => {
-        const m = document.body.innerText.match(/\/verifier\/([A-Za-z0-9-]+)/);
+        // « …/verifier/CODE » ou « …/verifier » suivi du code sur la ligne suivante.
+        const t = document.body.innerText;
+        const m = t.match(/\/verifier\/([A-Za-z0-9-]{6,})/) || t.match(/\/verifier\s+([A-Z0-9][A-Z0-9-]{5,})/);
         return m ? "/verifier/" + m[1] : null;
       });
       etat.verifier = chemin;
