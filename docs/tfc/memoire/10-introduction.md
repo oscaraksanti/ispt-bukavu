@@ -88,7 +88,7 @@ Sur le plan spatial, ce travail porte sur l'ISPT-Bukavu, situé dans la ville de
 
 Sur le plan temporel, il est rattaché à l'année académique 2025-2026. Les sources, les observations et l'état de la plateforme décrits sont ceux arrêtés en novembre 2026.
 
-Sur le plan thématique, il couvre la conception, la réalisation, les tests et le déploiement d'une première version de la plateforme. Il ne traite pas le paiement en ligne par monnaie mobile, la synchronisation automatique avec la plateforme ministérielle ni le passage d'examens en ligne. Les montants des frais, le programme officiel des cours et les textes juridiques de la plateforme relèvent de l'institut : ils sont paramétrables dans l'administration et ne sont pas fixés par ce travail.
+Sur le plan thématique, il couvre la conception, la réalisation, les tests et le déploiement d'une première version de la plateforme. Il ne traite pas le paiement en ligne par monnaie mobile, la synchronisation automatique avec la plateforme ministérielle ni le passage d'examens en ligne. Les montants des frais, le programme officiel des cours et les textes juridiques de la plateforme relèvent de l'institut : ils sont paramétrables dans l'administration. Ce travail ne fixe ni les montants ni le programme ; il propose une première rédaction des textes juridiques, que l'institut valide ou modifie.
 
 ## 0.8. Subdivision du travail
 

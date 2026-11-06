@@ -16,6 +16,7 @@
 | FAQ | Foire aux questions |
 | FC | Franc congolais |
 | GPL | *GNU General Public License*, licence de logiciel libre |
+| HSTS | *HTTP Strict Transport Security*, mécanisme imposant au navigateur une connexion chiffrée |
 | HTTPS | *Hypertext Transfer Protocol Secure*, protocole de communication web sécurisé |
 | IP | *Internet Protocol*, protocole Internet |
 | ISPT-Bukavu | Institut Supérieur Pédagogique et Technique de Bukavu |

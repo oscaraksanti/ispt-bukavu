@@ -1,6 +1,6 @@
 # ANNEXES
 
-Les annexes réunissent les outils préparés pour l'évaluation de la plateforme, les paramètres de référence de la gestion des droits et des délibérations, le guide d'utilisation remis aux usagers et les adresses d'accès à la plateforme.
+Les annexes réunissent les outils préparés pour l'évaluation de la plateforme, les paramètres de référence de la gestion des droits et des délibérations, le guide d'utilisation remis aux usagers, les adresses d'accès à la plateforme et les règles de sa communauté.
 
 - Annexe 1 : Questionnaire d'évaluation destiné aux étudiants et aux enseignants
 - Annexe 2 : Guide d'entretien avec les services de l'institut
@@ -8,6 +8,7 @@ Les annexes réunissent les outils préparés pour l'évaluation de la plateform
 - Annexe 4 : Règlement de délibération par défaut
 - Annexe 5 : Guide d'utilisation de la plateforme
 - Annexe 6 : Accès à la plateforme
+- Annexe 7 : Règles du Campus et de la messagerie
 
 ::saut
 
@@ -308,10 +309,11 @@ La plateforme s'installe sur l'écran d'accueil du téléphone depuis le navigat
 
 *Conseil :* Un étudiant écrit à sa promotion, à ses enseignants et aux services de l'institut. Un enseignant peut réserver l'écriture de son groupe de cours aux annonces.
 
-**Mon compte : mot de passe et appareils.**
+**Mon compte : photo, mot de passe et appareils.**
 1. Cliquez sur votre nom (ou sur l'icône de profil sur téléphone), en haut de l'écran.
 2. « Changer de mot de passe » : saisissez l'actuel, puis deux fois le nouveau.
 3. « Appareils connectés » : vous voyez où votre compte est ouvert et pouvez déconnecter les autres appareils.
+4. « Ajouter une photo » : votre photo de profil remplace vos initiales ; seuls les membres connectés de l'institut la voient.
 
 *Conseil :* Après un changement de mot de passe, les autres appareils sont déconnectés et un courrier électronique de confirmation est envoyé si une adresse est enregistrée.
 
@@ -367,10 +369,11 @@ L'onglet « Examens » liste les épreuves de vos cours et celles que vous surve
 
 *Conseil :* Un étudiant écrit à sa promotion, à ses enseignants et aux services de l'institut. Un enseignant peut réserver l'écriture de son groupe de cours aux annonces.
 
-**Mon compte : mot de passe et appareils.**
+**Mon compte : photo, mot de passe et appareils.**
 1. Cliquez sur votre nom (ou sur l'icône de profil sur téléphone), en haut de l'écran.
 2. « Changer de mot de passe » : saisissez l'actuel, puis deux fois le nouveau.
 3. « Appareils connectés » : vous voyez où votre compte est ouvert et pouvez déconnecter les autres appareils.
+4. « Ajouter une photo » : votre photo de profil remplace vos initiales ; seuls les membres connectés de l'institut la voient.
 
 *Conseil :* Après un changement de mot de passe, les autres appareils sont déconnectés et un courrier électronique de confirmation est envoyé si une adresse est enregistrée.
 
@@ -395,10 +398,11 @@ L'onglet « Examens » liste les épreuves de vos cours et celles que vous surve
 **Suivre sa candidature.**
 Le suivi indique chaque étape de l'instruction. La caisse vérifie votre paiement : votre reçu apparaît alors dans votre espace ; si la référence n'est pas reconnue, vous pouvez la corriger. Si une pièce est refusée, vous êtes prévenu avec le motif. La décision vous est notifiée dans votre espace et par courrier électronique ; une fois inscrit, vous vous connectez avec le même mot de passe à votre espace étudiant.
 
-**Mon compte : mot de passe et appareils.**
+**Mon compte : photo, mot de passe et appareils.**
 1. Cliquez sur votre nom (ou sur l'icône de profil sur téléphone), en haut de l'écran.
 2. « Changer de mot de passe » : saisissez l'actuel, puis deux fois le nouveau.
 3. « Appareils connectés » : vous voyez où votre compte est ouvert et pouvez déconnecter les autres appareils.
+4. « Ajouter une photo » : votre photo de profil remplace vos initiales ; seuls les membres connectés de l'institut la voient.
 
 *Conseil :* Après un changement de mot de passe, les autres appareils sont déconnectés et un courrier électronique de confirmation est envoyé si une adresse est enregistrée.
 
@@ -473,10 +477,11 @@ La page « Mise en service » liste ce qui reste à saisir et renvoie à l'écra
 
 *Conseil :* Un étudiant écrit à sa promotion, à ses enseignants et aux services de l'institut. Un enseignant peut réserver l'écriture de son groupe de cours aux annonces.
 
-**Mon compte : mot de passe et appareils.**
+**Mon compte : photo, mot de passe et appareils.**
 1. Cliquez sur votre nom (ou sur l'icône de profil sur téléphone), en haut de l'écran.
 2. « Changer de mot de passe » : saisissez l'actuel, puis deux fois le nouveau.
 3. « Appareils connectés » : vous voyez où votre compte est ouvert et pouvez déconnecter les autres appareils.
+4. « Ajouter une photo » : votre photo de profil remplace vos initiales ; seuls les membres connectés de l'institut la voient.
 
 *Conseil :* Après un changement de mot de passe, les autres appareils sont déconnectés et un courrier électronique de confirmation est envoyé si une adresse est enregistrée.
 
@@ -492,7 +497,26 @@ La page « Mise en service » liste ce qui reste à saisir et renvoie à l'écra
 | Dépôt d'une candidature | https://www.isptbukavu.org/candidater |
 | Vérification d'un document | https://www.isptbukavu.org/verifier |
 | Centre d'aide | https://www.isptbukavu.org/aide |
+| Mentions légales et confidentialité | https://www.isptbukavu.org/mentions-legales · /confidentialite |
+| Instance de démonstration (données fictives) | https://demo.isptbukavu.org |
 
 ::source Production personnelle.
 
 Les comptes du personnel sont créés par invitation depuis l'administration ; les étudiants activent leur compte avec leur matricule et le code remis par le secrétariat ; les candidats créent eux-mêmes leur compte lorsqu'une campagne d'admission est ouverte.
+
+::saut
+
+## Annexe 7. Règles du Campus et de la messagerie
+
+Ces règles sont proposées par la plateforme et modifiables par l'institut (Administration › Messagerie › Modération). Chaque utilisateur les accepte avant sa première publication sur le Campus ; elles restent consultables depuis le Campus et la messagerie.
+
+1. Le Campus et la messagerie servent aux échanges entre étudiants, enseignants et personnel de l'ISPT-Bukavu. Les annonces officielles (horaires, examens, résultats, décisions) sont publiées uniquement sur la valve.
+2. Restez courtois et respectueux : ni insulte, ni moquerie, ni menace, ni harcèlement, ni propos discriminatoire, notamment en raison de l'origine, de l'ethnie, du sexe, de la religion ou d'un handicap.
+3. Respectez la vie privée : ne publiez ni les coordonnées, les notes, les résultats ou les documents d'autrui, ni la photo d'une personne sans son accord.
+4. Préservez l'intégrité des études : ni triche, ni partage ou vente de sujets d'examen, ni travail rédigé à la place d'un autre.
+5. Pas d'arnaque, de vente, de publicité, de collecte d'argent ni de chaîne de messages.
+6. Pas de contenu violent, obscène, haineux ou contraire à la loi.
+7. Vérifiez une information avant de la partager et citez sa source ; ne relayez pas de rumeur.
+8. Dans la messagerie, écrivez pour des raisons liées aux études ou à la vie de l'institut. Chacun peut mettre une conversation en sourdine ou bloquer une personne.
+9. Tout contenu peut être signalé. Après trois signalements, il est masqué en attendant l'examen de la modération, qui ne voit que les contenus signalés et peut les retirer définitivement.
+10. Les manquements graves peuvent être portés à la connaissance des autorités académiques, qui en décident conformément au règlement de l'institut.

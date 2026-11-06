@@ -12,7 +12,7 @@ Le code de la plateforme est conservé dans un dépôt Git hébergé sur GitHub.
 
 La qualité du code est contrôlée par des outils automatiques : un formateur impose une présentation uniforme, un analyseur statique signale les erreurs courantes, et le compilateur TypeScript, en mode strict, vérifie la cohérence des types [@typescript-handbook]. À chaque envoi de code sur GitHub, un processus d'intégration continue enchaîne ces contrôles, les tests unitaires, la préparation d'une base de données éphémère, la compilation de l'application et les tests de bout en bout dans un navigateur. Une modification qui fait échouer l'une de ces étapes est immédiatement signalée.
 
-Le schéma de la base de données a évolué en quatorze migrations successives, appliquées automatiquement lors de chaque déploiement. Une instance de démonstration, alimentée par un script qui ne s'exécute jamais sur la base de production, permet de présenter la plateforme et de former les utilisateurs sans exposer de données réelles.
+Le schéma de la base de données a évolué en quinze migrations successives, appliquées automatiquement lors de chaque déploiement. Une instance de démonstration, en ligne à l'adresse demo.isptbukavu.org, permet de présenter la plateforme et de former les utilisateurs sans exposer de données réelles : alimentée par un script qui refuse de s'exécuter sur la base de production, elle ne contient que des données fictives, remises à zéro chaque nuit, et chaque profil s'y connecte d'un clic.
 
 ## 4.2. Présentation de la plateforme
 
@@ -112,9 +112,21 @@ La valve reste le canal des annonces officielles. La plateforme y ajoute trois o
 
 La **messagerie** crée automatiquement un groupe par promotion et un groupe par cours, dont les membres sont recalculés à partir des inscriptions et des affectations ; un étudiant qui abandonne ou un enseignant retiré d'un cours n'y a plus accès. Les conversations privées suivent des règles explicites : un étudiant écrit aux membres de sa promotion, à ses enseignants et aux services de l'institut, mais pas à n'importe quel autre étudiant. Chacun peut joindre une photo, réduite avant l'envoi, ou un document PDF, mettre une conversation en sourdine, bloquer une personne ou signaler un message. L'enseignant peut réserver l'écriture de son groupe de cours aux annonces.
 
-Le **Campus** est un fil de publications ouvert à la communauté de l'institut. Chaque publication, avec ou sans photos, est destinée à tout l'institut, à une filière ou à une promotion ; on peut y réagir, la commenter, y répondre, la partager, l'enregistrer et y mentionner une personne. Avant sa première publication, chaque utilisateur accepte des règles de conduite, proposées ici et à faire valider par l'institut. Un contenu signalé par trois personnes est masqué en attendant l'examen de la modération, et l'institut peut exiger la validation préalable des publications des étudiants. Les modérateurs ne voient que les contenus signalés, jamais le reste des conversations.
+Le **Campus** est un fil de publications ouvert à la communauté de l'institut. Chaque publication, avec ou sans photos, est destinée à tout l'institut, à une filière ou à une promotion ; on peut y réagir, la commenter, y répondre, la partager, l'enregistrer et y mentionner une personne. Avant sa première publication, chaque utilisateur accepte les règles du Campus et de la messagerie (annexe 7), proposées par ce travail et modifiables par l'institut ; elles restent consultables à tout moment depuis les deux espaces. Un contenu signalé par trois personnes est masqué en attendant l'examen de la modération, et l'institut peut exiger la validation préalable des publications des étudiants. Les modérateurs ne voient que les contenus signalés, jamais le reste des conversations. La figure 4.13 montre le fil du Campus sur ordinateur ; la figure 4.14 présente la messagerie et le Campus sur téléphone.
 
-Enfin, chaque utilisateur peut recevoir les **notifications sur son téléphone**, même lorsque le site est fermé : nouvelles notes, résultats, communiqués, messages et mentions. Ce réglage se fait appareil par appareil ; il est coupé à la déconnexion, ce qui protège les appareils partagés. Sur téléphone, une barre de navigation en bas de l'écran donne accès aux rubriques principales d'un seul geste. La page « Mon compte » permet de changer son mot de passe et de déconnecter les autres appareils, et la page « Mes données » remet à chaque utilisateur, sur demande, l'ensemble des données qui le concernent, conformément au droit d'accès prévu par le Code du numérique [@code-numerique2023].
+![Figure 4.13 : Fil du Campus dans l'espace étudiant](figures/ch4-campus.jpg){largeur=15.5}
+
+::source Plateforme ISPT-Bukavu, données fictives.
+
+![Figure 4.14 : Messagerie et Campus sur téléphone : conversations, groupe de la promotion et fil du Campus](figures/ch4-messagerie-mobile.jpg){largeur=15.5}
+
+::source Plateforme ISPT-Bukavu, données fictives, captures sur un écran de 390 pixels de large.
+
+Enfin, chaque utilisateur peut recevoir les **notifications sur son téléphone**, même lorsque le site est fermé : nouvelles notes, résultats, communiqués, messages et mentions. Ce réglage se fait appareil par appareil ; il est coupé à la déconnexion, ce qui protège les appareils partagés. Sur téléphone, une barre de navigation en bas de l'écran donne accès aux rubriques principales d'un seul geste. La page « Mon compte » (figure 4.15) permet d'ajouter une photo de profil, visible des seuls membres connectés de l'institut, de changer son mot de passe et de déconnecter les autres appareils ; elle remet aussi à chaque utilisateur, sur demande, l'ensemble des données qui le concernent, conformément au droit d'accès prévu par le Code du numérique [@code-numerique2023].
+
+![Figure 4.15 : Page « Mon compte » d'une étudiante](figures/ch4-compte.jpg){largeur=15.5}
+
+::source Plateforme ISPT-Bukavu, données fictives.
 
 ## 4.3. Tests et validation
 
@@ -125,8 +137,8 @@ Un logiciel n'est jamais prouvé correct par des tests ; les tests ont pour but 
 ::tableau Tableau 4.1 : Stratégie de test
 | Niveau | Outil | Objet | Volume |
 |---|---|---|---|
-| Tests unitaires | Vitest | Règles métier : moyennes, délibérations, soldes, transitions d'état, conflits d'examens, droits de la messagerie et du Campus, sécurité des mots de passe et des redirections | 198 tests, 23 fichiers |
-| Tests de bout en bout | Playwright | Parcours complets dans un vrai navigateur et tentatives d'accès interdites entre rôles | 115 tests, 13 fichiers |
+| Tests unitaires | Vitest | Règles métier : moyennes, délibérations, soldes, transitions d'état, conflits d'examens, droits de la messagerie et du Campus, sécurité des mots de passe et des redirections | 201 tests, 23 fichiers |
+| Tests de bout en bout | Playwright | Parcours complets dans un vrai navigateur et tentatives d'accès interdites entre rôles | 116 tests, 13 fichiers |
 | Accessibilité | axe-core | Règles WCAG 2.2 niveau AA, sur ordinateur et sur téléphone | Inclus dans les tests de bout en bout |
 | Performance | Lighthouse et mesures du navigateur | Poids des pages et temps d'affichage en réseau mobile lent simulé | 7 pages publiques |
 
@@ -136,7 +148,7 @@ Tous ces tests, à l'exception des mesures de performance, s'exécutent automati
 
 ### 4.3.2. Tests unitaires
 
-Les règles métier ont été isolées dans des fonctions sans accès à la base de données, ce qui permet de les tester rapidement et de manière reproductible [@vitest-docs]. Les 198 tests unitaires réussissent. Ils vérifient notamment :
+Les règles métier ont été isolées dans des fonctions sans accès à la base de données, ce qui permet de les tester rapidement et de manière reproductible [@vitest-docs]. Les 201 tests unitaires réussissent. Ils vérifient notamment :
 
 - le calcul de la moyenne pondérée d'un cours à partir de ses évaluations publiées, et l'arrondi au demi-point ;
 - le moteur de délibération, testé sur les notes réelles d'une promotion, préalablement anonymisées : il reproduit les seize décisions prises par le jury ;
@@ -149,7 +161,7 @@ Les règles métier ont été isolées dans des fonctions sans accès à la base
 
 ### 4.3.3. Tests de bout en bout et contrôle des accès
 
-Les tests de bout en bout pilotent un navigateur réel sur la version compilée de l'application, connectée à une base de test dédiée [@playwright-docs]. Les 115 tests réussissent. Ils rejouent les parcours critiques (dépôt et instruction d'une candidature, circuit des notes, délibération et proclamation, planification des examens, devoirs et présences, notifications, messagerie, Campus, exports et gestion du compte) et tentent délibérément des accès interdits, par exemple :
+Les tests de bout en bout pilotent un navigateur réel sur la version compilée de l'application, connectée à une base de test dédiée [@playwright-docs]. Les 116 tests réussissent. Ils rejouent les parcours critiques (dépôt et instruction d'une candidature, circuit des notes, délibération et proclamation, planification des examens, devoirs et présences, notifications, messagerie, Campus, exports et gestion du compte) et tentent délibérément des accès interdits, par exemple :
 
 - un étudiant qui tente d'ouvrir le reçu, le relevé ou le bulletin d'un autre étudiant ;
 - un enseignant qui tente de saisir des notes dans un cours qui ne lui est pas confié ;
@@ -198,7 +210,7 @@ Ce choix d'hébergement a été accepté par l'institut, faute d'offre professio
 
 ### 4.4.2. Nom de domaine et messagerie
 
-La plateforme est accessible à l'adresse www.isptbukavu.org, en HTTPS. Les courriers électroniques automatiques (confirmation d'adresse, réinitialisation du mot de passe, décisions d'admission, matricule de l'admis) sont envoyés depuis ce domaine par le service Resend, après vérification du domaine par les enregistrements DNS requis. En l'absence de configuration, les messages sont seulement consignés dans le journal du serveur, ce qui évite toute panne de l'application.
+La plateforme est accessible à l'adresse www.isptbukavu.org, uniquement en HTTPS. Le domaine a été proposé à l'inscription sur la liste de préchargement HSTS des navigateurs, qui leur impose d'utiliser une connexion chiffrée dès la toute première visite ; la demande, acceptée le 6 novembre 2026, sera prise en compte au fil des mises à jour des navigateurs. Les courriers électroniques automatiques (confirmation d'adresse, réinitialisation du mot de passe, décisions d'admission, matricule de l'admis) sont envoyés depuis ce domaine par le service Resend, après vérification du domaine par les enregistrements DNS requis. En l'absence de configuration, les messages sont seulement consignés dans le journal du serveur, ce qui évite toute panne de l'application.
 
 ### 4.4.3. Sauvegardes et restauration
 
@@ -238,7 +250,7 @@ Le tableau 4.4 confronte les résultats aux trois hypothèses formulées en intr
 | Hypothèse | Résultats | Conclusion |
 |---|---|---|
 | 1. Une application web progressive, légère et consultable hors connexion, convient au contexte de Bukavu | Premières visites de 320 à 602 Ko ; visites suivantes de 7 à 18 Ko ; contenu principal affiché en moins de 3 s en réseau mobile lent simulé ; pages personnelles lisibles hors connexion ; installation sans magasin d'applications | Vérifiée en conditions simulées ; à confirmer sur le réseau d'un opérateur local, avec de vrais téléphones |
-| 2. Une plateforme unique, organisée autour de la valve et de circuits de validation, couvre les processus de l'institut avec des droits vérifiés côté serveur | Admissions, valve, horaires, notes, délibérations, examens, frais, documents et stages réunis dans un même outil ; 198 tests unitaires et 115 tests de bout en bout réussis, dont des tentatives d'accès interdites ; deux revues de sécurité, constats corrigés | Vérifiée sur le plan technique ; l'adoption par les usagers reste à évaluer après la mise en service |
+| 2. Une plateforme unique, organisée autour de la valve et de circuits de validation, couvre les processus de l'institut avec des droits vérifiés côté serveur | Admissions, valve, horaires, notes, délibérations, examens, frais, documents et stages réunis dans un même outil ; 201 tests unitaires et 116 tests de bout en bout réussis, dont des tentatives d'accès interdites ; deux revues de sécurité, constats corrigés | Vérifiée sur le plan technique ; l'adoption par les usagers reste à évaluer après la mise en service |
 | 3. Une architecture portable, complémentaire de la plateforme ministérielle, respecte le cadre réglementaire | Base PostgreSQL standard et stockage d'objets remplaçable ; sauvegarde restaurée sans perte dans une base neuve ; exports en tableur du registre des inscriptions, des effectifs, des notes et des résultats proclamés | Partiellement vérifiée : la portabilité est démontrée, mais les exports au format attendu par la plateforme ministérielle et l'hébergement en RDC restent à réaliser |
 
 ::source Production personnelle.
@@ -250,7 +262,7 @@ Ce travail présente plusieurs limites, qu'il convient d'énoncer clairement :
 - **l'absence d'évaluation par les usagers** : le questionnaire préparé n'a pas pu être administré dans le temps du travail ; la satisfaction des étudiants, des enseignants et du personnel reste à mesurer après la mise en service ;
 - **des mesures de performance simulées** : elles ont été réalisées depuis un serveur, et non depuis un téléphone connecté au réseau d'un opérateur de Bukavu ;
 - **l'hébergement hors de la RDC**, accepté par l'institut mais contraire au principe posé par le Code du numérique, en l'absence d'autorisation de l'autorité de protection des données ;
-- **les données officielles en attente** : les montants des frais, le programme officiel des cours, les règles d'évaluation fixées par l'arrêté en vigueur et les textes juridiques de la plateforme doivent être fournis par l'institut ; les règles de délibération reprennent la pratique observée dans un classeur de bulletins, en attendant leur confirmation ;
+- **les données officielles en attente** : les montants des frais, le programme officiel des cours, les règles d'évaluation fixées par l'arrêté en vigueur doivent être fournis par l'institut, et les textes juridiques proposés (mentions légales, politique de confidentialité, règles du Campus) doivent être validés par lui ; les règles de délibération reprennent la pratique observée dans un classeur de bulletins, en attendant leur confirmation ;
 - **l'interopérabilité avec la plateforme ministérielle**, limitée à des exports tabulaires, sans échange automatique ;
 - **le paiement par monnaie mobile**, non intégré : les paiements sont enregistrés par la caisse ;
 - **les règles de la communauté** (règles de conduite du Campus, droits d'écriture de la messagerie, choix des modérateurs), proposées par la plateforme mais à faire valider par l'institut ;
