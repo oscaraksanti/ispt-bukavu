@@ -107,13 +107,13 @@ test.describe("documents et textes à compléter", () => {
     await expect(page.getByText("Les paramètres des documents sont enregistrés.")).toBeVisible();
   });
 
-  test("les textes juridiques non fournis sont annoncés comme en cours de validation", async ({
-    page,
-  }) => {
-    for (const chemin of ["/mentions-legales", "/confidentialite"]) {
-      await page.goto(chemin);
-      await expect(page.getByText(/en cours de validation par l'institut/)).toBeVisible();
-    }
+  test("les textes juridiques proposés sont publiés et datés", async ({ page }) => {
+    await page.goto("/mentions-legales");
+    await expect(page.getByRole("heading", { name: "Directeur de la publication" })).toBeVisible();
+    await expect(page.getByText(/6 novembre 2026/)).toBeVisible();
+    await page.goto("/confidentialite");
+    await expect(page.getByRole("heading", { name: "Responsable du traitement" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Vos droits" })).toBeVisible();
   });
 });
 
