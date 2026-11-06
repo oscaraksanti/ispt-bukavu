@@ -120,3 +120,46 @@ test("la déconnexion supprime l'abonnement aux notifications de l'appareil", as
     await contexte.close();
   }
 });
+
+test("photo de profil : ajout, affichage, visibilité réservée aux membres", async ({
+  browser,
+  request,
+}) => {
+  const sharp = (await import("sharp")).default;
+  const image = await sharp({
+    create: { width: 600, height: 400, channels: 3, background: { r: 40, g: 56, b: 144 } },
+  })
+    .jpeg()
+    .toBuffer();
+  const a = await (await browser.newContext()).newPage();
+  await seConnecter(a, D.comptes.etudiantA);
+  await a.goto("/etudiant/compte");
+  await a.waitForLoadState("networkidle");
+  await a.locator("#photo-profil").setInputFiles({
+    name: "portrait.jpg",
+    mimeType: "image/jpeg",
+    buffer: image,
+  });
+  await expect(a.getByText("Photo de profil enregistrée.")).toBeVisible();
+  // La photo remplace l'icône dans l'en-tête de l'espace.
+  const img = a.locator('header img[src^="/profils/photo/"]');
+  await expect(img).toBeVisible();
+  const adresse = (await img.getAttribute("src"))!;
+  expect((await a.request.get(adresse)).status()).toBe(200);
+
+  // Un autre étudiant la voit ; un visiteur non connecté, non.
+  const b = await (await browser.newContext()).newPage();
+  await seConnecter(b, D.comptes.etudiantB);
+  const vue = await b.request.get(adresse);
+  expect(vue.status()).toBe(200);
+  expect(vue.headers()["content-type"]).toBe("image/webp");
+  expect((await request.get(adresse)).status()).toBe(404);
+
+  // Retrait : l'icône revient, l'adresse ne sert plus rien.
+  await a.goto("/etudiant/compte");
+  await a.waitForLoadState("networkidle");
+  await a.getByRole("button", { name: "Retirer la photo" }).click();
+  await a.getByRole("button", { name: "Confirmer" }).click();
+  await expect(a.locator('header img[src^="/profils/photo/"]')).toHaveCount(0);
+  expect((await b.request.get(adresse)).status()).toBe(404);
+});

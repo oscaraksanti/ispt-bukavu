@@ -20,6 +20,7 @@ import {
 import { ilYA, LIBELLES_AUDIENCE } from "@/features/campus/regles";
 import { exigerMessagerie } from "@/features/messagerie/acces";
 import { db } from "@/lib/db";
+import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/cn";
 import { Compositeur } from "./compositeur";
 import {
@@ -85,19 +86,13 @@ function Commentaires({
   const maintenant = new Date();
   const bulle = (c: CarteCommentaire | CarteCommentaire["reponses"][number], racine: boolean) => (
     <div key={c.id} className="flex gap-2">
-      <span
-        aria-hidden
-        className={cn(
-          "flex shrink-0 items-center justify-center rounded-full bg-pierre-100 font-mono text-pierre-600",
-          racine ? "size-8 text-legende" : "size-6 text-[0.625rem]",
-        )}
-      >
-        {c.auteur
-          .split(" ")
-          .slice(0, 2)
-          .map((x) => x[0]?.toUpperCase())
-          .join("")}
-      </span>
+      <Avatar
+        id={c.auteurId ?? ""}
+        nom={c.auteur}
+        photo={c.auteurPhoto}
+        taille={racine ? 32 : 24}
+        className={cn("bg-pierre-100 text-pierre-600", racine ? "text-legende" : "text-[0.625rem]")}
+      />
       <div className="min-w-0 flex-1">
         <div
           className={cn(
@@ -200,12 +195,7 @@ function Carte({
           </p>
         )}
         <header className="flex items-start gap-3">
-          <span
-            aria-hidden
-            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ispt-50 font-mono text-xs text-ispt-700"
-          >
-            {p.initiales}
-          </span>
+          <Avatar id={p.auteurId ?? ""} nom={p.auteur} photo={p.auteurPhoto} taille={40} />
           <div className="min-w-0 flex-1">
             <h2 id={`pub-${p.id}`} className="truncate font-sans text-sm font-semibold text-encre">
               {p.auteur}
@@ -335,11 +325,6 @@ export async function EcranCampus({
     fil(l, filtre, avant ?? undefined),
   ]);
   const commentaires = await Promise.all(publications.map((p) => commentairesDe(p.id, l, 2)));
-  const initiales = u.nomComplet
-    .split(" ")
-    .slice(0, 2)
-    .map((x) => x[0]?.toUpperCase())
-    .join("");
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -380,7 +365,7 @@ export async function EcranCampus({
       <div className="mt-5">
         {compte?.reglesCampusLe ? (
           <Compositeur
-            initiales={initiales}
+            auteur={{ id: u.id, nom: u.nomComplet, photo: u.photo }}
             filieres={choix.filieres}
             promotions={choix.promotions}
             validationPrealable={

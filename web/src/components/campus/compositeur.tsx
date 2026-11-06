@@ -7,18 +7,19 @@ import { publier } from "@/features/campus/actions";
 import { PHOTOS_MAX } from "@/features/campus/regles";
 import { ETAT_INITIAL } from "@/lib/etat-formulaire";
 import { reduireImage } from "@/lib/reduire-image";
+import { Avatar } from "@/components/ui/avatar";
 import { ChampMentions } from "./champ-mentions";
 
 type Choix = { id: string; libelle: string };
 
 /** Formulaire de publication : texte, public visé, jusqu'à quatre photos. */
 export function Compositeur({
-  initiales,
+  auteur,
   filieres,
   promotions,
   validationPrealable,
 }: {
-  initiales: string;
+  auteur: { id: string; nom: string; photo: Date | null };
   filieres: Choix[];
   promotions: Choix[];
   validationPrealable: boolean;
@@ -70,12 +71,7 @@ export function Compositeur({
       className="rounded-md border border-pierre-200 bg-white p-4"
     >
       <div className="flex gap-3">
-        <span
-          aria-hidden
-          className="flex size-10 shrink-0 items-center justify-center rounded-full bg-ispt-50 font-mono text-xs text-ispt-700"
-        >
-          {initiales}
-        </span>
+        <Avatar id={auteur.id} nom={auteur.nom} photo={auteur.photo} taille={40} />
         <div className="min-w-0 flex-1">
           <ChampMentions
             id="publication-contenu"

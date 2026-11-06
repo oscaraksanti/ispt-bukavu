@@ -36,7 +36,9 @@ export async function listeConversations(profil: ProfilComplet) {
           participants: {
             where: { utilisateurId: { not: profil.id } },
             take: 1,
-            include: { utilisateur: { select: { prenom: true, nom: true } } },
+            include: {
+              utilisateur: { select: { id: true, prenom: true, nom: true, photoMajLe: true } },
+            },
           },
           messages: {
             orderBy: { creeLe: "desc" },
@@ -74,6 +76,7 @@ export async function listeConversations(profil: ProfilComplet) {
           .slice(0, 2)
           .map((x) => x[0]?.toUpperCase())
           .join(""),
+        autre: c.type === "PRIVEE" && autre ? { id: autre.id, photo: autre.photoMajLe } : null,
         sourdine: p.sourdine,
         nonLus: nonLus[i],
         dernierLe: dernier?.creeLe ?? null,

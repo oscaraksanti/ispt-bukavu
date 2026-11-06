@@ -55,6 +55,7 @@ const INCLURE = (moi: string) =>
         id: true,
         prenom: true,
         nom: true,
+        photoMajLe: true,
         roles: { select: { role: { select: { code: true, libelle: true } } } },
         profilEtudiant: {
           select: {
@@ -115,12 +116,8 @@ function versCarte(p: PublicationBrute, l: Lecteur, noms: Map<string, string>) {
     id: p.id,
     auteurId: p.auteurId,
     auteur: nom(p.auteur),
+    auteurPhoto: p.auteur?.photoMajLe ?? null,
     qualite: qualiteAuteur(p.auteur),
-    initiales: nom(p.auteur)
-      .split(" ")
-      .slice(0, 2)
-      .map((x) => x[0]?.toUpperCase())
-      .join(""),
     moi: p.auteurId === l.id,
     contenu: p.contenu,
     audience: p.audience,
@@ -224,7 +221,7 @@ export async function commentairesDe(publicationId: string, l: Lecteur, limite?:
       publicationId,
       OR: [{ masqueLe: null }, ...(l.moderateur ? [{}] : [{ auteurId: l.id }])],
     },
-    include: { auteur: { select: { prenom: true, nom: true } } },
+    include: { auteur: { select: { prenom: true, nom: true, photoMajLe: true } } },
     orderBy: { creeLe: "asc" },
   });
   const noms = await nomsMentionnes(liste.flatMap((c) => c.mentions));
@@ -233,6 +230,7 @@ export async function commentairesDe(publicationId: string, l: Lecteur, limite?:
     parentId: c.parentId,
     auteurId: c.auteurId,
     auteur: nom(c.auteur),
+    auteurPhoto: c.auteur?.photoMajLe ?? null,
     moi: c.auteurId === l.id,
     contenu: c.supprimeLe ? "" : c.contenu,
     supprime: !!c.supprimeLe,

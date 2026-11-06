@@ -8,6 +8,7 @@ import { Signature } from "@/components/marque/blason";
 import { seDeconnecter } from "@/features/auth/actions";
 import { IconeMessages } from "@/components/messagerie/icone-messages";
 import { Cloche } from "@/components/notifications/cloche";
+import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/cn";
 import { ICONES } from "./icones";
 import type { GroupeNavigation } from "./navigation";
@@ -66,25 +67,28 @@ function Liens({ groupes, surClic }: { groupes: GroupeNavigation[]; surClic?: ()
   );
 }
 
-function Pied({ nom, email }: { nom: string; email: string }) {
-  const initiales = nom
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((m) => m[0]?.toUpperCase())
-    .join("");
+function Pied({
+  nom,
+  email,
+  avatar,
+}: {
+  nom: string;
+  email: string;
+  avatar?: { id: string; photo: Date | null };
+}) {
   return (
     <div className="border-t border-white/10 pt-4">
       <Link
         href="/admin/compte"
         className="-mx-2 flex items-center gap-3 rounded-xs px-2 py-1.5 hover:bg-white/5"
       >
-        <span
-          aria-hidden
-          className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/10 font-mono text-xs text-white"
-        >
-          {initiales}
-        </span>
+        <Avatar
+          id={avatar?.id ?? ""}
+          nom={nom}
+          photo={avatar?.photo}
+          taille={36}
+          className="bg-white/10 text-white"
+        />
         <span className="min-w-0">
           <span className="sr-only">Mon compte, </span>
           <span className="block truncate text-sm text-white">{nom}</span>
@@ -117,12 +121,14 @@ export function BarreLaterale({
   groupes,
   nom,
   email,
+  avatar,
   notifications,
   messages,
 }: {
   groupes: GroupeNavigation[];
   nom: string;
   email: string;
+  avatar?: { id: string; photo: Date | null };
   notifications: number;
   messages: number;
 }) {
@@ -146,7 +152,7 @@ export function BarreLaterale({
         <div className="-mx-1 mt-6 flex-1 [scrollbar-width:thin] [scrollbar-color:rgb(255_255_255/0.18)_transparent] overflow-y-auto px-1 pb-4">
           <Liens groupes={groupes} />
         </div>
-        <Pied nom={nom} email={email} />
+        <Pied nom={nom} email={email} avatar={avatar} />
       </aside>
 
       <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-white/10 bg-encre px-4 lg:hidden">
@@ -190,7 +196,7 @@ export function BarreLaterale({
           <div className="mt-6 flex-1 [scrollbar-width:thin] [scrollbar-color:rgb(255_255_255/0.18)_transparent] overflow-y-auto">
             <Liens groupes={groupes} surClic={fermer} />
           </div>
-          <Pied nom={nom} email={email} />
+          <Pied nom={nom} email={email} avatar={avatar} />
         </div>
       </dialog>
 

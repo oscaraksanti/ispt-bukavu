@@ -21,6 +21,7 @@ import {
 } from "@/features/messagerie/requetes";
 import { peutPublier, quandCourt } from "@/features/messagerie/regles";
 import { db } from "@/lib/db";
+import { Avatar } from "@/components/ui/avatar";
 import { cn } from "@/lib/cn";
 import { FilConversation } from "./fil-conversation";
 
@@ -92,15 +93,19 @@ function Liste({
                   c.id === actif && "bg-ispt-50 hover:bg-ispt-50",
                 )}
               >
-                <span
-                  aria-hidden
-                  className={cn(
-                    "flex size-10 shrink-0 items-center justify-center rounded-full font-mono text-xs",
-                    c.type === "PRIVEE" ? "bg-pierre-100 text-pierre-700" : "bg-encre text-white",
-                  )}
-                >
-                  {c.type === "PRIVEE" ? c.initiales : <UsersRound className="size-4" />}
-                </span>
+                {c.autre?.photo ? (
+                  <Avatar id={c.autre.id} nom={c.titre} photo={c.autre.photo} taille={40} />
+                ) : (
+                  <span
+                    aria-hidden
+                    className={cn(
+                      "flex size-10 shrink-0 items-center justify-center rounded-full font-mono text-xs",
+                      c.type === "PRIVEE" ? "bg-pierre-100 text-pierre-700" : "bg-encre text-white",
+                    )}
+                  >
+                    {c.type === "PRIVEE" ? c.initiales : <UsersRound className="size-4" />}
+                  </span>
+                )}
                 <span className="min-w-0 flex-1">
                   <span className="flex items-baseline justify-between gap-2">
                     <span

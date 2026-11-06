@@ -6,6 +6,7 @@ import { seDeconnecter } from "@/features/auth/actions";
 import { IconeMessages } from "@/components/messagerie/icone-messages";
 import { Cloche } from "@/components/notifications/cloche";
 import { BandeauHorsLigne } from "@/components/pwa/bandeau-hors-ligne";
+import { Avatar } from "@/components/ui/avatar";
 import { LienEvitement } from "@/components/ui/elements";
 import { BarreMobile } from "./barre-mobile";
 import { NavigationEspace } from "./navigation-espace";
@@ -20,8 +21,11 @@ export function CadreEspace({
   messages,
   aide,
   compte,
+  avatar,
   children,
 }: {
+  /** Compte connecté : photo de profil (ou initiales) dans l'en-tête. */
+  avatar?: { id: string; photo: Date | null };
   /** Page « Mon compte » de l'espace. */
   compte: string;
   /** Guide d'utilisation de l'espace. */
@@ -55,14 +59,18 @@ export function CadreEspace({
             ))}
             <Link
               href={compte}
-              className="inline-flex size-10 items-center justify-center rounded-xs text-pierre-700 hover:bg-pierre-100 lg:size-auto lg:max-w-56 lg:px-2 lg:py-1 lg:text-right"
+              className="inline-flex size-10 items-center justify-center gap-3 rounded-xs text-pierre-700 hover:bg-pierre-100 lg:size-auto lg:max-w-72 lg:px-2 lg:py-1 lg:text-right"
             >
               <span className="sr-only">Mon compte, </span>
               <span className="hidden min-w-0 lg:block">
                 <span className="block truncate text-sm font-medium text-encre">{nom}</span>
                 <span className="block truncate text-xs text-pierre-500">{sousTitre}</span>
               </span>
-              <CircleUserRound aria-hidden className="size-5 lg:hidden" />
+              {avatar?.photo ? (
+                <Avatar id={avatar.id} nom={nom} photo={avatar.photo} taille={32} />
+              ) : (
+                <CircleUserRound aria-hidden className="size-5 lg:hidden" />
+              )}
             </Link>
             {aide && (
               <Link

@@ -14,6 +14,7 @@ export async function donneesCompte(utilisateurId: string) {
         telephone: true,
         derniereConnexion: true,
         doitChangerMotDePasse: true,
+        photoMajLe: true,
         roles: { select: { role: { select: { libelle: true } } } },
         profilEtudiant: { select: { matricule: true } },
       },
@@ -32,6 +33,7 @@ export async function donneesCompte(utilisateurId: string) {
     roles: compte.roles.map((r) => r.role.libelle),
     derniereConnexion: compte.derniereConnexion,
     doitChangerMotDePasse: compte.doitChangerMotDePasse,
+    photo: compte.photoMajLe,
     appareils: sessions.map((s) => ({
       id: s.id,
       depuis: s.creeLe,

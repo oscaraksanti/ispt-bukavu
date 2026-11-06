@@ -19,11 +19,12 @@ export type Guide = {
 
 /** Section commune : la page « Mon compte » existe dans chaque espace. */
 const MON_COMPTE: SectionGuide = {
-  titre: "Mon compte : mot de passe et appareils",
+  titre: "Mon compte : photo, mot de passe et appareils",
   etapes: [
     "Cliquez sur votre nom (ou sur l'icône de profil sur téléphone), en haut de l'écran.",
     "« Changer de mot de passe » : saisissez l'actuel, puis deux fois le nouveau.",
     "« Appareils connectés » : vous voyez où votre compte est ouvert et pouvez déconnecter les autres appareils.",
+    "« Ajouter une photo » : votre photo de profil remplace vos initiales ; seuls les membres connectés de l'institut la voient.",
   ],
   conseil:
     "Après un changement de mot de passe, les autres appareils sont déconnectés et un email de confirmation est envoyé si une adresse est enregistrée.",

@@ -6,7 +6,7 @@
  *   « hors ligne » ;
  * - l'administration, les actions et les fichiers privés ne sont jamais mis en cache.
  */
-const VERSION = "v7";
+const VERSION = "v8";
 const STATIQUE = `ispt-statique-${VERSION}`;
 const PAGES = `ispt-pages-${VERSION}`;
 const ESPACES = "ispt-espaces";
@@ -34,6 +34,7 @@ const JAMAIS = [
   /^\/compte\//,
   /^\/messages\//,
   /^\/campus\//,
+  /^\/profils\//,
   /^\/candidat/,
   /^\/confirmer-email/,
   /^\/affiche/,

@@ -2,12 +2,18 @@ import { CircleHelp, Download, KeyRound, MonitorSmartphone, ShieldCheck } from "
 import Link from "next/link";
 import { BoutonAction } from "@/components/admin/bouton-action";
 import { NotificationsTelephone } from "@/components/compte/notifications-telephone";
+import { ChoixPhotoProfil } from "@/components/compte/photo-profil";
+import { Avatar } from "@/components/ui/avatar";
 import { Panneau } from "@/components/admin/entete-admin";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
 import { Champ, Saisie } from "@/components/ui/champs";
 import { Encadre } from "@/components/ui/elements";
 import { formatHeure, formatJour } from "@/features/actualites/dates";
-import { changerMotDePasse, deconnecterAutresAppareils } from "@/features/compte/actions";
+import {
+  changerMotDePasse,
+  deconnecterAutresAppareils,
+  retirerPhotoProfil,
+} from "@/features/compte/actions";
 import { donneesCompte } from "@/features/compte/requetes";
 
 const quand = (d: Date) => `${formatJour.format(d)} à ${formatHeure.format(d)}`;
@@ -46,6 +52,24 @@ export async function MonCompte({
       )}
       <div className="grid gap-6 lg:grid-cols-5">
         <Panneau titre="Identité" className="lg:col-span-2">
+          <div className="mb-5 flex items-center gap-4 border-b border-pierre-100 pb-5">
+            <Avatar id={utilisateurId} nom={nomComplet} photo={c.photo} taille={72} />
+            <div className="min-w-0 space-y-2">
+              <ChoixPhotoProfil aUnePhoto={!!c.photo} />
+              {c.photo && (
+                <BoutonAction
+                  action={retirerPhotoProfil}
+                  variante="fantome"
+                  confirmation="Retirer votre photo de profil ?"
+                >
+                  Retirer la photo
+                </BoutonAction>
+              )}
+              <p className="text-detail text-pierre-500">
+                Visible des seuls membres connectés de l&apos;institut.
+              </p>
+            </div>
+          </div>
           <dl className="divide-y divide-pierre-100 text-sm">
             {identite.map(([k, v]) => (
               <div key={k} className="py-2.5 first:pt-0 last:pb-0">

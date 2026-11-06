@@ -33,3 +33,28 @@ describe("purge", () => {
     expect(CONSERVATION_JOURS.notificationsLues).toBe(365);
   });
 });
+
+describe("photo de profil", () => {
+  it("n'accepte que des photos légères aux formats courants", async () => {
+    const { verifierPhotoProfil } = await import("@/features/compte/regles");
+    expect(verifierPhotoProfil({ type: "image/jpeg", size: 200_000 })).toBeNull();
+    expect(verifierPhotoProfil({ type: "image/webp", size: 1 })).toBeNull();
+    expect(verifierPhotoProfil(null)).toMatch(/Choisissez/);
+    expect(verifierPhotoProfil({ type: "image/gif", size: 1000 })).toMatch(/Formats/);
+    expect(verifierPhotoProfil({ type: "image/svg+xml", size: 1000 })).toMatch(/Formats/);
+    expect(verifierPhotoProfil({ type: "image/png", size: 5 * 1024 * 1024 })).toMatch(/lourde/);
+  });
+  it("n'est visible que des membres connectés (un candidat ne voit que la sienne)", async () => {
+    const { peutVoirPhoto } = await import("@/features/compte/regles");
+    expect(peutVoirPhoto(null, "a")).toBe(false);
+    expect(peutVoirPhoto({ id: "a", roles: ["candidat"] }, "a")).toBe(true);
+    expect(peutVoirPhoto({ id: "a", roles: ["candidat"] }, "b")).toBe(false);
+    expect(peutVoirPhoto({ id: "a", roles: ["etudiant"] }, "b")).toBe(true);
+    expect(peutVoirPhoto({ id: "a", roles: ["enseignant"] }, "b")).toBe(true);
+  });
+  it("affiche deux initiales à défaut de photo", async () => {
+    const { initialesDe } = await import("@/features/compte/regles");
+    expect(initialesDe("Grâce Bahati Mukengere")).toBe("GB");
+    expect(initialesDe("  ")).toBe("?");
+  });
+});

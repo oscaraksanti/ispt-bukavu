@@ -15,6 +15,8 @@ export type UtilisateurConnecte = {
   permissions: Set<string>;
   estPersonnel: boolean;
   doitChangerMotDePasse: boolean;
+  /** Date de mise à jour de la photo de profil (null : pas de photo). */
+  photo: Date | null;
 };
 
 /**
@@ -43,6 +45,7 @@ export const utilisateurConnecte = cache(async (): Promise<UtilisateurConnecte |
     permissions,
     estPersonnel: roles.some((r) => ROLES_PERSONNEL.includes(r)),
     doitChangerMotDePasse: u.doitChangerMotDePasse,
+    photo: u.photoMajLe,
   };
 });
 

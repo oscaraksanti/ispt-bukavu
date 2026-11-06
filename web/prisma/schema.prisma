@@ -33,6 +33,9 @@ model Utilisateur {
   emailVerifieLe        DateTime?
   doitChangerMotDePasse Boolean      @default(false)
   derniereConnexion     DateTime?
+  /// Photo de profil : clé dans le stockage privé (visible des seuls membres connectés).
+  photoCle              String?
+  photoMajLe            DateTime?
   creeLe                DateTime     @default(now())
   majLe                 DateTime     @updatedAt
 

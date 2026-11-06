@@ -19,6 +19,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
   const promotion = profil.inscriptions[0]?.promotion;
   return (
     <CadreEspace
+      avatar={{ id: u.id, photo: u.photo }}
       compte="/etudiant/compte"
       aide="/aide/etudiant"
       nom={u.nomComplet}

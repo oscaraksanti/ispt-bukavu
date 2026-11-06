@@ -27,6 +27,7 @@ async function Cadre({ children }: { children: React.ReactNode }) {
         groupes={groupes}
         nom={u.nomComplet}
         email={u.email ?? ""}
+        avatar={{ id: u.id, photo: u.photo }}
         notifications={await compterNonLues(u.id)}
         messages={await compterConversationsNonLues(u.id)}
       />
