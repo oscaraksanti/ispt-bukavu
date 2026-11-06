@@ -24,6 +24,7 @@
     "@prisma/client": "7.10.1",
     "@sentry/browser": "11.11.0",
     "@sentry/nextjs": "11.11.0",
+    "@vercel/blob": "2.8.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.67.0",
@@ -61,5 +62,10 @@
   },
   "engines": {
     "node": ">=22"
+  },
+  "overrides": {
+    "@vercel/cli-config": {
+      "zod": "$zod"
+    }
   }
 }

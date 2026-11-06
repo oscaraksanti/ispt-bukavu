@@ -7,6 +7,8 @@ import path from "node:path";
  *
  * - Supabase Storage (compatible S3) en production, si SUPABASE_URL et
  *   SUPABASE_SERVICE_ROLE_KEY sont définis ;
+ * - Vercel Blob en accès privé, si un magasin Blob est relié au projet
+ *   (BLOB_READ_WRITE_TOKEN) : instance de démonstration ;
  * - disque local sinon (développement).
  *
  * Les fichiers sont désignés par une clé opaque ; l'application les sert via
@@ -67,10 +69,40 @@ function stockageSupabase(url: string, cleService: string, bucket: string): Stoc
   };
 }
 
+/**
+ * Vercel Blob, en accès privé : un fichier n'est lisible qu'avec le jeton du
+ * serveur, et l'application le sert toujours par ses routes contrôlées.
+ */
+const stockageBlob: Stockage = {
+  async enregistrer(cle, contenu, typeMime) {
+    const { put } = await import("@vercel/blob");
+    await put(cle, contenu, {
+      access: "private",
+      contentType: typeMime,
+      addRandomSuffix: false,
+      allowOverwrite: true,
+    });
+  },
+  async lire(cle) {
+    const { get } = await import("@vercel/blob");
+    const r = await get(cle, { access: "private" }).catch(() => null);
+    if (!r || r.statusCode !== 200) return null;
+    return {
+      contenu: Buffer.from(await new Response(r.stream).arrayBuffer()),
+      typeMime: r.blob.contentType || typeMimeDepuisCle(cle),
+    };
+  },
+  async supprimer(cle) {
+    const { del } = await import("@vercel/blob");
+    await del(cle).catch(() => undefined);
+  },
+};
+
 export function stockage(): Stockage {
   const url = process.env.SUPABASE_URL;
   const cle = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (url && cle) return stockageSupabase(url, cle, process.env.STOCKAGE_BUCKET ?? "medias");
+  if (process.env.BLOB_READ_WRITE_TOKEN) return stockageBlob;
   return stockageLocal;
 }
 
