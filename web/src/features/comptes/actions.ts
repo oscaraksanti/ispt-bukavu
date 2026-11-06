@@ -2,8 +2,12 @@
 
 import { refresh } from "next/cache";
 import { z } from "zod";
-import { exigerPermission } from "@/features/auth/acces";
-import { DUREE_JETON_INVITATION_MS, normaliserEmail } from "@/features/auth/regles";
+import { exigerConnexion, exigerPermission } from "@/features/auth/acces";
+import {
+  DUREE_JETON_INVITATION_MS,
+  normaliserEmail,
+  normaliserMatricule,
+} from "@/features/auth/regles";
 import { db } from "@/lib/db";
 import { envoyerEmail, urlSite } from "@/lib/email";
 import { echec, type EtatFormulaire, succes } from "@/lib/etat-formulaire";
@@ -12,7 +16,7 @@ import { PERMISSIONS, ROLES_PERSONNEL } from "@/lib/permissions";
 import { empreinte, jetonAleatoire } from "@/lib/securite";
 import { rolesAttribuablesPar } from "./catalogue";
 import { type LignePersonnel, lireListePersonnel } from "./import";
-import { compteModifiable } from "./regles";
+import { compteModifiable, verifierIdentite } from "./regles";
 
 /** Crée un lien d'invitation à usage unique et l'envoie par email. */
 async function emettreInvitation(utilisateur: {
@@ -398,4 +402,111 @@ export async function modifierPermissionsRole(
   });
   refresh();
   return succes(`Permissions du rôle « ${role.libelle} » enregistrées.`);
+}
+
+/**
+ * Correction de l'identité d'un compte (droit de rectification) : nom,
+ * post-nom, prénom, adresse électronique, téléphone, et pour un étudiant son
+ * matricule et son sexe. Un compte étudiant se corrige avec la permission
+ * « Gérer les étudiants », un compte du personnel avec « Gérer les comptes »
+ * (et seulement s'il est modifiable par l'auteur). Journalisé avant / après.
+ */
+export async function corrigerIdentite(
+  id: string,
+  _e: EtatFormulaire,
+  fd: FormData,
+): Promise<EtatFormulaire> {
+  const auteur = await exigerConnexion("/connexion");
+  const cible = await db.utilisateur.findUnique({
+    where: { id },
+    include: { roles: { include: { role: true } }, profilEtudiant: true },
+  });
+  if (!cible) return echec("Ce compte n'existe plus.");
+  const roles = cible.roles.map((r) => r.role.code);
+  const etudiant = !!cible.profilEtudiant && roles.every((r) => r === "etudiant");
+  if (etudiant) {
+    if (!auteur.permissions.has("etudiants.gerer")) return echec("Action non autorisée.");
+  } else {
+    if (!auteur.permissions.has("utilisateurs.gerer")) return echec("Action non autorisée.");
+    const permis = await rolesAttribuablesPar(auteur);
+    if (!compteModifiable(auteur, { id, roles }, permis))
+      return echec(
+        "Ce compte ne peut être corrigé que par un gestionnaire disposant de ses rôles.",
+      );
+  }
+  const texte = (k: string) => String(fd.get(k) ?? "").trim();
+  const saisie = {
+    prenom: texte("prenom"),
+    nom: texte("nom").toUpperCase(),
+    postnom: texte("postnom").toUpperCase(),
+    email: texte("email"),
+    telephone: texte("telephone"),
+    matricule: etudiant ? normaliserMatricule(texte("matricule")) : undefined,
+    sexe: etudiant ? texte("sexe") : undefined,
+  };
+  const probleme = verifierIdentite(saisie, etudiant);
+  if (probleme) return echec(probleme);
+  const email = saisie.email ? normaliserEmail(saisie.email) : null;
+  if (email && email !== cible.email) {
+    const pris = await db.utilisateur.findUnique({ where: { email }, select: { id: true } });
+    if (pris && pris.id !== id)
+      return echec("Cette adresse est déjà utilisée par un autre compte.");
+  }
+  if (etudiant && saisie.matricule !== cible.profilEtudiant!.matricule) {
+    const pris = await db.profilEtudiant.findUnique({ where: { matricule: saisie.matricule! } });
+    if (pris) return echec("Ce matricule est déjà attribué à un autre étudiant.");
+  }
+  const avant = {
+    nom: cible.nom,
+    postnom: cible.postnom,
+    prenom: cible.prenom,
+    email: cible.email,
+    telephone: cible.telephone,
+    ...(etudiant
+      ? { matricule: cible.profilEtudiant!.matricule, sexe: cible.profilEtudiant!.sexe }
+      : {}),
+  };
+  const apres = {
+    nom: saisie.nom,
+    postnom: saisie.postnom || null,
+    prenom: saisie.prenom || null,
+    email,
+    telephone: saisie.telephone || null,
+    ...(etudiant ? { matricule: saisie.matricule, sexe: saisie.sexe || null } : {}),
+  };
+  await db.$transaction([
+    db.utilisateur.update({
+      where: { id },
+      data: {
+        nom: apres.nom,
+        postnom: apres.postnom,
+        prenom: apres.prenom,
+        email: apres.email,
+        telephone: apres.telephone,
+        // Une adresse modifiée n'est plus considérée comme confirmée.
+        ...(email !== cible.email ? { emailVerifieLe: null } : {}),
+      },
+    }),
+    ...(etudiant
+      ? [
+          db.profilEtudiant.update({
+            where: { id: cible.profilEtudiant!.id },
+            data: {
+              matricule: saisie.matricule!,
+              sexe: (saisie.sexe || null) as "F" | "M" | null,
+            },
+          }),
+        ]
+      : []),
+  ]);
+  await journaliser({
+    auteurId: auteur.id,
+    action: "identite_corrigee",
+    entite: "Utilisateur",
+    entiteId: id,
+    avant,
+    apres,
+  });
+  refresh();
+  return succes("Identité corrigée.");
 }

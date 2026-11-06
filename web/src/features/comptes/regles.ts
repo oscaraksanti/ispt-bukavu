@@ -49,3 +49,37 @@ export const LIBELLES_STATUT: Record<string, string> = {
   ACTIF: "Actif",
   SUSPENDU: "Suspendu",
 };
+
+export type SaisieIdentite = {
+  prenom: string;
+  nom: string;
+  postnom: string;
+  email: string;
+  telephone: string;
+  matricule?: string;
+  sexe?: string;
+};
+
+/**
+ * Vérifie une correction d'identité (droit de rectification). L'adresse
+ * électronique est obligatoire pour le personnel (identifiant de connexion),
+ * facultative pour un étudiant, qui se connecte avec son matricule.
+ */
+export function verifierIdentite(s: SaisieIdentite, etudiant: boolean): string | null {
+  if (!s.nom.trim()) return "Le nom est obligatoire.";
+  if (s.nom.length > 80 || s.prenom.length > 80 || s.postnom.length > 80)
+    return "Nom, post-nom ou prénom trop long.";
+  if (!etudiant && !s.email.trim())
+    return "L'adresse électronique est obligatoire pour le personnel.";
+  if (s.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email.trim()))
+    return "Adresse électronique invalide.";
+  if (s.telephone.trim() && !/^[+\d][\d\s.-]{5,19}$/.test(s.telephone.trim()))
+    return "Numéro de téléphone invalide.";
+  if (etudiant) {
+    if (!s.matricule?.trim()) return "Le matricule est obligatoire.";
+    if (!/^[A-Z0-9/-]{2,30}$/.test(s.matricule.replace(/\s+/g, "").toUpperCase()))
+      return "Matricule invalide (lettres, chiffres, « / » ou « - »).";
+    if (s.sexe && !["F", "M", ""].includes(s.sexe)) return "Sexe invalide.";
+  }
+  return null;
+}

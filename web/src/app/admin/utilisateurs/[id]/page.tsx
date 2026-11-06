@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 import { BoutonAction } from "@/components/admin/bouton-action";
 import { EnteteAdmin, Panneau } from "@/components/admin/entete-admin";
 import { FormulaireAction } from "@/components/admin/formulaire-action";
+import { FormulaireIdentite } from "@/components/admin/formulaire-identite";
 import { Case } from "@/components/ui/champs";
 import { Etiquette } from "@/components/ui/elements";
 import { exigerPermission } from "@/features/auth/acces";
 import {
   changerStatutCompte,
+  corrigerIdentite,
   modifierRolesCompte,
   renvoyerInvitation,
 } from "@/features/comptes/actions";
@@ -152,6 +154,19 @@ export default async function Compte({ params }: PageProps<"/admin/utilisateurs/
           )}
         </Panneau>
       </div>
+      {!protege && (
+        <Panneau
+          className="mt-6"
+          titre="Corriger l'identité"
+          description="Pour rectifier un nom, une adresse ou un numéro à la demande de la personne."
+        >
+          <FormulaireIdentite
+            action={corrigerIdentite.bind(null, c.id)}
+            valeurs={c}
+            etudiant={false}
+          />
+        </Panneau>
+      )}
     </>
   );
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { BoutonAction } from "@/components/admin/bouton-action";
 import { CodesActivation } from "@/components/admin/codes-activation";
 import { EnteteAdmin, Panneau } from "@/components/admin/entete-admin";
@@ -155,7 +156,12 @@ export default async function Etudiants({ searchParams }: PageProps<"/admin/etud
                     <tr key={i.id}>
                       <td className="px-4 py-2.5 font-mono text-xs text-pierre-500">{n + 1}</td>
                       <td className="px-4 py-2.5 text-pierre-900">
-                        {[u.nom, u.postnom, u.prenom].filter(Boolean).join(" ")}
+                        <Link
+                          href={`/admin/etudiants/${u.id}`}
+                          className="underline-offset-4 hover:underline"
+                        >
+                          {[u.nom, u.postnom, u.prenom].filter(Boolean).join(" ")}
+                        </Link>
                       </td>
                       <td className="px-4 py-2.5">{i.etudiant.sexe ?? "—"}</td>
                       <td className="px-4 py-2.5 font-mono text-xs">{i.etudiant.matricule}</td>

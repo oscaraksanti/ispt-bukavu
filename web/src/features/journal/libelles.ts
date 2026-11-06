@@ -19,6 +19,7 @@ export const LIBELLES_ACTIONS: Record<string, string> = {
   mot_de_passe_change: "Mot de passe changé par son titulaire",
   sessions_fermees: "Autres appareils déconnectés",
   photo_profil_modifiee: "Photo de profil modifiée",
+  identite_corrigee: "Identité corrigée",
   photo_profil_retiree: "Photo de profil retirée",
   purge_effectuee: "Purge automatique des données expirées",
   export_donnees: "Export de données (tableur)",

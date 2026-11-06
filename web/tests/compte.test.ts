@@ -58,3 +58,28 @@ describe("photo de profil", () => {
     expect(initialesDe("  ")).toBe("?");
   });
 });
+
+describe("correction d'identité", () => {
+  it("exige le nom, et l'adresse pour le personnel", async () => {
+    const { verifierIdentite } = await import("@/features/comptes/regles");
+    const base = { prenom: "Esther", nom: "MAPENDO", postnom: "", email: "", telephone: "" };
+    expect(verifierIdentite({ ...base, nom: " " }, false)).toMatch(/nom est obligatoire/);
+    expect(verifierIdentite(base, false)).toMatch(/obligatoire pour le personnel/);
+    expect(verifierIdentite({ ...base, email: "a@b.cd" }, false)).toBeNull();
+    expect(verifierIdentite({ ...base, email: "pas-une-adresse" }, false)).toMatch(/invalide/);
+    expect(verifierIdentite({ ...base, email: "a@b.cd", telephone: "abc" }, false)).toMatch(
+      /Téléphone|téléphone/,
+    );
+    expect(
+      verifierIdentite({ ...base, email: "a@b.cd", telephone: "+243 99 924 96 30" }, false),
+    ).toBeNull();
+  });
+  it("pour un étudiant, exige un matricule valide et accepte l'absence d'adresse", async () => {
+    const { verifierIdentite } = await import("@/features/comptes/regles");
+    const base = { prenom: "Esther", nom: "MAPENDO", postnom: "NABINTU", email: "", telephone: "" };
+    expect(verifierIdentite({ ...base, matricule: "" }, true)).toMatch(/matricule est obligatoire/);
+    expect(verifierIdentite({ ...base, matricule: "ISPT/2026<script>" }, true)).toMatch(/invalide/);
+    expect(verifierIdentite({ ...base, matricule: "ISPT/2026/014", sexe: "F" }, true)).toBeNull();
+    expect(verifierIdentite({ ...base, matricule: "E1", sexe: "X" }, true)).toMatch(/Sexe/);
+  });
+});

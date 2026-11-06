@@ -126,3 +126,31 @@ test.describe("vérification publique des documents", () => {
     await expect(page.getByRole("heading", { name: /Code inconnu/ })).toBeVisible();
   });
 });
+
+test.describe("correction d'identité", () => {
+  test("le secrétariat corrige un étudiant ; un étudiant ne peut pas", async ({ browser }) => {
+    const admin = await (await browser.newContext()).newPage();
+    await seConnecter(admin, D.comptes.admin);
+    await admin.goto(`/admin/etudiants?promotion=${D.ids.promotion}`);
+    await admin.waitForLoadState("networkidle");
+    await admin.getByRole("link", { name: /ETUDIANT-B/ }).click();
+    await admin.waitForURL(/\/admin\/etudiants\/[^/?]+$/);
+    const fiche = admin.url();
+    await admin.waitForLoadState("networkidle");
+    const prenom = admin.locator("#prenom");
+    const avant = await prenom.inputValue();
+    await prenom.fill(`${avant} Corrigé`);
+    await admin.getByRole("button", { name: "Enregistrer la correction" }).click();
+    await expect(admin.getByText("Identité corrigée.")).toBeVisible();
+    await expect(admin.getByRole("heading", { level: 1 })).toContainText("Corrigé");
+    // Remise en état.
+    await admin.locator("#prenom").fill(avant);
+    await admin.getByRole("button", { name: "Enregistrer la correction" }).click();
+    await expect(admin.getByText("Identité corrigée.")).toBeVisible();
+
+    const etudiant = await (await browser.newContext()).newPage();
+    await seConnecter(etudiant, D.comptes.etudiantA);
+    await etudiant.goto(fiche);
+    await attendreRefus(etudiant);
+  });
+});
