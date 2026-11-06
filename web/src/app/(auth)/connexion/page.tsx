@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { ViderEspacesHorsLigne } from "@/components/pwa/service-worker";
 import { COMPTES_DEMO, MODE_DEMO, MOT_DE_PASSE_DEMO } from "@/lib/demo";
+import { ComptesDemo } from "./comptes-demo";
 import { FormulaireConnexion } from "./formulaire-connexion";
 
 export const metadata: Metadata = { title: "Connexion", robots: { index: false } };
@@ -38,16 +39,10 @@ export default function PageConnexion({ searchParams }: PageProps<"/connexion">)
             Comptes de démonstration
           </h2>
           <p className="mt-1 text-pierre-700">
-            Mot de passe commun : <span className="font-mono">{MOT_DE_PASSE_DEMO}</span>
+            Cliquez sur un profil pour vous connecter. Mot de passe commun :{" "}
+            <span className="font-mono">{MOT_DE_PASSE_DEMO}</span>
           </p>
-          <dl className="mt-3 space-y-2">
-            {COMPTES_DEMO.map((c) => (
-              <div key={c.identifiant}>
-                <dt className="text-xs text-pierre-600">{c.profil}</dt>
-                <dd className="font-mono text-detail text-encre">{c.identifiant}</dd>
-              </div>
-            ))}
-          </dl>
+          <ComptesDemo comptes={COMPTES_DEMO} motDePasse={MOT_DE_PASSE_DEMO} />
         </section>
       )}
     </>
