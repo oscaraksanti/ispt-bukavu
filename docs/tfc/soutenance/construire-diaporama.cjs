@@ -594,8 +594,8 @@ async function icone(nom, couleur, taille = 256) {
   {
     const s = nouvelle("Une qualité mesurée, pas déclarée", "6 · Résultats", "Résultats");
     const stats = [
-      ["198", "tests unitaires réussis"],
-      ["115", "tests de bout en bout, dont des accès interdits"],
+      ["203", "tests unitaires réussis"],
+      ["117", "tests de bout en bout, dont des accès interdits"],
       ["0", "violation WCAG 2.2 AA sur 74 pages"],
       ["16/16", "décisions d’un jury réel reproduites"],
     ];
@@ -629,7 +629,7 @@ async function icone(nom, couleur, taille = 256) {
     const s = nouvelle("Vérification des hypothèses", "6 · Résultats", "Résultats");
     const v = [
       ["H1", "Application web progressive", "Pages de 320 à 602 Ko, contenu affiché en moins de 3 s, lecture hors connexion", "Vérifiée en conditions simulées", SUCCES, "ok"],
-      ["H2", "Plateforme unique, droits vérifiés", "Principaux processus réunis ; 313 tests réussis, dont les tentatives d’accès interdites", "Vérifiée sur le plan technique", SUCCES, "ok"],
+      ["H2", "Plateforme unique, droits vérifiés", "Principaux processus réunis ; 320 tests réussis, dont les tentatives d’accès interdites", "Vérifiée sur le plan technique", SUCCES, "ok"],
       ["H3", "Architecture portable", "Restauration complète sans perte ; exports en tableur des inscriptions, notes et résultats", "Partiellement vérifiée", ATTENTION, "partiel"],
     ];
     v.forEach(([n, t, r, c, coul, ic], i) => {

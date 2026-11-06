@@ -62,21 +62,21 @@ On peut photocopier ou retoucher un papier, mais pas la page de vérification : 
 Pour fermer complètement l'interface de programmation publique de l'hébergeur : elle ne peut lire aucune donnée. Seule l'application, connectée par un canal serveur, accède à la base (3.4.2).
 
 **Qu'a donné la revue de sécurité ?**
-Douze constats : un de gravité élevée (un gestionnaire pouvait obtenir un lien de réinitialisation pour un compte déjà actif), cinq moyens et six faibles. Onze ont été corrigés ; le douzième a été vérifié sans nécessiter de correction (4.3.3).
+Deux revues. La première, sur l'ensemble du code : douze constats, dont un de gravité élevée (un gestionnaire pouvait obtenir un lien de réinitialisation pour un compte déjà actif) ; onze corrigés, le douzième vérifié sans correction. La seconde, sur les modules ajoutés ensuite (messagerie, Campus, notifications sur le téléphone, exports) : neuf constats, dont un élevé (un appareil continuait de recevoir les notifications après la déconnexion), tous corrigés (4.3.3).
 
 **Votre politique de sécurité du contenu autorise les scripts intégrés. Pourquoi ?**
 C'est un compromis nécessaire au fonctionnement du cadre d'application et au maintien du cache (4.6). Explication technique, à donner oralement : une protection par nonce rendrait toutes les pages dynamiques et supprimerait leur mise en cache, essentielle sur une connexion lente.
 
 ## 5. Tests et performance
 
-**Que vérifient vos 313 tests ?**
-198 tests unitaires sur les règles métier (moyennes, délibérations, soldes, transitions d'état, conflits d'examens, droits de la messagerie et du Campus, sécurité) et 115 tests de bout en bout sur les parcours complets et les accès interdits. Ils s'exécutent automatiquement à chaque modification du code (tableau 4.1).
+**Que vérifient vos 320 tests ?**
+203 tests unitaires sur les règles métier (moyennes, délibérations, soldes, transitions d'état, conflits d'examens, droits de la messagerie et du Campus, sécurité) et 117 tests de bout en bout sur les parcours complets et les accès interdits. Ils s'exécutent automatiquement à chaque modification du code (tableau 4.1).
 
 **Vos mesures de performance sont simulées. Sont-elles représentatives ?**
 Elles utilisent un profil de réseau mobile lent (150 ms de latence, 1,6 Mbit/s) et un processeur ralenti quatre fois. Elles donnent un ordre de grandeur : l'accueil pèse 602 Ko, environ quatre fois moins que la médiane du web mobile. Mais elles ne remplacent pas une mesure sur un téléphone à Bukavu, qui est en perspective (4.3.5, 4.6).
 
 **Combien d'utilisateurs simultanés la plateforme supporte-t-elle ?**
-Ce n'est pas mesuré dans ce travail : aucun test de charge n'a été réalisé. Les pages publiques sont servies depuis le cache de l'hébergeur, ce qui limite la charge du serveur. Un test de charge sur les pics (rentrée, publication des résultats) constitue une suite naturelle de ce travail.
+Un test de charge léger a été mené sur le site en production : 280 requêtes, dix à la fois, sans aucune erreur ; une fois les pages en cache, 95 % des réponses arrivent en moins de 0,6 s, soit environ quarante pages par seconde (4.3.5). Cela dépasse largement la fréquentation attendue, mais ne remplace pas une observation lors d'un vrai pic, comme une publication de résultats.
 
 **Qu'est-ce que WCAG 2.2 AA, et pourquoi ?**
 Ce sont les règles internationales d'accessibilité du web. Niveau AA : contrastes suffisants, navigation au clavier, libellés des formulaires, etc. 74 pages analysées, aucune violation après corrections ; une vérification manuelle au clavier a complété l'analyse (4.3.4).
@@ -90,15 +90,18 @@ L'article 201 du Code du numérique exige un hébergement en RDC, sauf autorisat
 Le mémoire retient l'organisation communiquée par l'institut (4 ans, BAC1 à BAC4) et signale l'écart. Dans la plateforme, les niveaux sont des données paramétrables, pas des constantes du code.
 
 **Comment respectez-vous les droits des personnes sur leurs données ?**
-Chacun consulte ses propres données dans son espace et peut en obtenir l'export complet (page « Mes données »), conformément au droit d'accès ; les actions sensibles sont journalisées ; les sauvegardes sont chiffrées ; les rapports d'erreur ne contiennent aucune donnée personnelle.
+Chacun consulte ses propres données et en télécharge l'export complet depuis « Mon compte » (droit d'accès et de portabilité). Une erreur de nom, de matricule ou d'adresse est corrigée par le secrétariat (droit de rectification), et la correction est inscrite au journal avec l'état avant et après. La politique de confidentialité publiée sur le site énumère les données traitées, leurs finalités, leurs durées de conservation, les hébergeurs et ces droits (Code du numérique, articles 209 à 215). Les sauvegardes sont chiffrées et les rapports d'erreur ne contiennent aucune donnée personnelle.
+
+**Qui a rédigé les mentions légales, la politique de confidentialité et les règles du Campus ?**
+Ce travail en propose une première rédaction, établie d'après le fonctionnement réel de la plateforme et les informations transmises par l'institut. Elles sont publiées et modifiables dans l'administration ; leur validation juridique revient à l'institut (4.6, annexe 7).
 
 ## 7. Exploitation et pérennité
 
 **Combien coûte la plateforme à l'institut ?**
-L'hébergement, la base de données et GitHub utilisent des offres gratuites, suffisantes pour le trafic d'un institut. Le seul coût récurrent propre au projet est le nom de domaine (abonnement annuel) ; le courrier électronique passe aujourd'hui par le compte Resend de l'auteur (tableau 4.3). *[Oscar : compléter avec les montants réels.]*
+La base de données, le code, les sauvegardes et la surveillance utilisent des offres gratuites, suffisantes pour le trafic d'un institut. L'hébergement de l'application utilise aujourd'hui l'offre Pro de Vercel de l'auteur, partagée avec d'autres projets ; à la passation, l'institut la reprendra ou en choisira une autre. S'y ajoutent le nom de domaine (abonnement annuel) et le courrier électronique, qui passe par le compte Resend de l'auteur (tableau 4.3). *[Oscar : compléter avec les montants réels.]*
 
 **Qui maintiendra la plateforme après vous ?**
-Le contenu (pages, filières, communiqués, rôles, règlement) est administré par le personnel, sans compétence technique. Pour le code : un seul langage, typé, des règles métier isolées et testées, des tests qui s'exécutent à chaque modification, et, dans le dépôt du projet, une documentation d'exploitation (sauvegarde, restauration, démonstration). Une passation à l'institut est prévue après la soutenance.
+Le contenu (pages, filières, communiqués, rôles, règlement) est administré par le personnel, sans compétence technique. Pour le code : un seul langage, typé, des règles métier isolées et testées, des tests qui s'exécutent à chaque modification, et, dans le dépôt du projet, une documentation d'exploitation (sauvegarde, restauration, démonstration). Pour la mise en service, un guide illustré explique au personnel comment créer les comptes (invitations, listes, registre des étudiants, codes d'activation) ; il se télécharge depuis l'administration. Une passation à l'institut est prévue après la soutenance.
 
 **Que se passe-t-il en cas de coupure d'internet ?**
 Les pages personnelles déjà consultées restent lisibles hors connexion, et un bandeau signale l'absence de réseau. Les actions qui modifient des données (déposer une pièce, publier) nécessitent la connexion.

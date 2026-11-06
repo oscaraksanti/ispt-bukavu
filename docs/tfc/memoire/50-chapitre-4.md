@@ -137,8 +137,8 @@ Un logiciel n'est jamais prouvé correct par des tests ; les tests ont pour but 
 ::tableau Tableau 4.1 : Stratégie de test
 | Niveau | Outil | Objet | Volume |
 |---|---|---|---|
-| Tests unitaires | Vitest | Règles métier : moyennes, délibérations, soldes, transitions d'état, conflits d'examens, droits de la messagerie et du Campus, sécurité des mots de passe et des redirections | 201 tests, 23 fichiers |
-| Tests de bout en bout | Playwright | Parcours complets dans un vrai navigateur et tentatives d'accès interdites entre rôles | 116 tests, 13 fichiers |
+| Tests unitaires | Vitest | Règles métier : moyennes, délibérations, soldes, transitions d'état, conflits d'examens, droits de la messagerie et du Campus, sécurité des mots de passe et des redirections | 203 tests, 23 fichiers |
+| Tests de bout en bout | Playwright | Parcours complets dans un vrai navigateur et tentatives d'accès interdites entre rôles | 117 tests, 13 fichiers |
 | Accessibilité | axe-core | Règles WCAG 2.2 niveau AA, sur ordinateur et sur téléphone | Inclus dans les tests de bout en bout |
 | Performance | Lighthouse et mesures du navigateur | Poids des pages et temps d'affichage en réseau mobile lent simulé | 7 pages publiques |
 
@@ -148,7 +148,7 @@ Tous ces tests, à l'exception des mesures de performance, s'exécutent automati
 
 ### 4.3.2. Tests unitaires
 
-Les règles métier ont été isolées dans des fonctions sans accès à la base de données, ce qui permet de les tester rapidement et de manière reproductible [@vitest-docs]. Les 201 tests unitaires réussissent. Ils vérifient notamment :
+Les règles métier ont été isolées dans des fonctions sans accès à la base de données, ce qui permet de les tester rapidement et de manière reproductible [@vitest-docs]. Les 203 tests unitaires réussissent. Ils vérifient notamment :
 
 - le calcul de la moyenne pondérée d'un cours à partir de ses évaluations publiées, et l'arrondi au demi-point ;
 - le moteur de délibération, testé sur les notes réelles d'une promotion, préalablement anonymisées : il reproduit les seize décisions prises par le jury ;
@@ -161,7 +161,7 @@ Les règles métier ont été isolées dans des fonctions sans accès à la base
 
 ### 4.3.3. Tests de bout en bout et contrôle des accès
 
-Les tests de bout en bout pilotent un navigateur réel sur la version compilée de l'application, connectée à une base de test dédiée [@playwright-docs]. Les 116 tests réussissent. Ils rejouent les parcours critiques (dépôt et instruction d'une candidature, circuit des notes, délibération et proclamation, planification des examens, devoirs et présences, notifications, messagerie, Campus, exports et gestion du compte) et tentent délibérément des accès interdits, par exemple :
+Les tests de bout en bout pilotent un navigateur réel sur la version compilée de l'application, connectée à une base de test dédiée [@playwright-docs]. Les 117 tests réussissent. Ils rejouent les parcours critiques (dépôt et instruction d'une candidature, circuit des notes, délibération et proclamation, planification des examens, devoirs et présences, notifications, messagerie, Campus, exports et gestion du compte) et tentent délibérément des accès interdits, par exemple :
 
 - un étudiant qui tente d'ouvrir le reçu, le relevé ou le bulletin d'un autre étudiant ;
 - un enseignant qui tente de saisir des notes dans un cours qui ne lui est pas confié ;
@@ -250,7 +250,7 @@ Le tableau 4.4 confronte les résultats aux trois hypothèses formulées en intr
 | Hypothèse | Résultats | Conclusion |
 |---|---|---|
 | 1. Une application web progressive, légère et consultable hors connexion, convient au contexte de Bukavu | Premières visites de 320 à 602 Ko ; visites suivantes de 7 à 18 Ko ; contenu principal affiché en moins de 3 s en réseau mobile lent simulé ; pages personnelles lisibles hors connexion ; installation sans magasin d'applications | Vérifiée en conditions simulées ; à confirmer sur le réseau d'un opérateur local, avec de vrais téléphones |
-| 2. Une plateforme unique, organisée autour de la valve et de circuits de validation, couvre les processus de l'institut avec des droits vérifiés côté serveur | Admissions, valve, horaires, notes, délibérations, examens, frais, documents et stages réunis dans un même outil ; 201 tests unitaires et 116 tests de bout en bout réussis, dont des tentatives d'accès interdites ; deux revues de sécurité, constats corrigés | Vérifiée sur le plan technique ; l'adoption par les usagers reste à évaluer après la mise en service |
+| 2. Une plateforme unique, organisée autour de la valve et de circuits de validation, couvre les processus de l'institut avec des droits vérifiés côté serveur | Admissions, valve, horaires, notes, délibérations, examens, frais, documents et stages réunis dans un même outil ; 203 tests unitaires et 117 tests de bout en bout réussis, dont des tentatives d'accès interdites ; deux revues de sécurité, constats corrigés | Vérifiée sur le plan technique ; l'adoption par les usagers reste à évaluer après la mise en service |
 | 3. Une architecture portable, complémentaire de la plateforme ministérielle, respecte le cadre réglementaire | Base PostgreSQL standard et stockage d'objets remplaçable ; sauvegarde restaurée sans perte dans une base neuve ; exports en tableur du registre des inscriptions, des effectifs, des notes et des résultats proclamés | Partiellement vérifiée : la portabilité est démontrée, mais les exports au format attendu par la plateforme ministérielle et l'hébergement en RDC restent à réaliser |
 
 ::source Production personnelle.
